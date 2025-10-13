@@ -1,0 +1,25 @@
+.site-container {
+  max-width: 50%;
+  margin:10% auto;
+  padding: 1rem;
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px var(--shadow);
+  text-align: center;
+}
+h2 {
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+img.img-fluid {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+.list-unstyled {
+  padding-left: 0;
+}
+.border.rounded {
+  background: var(--background);
+}
