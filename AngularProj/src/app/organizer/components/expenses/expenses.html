@@ -1,0 +1,6 @@
+<div style="padding:20px">
+    <h2>Expenses</h2>
+    <ul>
+        <li *ngFor="let ex of expenses">{{ ex.id }} - {{ ex.name }} - {{ ex.amount | number:'1.2-2' }}</li>
+    </ul>
+</div>

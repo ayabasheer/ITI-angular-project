@@ -1,0 +1,11 @@
+<div style="padding:20px">
+    <h2>Events</h2>
+    <div *ngIf="events.length; else no">
+        <ul>
+            <li *ngFor="let e of events">
+                {{ e.id }} - {{ e.name }} - {{ e.startDate | date:'short' }}
+            </li>
+        </ul>
+    </div>
+    <ng-template #no>No events found.</ng-template>
+</div>
