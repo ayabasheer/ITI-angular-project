@@ -20,5 +20,6 @@ export const routes: Routes = [
 	{ path: 'events/:id/feedback', component: FeedbackComponent },
 	{ path: 'events', component: EventsComponent },
 	{ path: 'create-event', component: CreateEvent },
+	{path:"dashboard", loadChildren: () => import('./organizer/organizer-module').then(m => m.OrganizerModule)},
 	{ path: '**', redirectTo: '' }
 ];

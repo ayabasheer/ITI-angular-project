@@ -98,3 +98,4 @@ export interface FeedbackPayload {
   rating: number;
   comment?: string;
 }
+

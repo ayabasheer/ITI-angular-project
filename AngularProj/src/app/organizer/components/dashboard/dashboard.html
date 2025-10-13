@@ -1,1 +1,50 @@
-<p>dashboard works!</p>
+<div class="dashboard-root">
+    <div class="header-row">
+        <h1>Dashboard</h1>
+        <button routerLink="/organizer/events" class="add-btn">+ Add Event</button>
+    </div>
+
+    <div class="cards-grid">
+        <a class="stat-card" routerLink="/organizer/events" title="View Events">
+            <div class="icon">📅</div>
+            <div class="stat">
+                <div class="num">{{ total }}</div>
+                <div class="label">Total Events</div>
+            </div>
+        </a>
+
+        <a class="stat-card" routerLink="/organizer/events?filter=upcoming" title="View Upcoming">
+            <div class="icon">⏳</div>
+            <div class="stat">
+                <div class="num">{{ upcoming }}</div>
+                <div class="label">Upcoming</div>
+            </div>
+        </a>
+
+        <a class="stat-card" routerLink="/organizer/events?filter=completed" title="View Completed">
+            <div class="icon">✅</div>
+            <div class="stat">
+                <div class="num">{{ completed }}</div>
+                <div class="label">Completed</div>
+            </div>
+        </a>
+
+        <a class="stat-card" routerLink="/organizer/guests" title="View Guests">
+            <div class="icon">👥</div>
+            <div class="stat">
+                <div class="num">{{ totalGuests }}</div>
+                <div class="label">Total Guests</div>
+            </div>
+        </a>
+    </div>
+
+    <!-- placeholder area for charts in future -->
+    <div class="charts-row">
+        <div class="chart-card"> <!-- left chart placeholder -->
+            Expenses by Category (coming soon)
+        </div>
+        <div class="chart-card"> <!-- right chart placeholder -->
+            Events by Month (coming soon)
+        </div>
+    </div>
+</div>
