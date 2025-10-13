@@ -1,6 +1,5 @@
 import type { Organizer, Guest, Admin, EventModel, Task, Expense, Feedback, EventStatus, GuestStatus, Priority, ExpenseCategory } from '../models/interfaces';
 
-/* Helpers */
 function pad(n: number) { return n < 10 ? '0' + n : String(n); }
 function isoDateOffset(base: Date, daysOffset: number, hour = 9, minute = 0) {
   const d = new Date(base);
@@ -11,35 +10,35 @@ function isoDateOffset(base: Date, daysOffset: number, hour = 9, minute = 0) {
 function randInt(min: number, max: number) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 function randChoice<T>(arr: T[]) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-async function fetchImageAsDataUrl(url: string): Promise<string | null> {
+function makeDemoPassword(role: string, id: number) {
+  return `${role}!${id}`;
+}
+
+
+async function checkAssetExists(path: string): Promise<boolean> {
   try {
-    const resp = await fetch(url);
-    if (!resp.ok) return null;
-    const blob = await resp.blob();
-    return await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  } catch (e) {
-    return null;
+    const resp = await fetch(path, { method: 'GET', cache: 'no-store' });
+    return resp.ok;
+  } catch {
+    return false;
   }
 }
 
-export async function loadAndStoreLocalImages(options?: {count?: number, folderPath?: string}) {
-  const count = options?.count ?? 100;
-  const folder = options?.folderPath ?? 'assets/event-images';
-  const extensions = ['jpg','jpeg','png','webp'];
+export async function loadAndStoreLocalImages(options?: { count?: number, folderPath?: string }) {
+  const count = options?.count ?? 8;
+  let folder = options?.folderPath ?? 'assets/event-images';
+  if (!folder.startsWith('/')) folder = '/' + folder;
+
+  const extensions = ['jpg', 'jpeg', 'png', 'webp'];
   const images: string[] = [];
 
   for (let i = 1; i <= count; i++) {
     let found = false;
     for (const ext of extensions) {
       const path = `${folder}/image${i}.${ext}`;
-      const dataUrl = await fetchImageAsDataUrl(path);
-      if (dataUrl) {
-        images.push(dataUrl);
+
+      if (await checkAssetExists(path)) {
+        images.push(path);
         found = true;
         break;
       }
@@ -47,18 +46,18 @@ export async function loadAndStoreLocalImages(options?: {count?: number, folderP
     if (!found) {
       for (const ext of extensions) {
         const path = `${folder}/${i}.${ext}`;
-        const dataUrl = await fetchImageAsDataUrl(path);
-        if (dataUrl) {
-          images.push(dataUrl);
+        if (await checkAssetExists(path)) {
+          images.push(path);
           found = true;
           break;
         }
       }
     }
   }
-
-  if (images.length === 0) {
-    for (let i = 1; i <= count; i++) images.push(`https://picsum.photos/800/500?random=${i}`);
+ if (images.length === 0) {
+    for (let i = 1; i <= count; i++) {
+      images.push(`${folder}/image${i}.jpg`);
+    }
   }
 
   try {
@@ -68,7 +67,6 @@ export async function loadAndStoreLocalImages(options?: {count?: number, folderP
   }
   return images;
 }
-
 
 export async function generateAndSaveAllWithImages() {
   const base = new Date('2025-10-11T09:00:00Z');
@@ -80,16 +78,18 @@ export async function generateAndSaveAllWithImages() {
   const expenses: Expense[] = [];
   const feedbacks: Feedback[] = [];
 
-  const loadedImages = await loadAndStoreLocalImages({count: 100, folderPath: 'assets/event-images'});
+
+  const loadedImages = await loadAndStoreLocalImages({ count: 8, folderPath: 'assets/event-images' });
 
   for (let i = 1; i <= 100; i++) {
     organizers.push({
       id: i,
       name: `Organizer ${i}`,
       email: `organizer${i}@example.com`,
+      password: makeDemoPassword('Organizer', i),
       phone: `+20100${100000 + i}`,
       role: 'Organizer',
-      createdAt: isoDateOffset(base, -randInt(1, 30), 8, randInt(0,59))
+      createdAt: isoDateOffset(base, -randInt(1, 30), 8, randInt(0, 59))
     });
   }
 
@@ -98,23 +98,25 @@ export async function generateAndSaveAllWithImages() {
       id: i,
       name: `Admin ${i}`,
       email: `admin${i}@example.com`,
+      password: makeDemoPassword('Admin', i),
       role: 'Admin',
-      createdAt: isoDateOffset(base, -randInt(1, 40), 7, randInt(0,59))
+      createdAt: isoDateOffset(base, -randInt(1, 40), 7, randInt(0, 59))
     });
   }
+
   for (let i = 1; i <= 100; i++) {
     const creatorId = ((i - 1) % organizers.length) + 1;
     const startDays = i;
     const durationDays = randInt(0, 2);
     const start = isoDateOffset(base, startDays, 9 + (i % 6));
     const end = isoDateOffset(base, startDays + durationDays, 17);
-    const categoryList = ['Conference','Meeting','Workshop','Webinar','Party'];
-    const statusList: EventStatus[] = ['Upcoming','InProgress','Completed','Cancelled'];
+    const categoryList = ['Conference', 'Meeting', 'Workshop', 'Webinar', 'Party'];
+    const statusList: EventStatus[] = ['Upcoming', 'InProgress', 'Completed', 'Cancelled'];
     const category = categoryList[i % categoryList.length];
     const status = statusList[i % statusList.length];
     const guestCount = randInt(5, 120);
 
-    const chosenImage = loadedImages.length ? randChoice(loadedImages) : `https://picsum.photos/400/250?random=${i}`;
+    const chosenImage = loadedImages.length ? loadedImages[(i - 1) % loadedImages.length] : '';
 
     events.push({
       id: i,
@@ -133,28 +135,30 @@ export async function generateAndSaveAllWithImages() {
       feedbacks: [],
       status,
       budget: 500 + i * 50,
-      createdAt: isoDateOffset(base, Math.floor(i/10) * -1, 8, randInt(0,59)),
-      updatedAt: isoDateOffset(base, Math.floor(i/5), 10, randInt(0,59))
+      createdAt: isoDateOffset(base, Math.floor(i / 10) * -1, 8, randInt(0, 59)),
+      updatedAt: isoDateOffset(base, Math.floor(i / 5), 10, randInt(0, 59))
     });
   }
 
   for (let i = 1; i <= 100; i++) {
     const assignedEvent = ((i - 1) % events.length) + 1;
-    const statusOpts: GuestStatus[] = ['Invited','Accepted','Declined','Pending'];
+    const statusOpts: GuestStatus[] = ['Invited', 'Accepted', 'Declined', 'Pending'];
     const g: Guest = {
       id: i,
       name: `Guest ${i}`,
       email: `guest${i}@example.com`,
+      password: makeDemoPassword('Guest', i),
       phone: `+20111${900000 + i}`,
       status: statusOpts[i % statusOpts.length],
       feedbackId: null,
       eventId: assignedEvent,
-      createdAt: isoDateOffset(base, -randInt(1, 20), 9, randInt(0,59))
+      createdAt: isoDateOffset(base, -randInt(1, 20), 9, randInt(0, 59))
     };
     guests.push(g);
     const ev = events.find(e => e.id === assignedEvent);
     if (ev) ev.guests.push(g.id);
   }
+
   for (let i = 1; i <= 100; i++) {
     const eventId = ((i - 1) % events.length) + 1;
     const assignedTo = ((i - 1) % organizers.length) + 1;
@@ -165,19 +169,19 @@ export async function generateAndSaveAllWithImages() {
       title: `Task ${i} for Event ${eventId}`,
       description: `Complete task ${i} for event ${eventId}`,
       assignedTo,
-      priority: (['Low','Medium','High','Critical'] as Priority[])[i % 4],
+      priority: (['Low', 'Medium', 'High', 'Critical'] as Priority[])[i % 4],
       deadline: isoDateOffset(base, (eventId % 10) + 1, 17),
       status: statuses[i % statuses.length],
       comments: [`Auto-generated comment for task ${i}`],
-      createdAt: isoDateOffset(base, -randInt(1,5), 9, randInt(0,59)),
-      updatedAt: isoDateOffset(base, randInt(0,3), 10, randInt(0,59))
+      createdAt: isoDateOffset(base, -randInt(1, 5), 9, randInt(0, 59)),
+      updatedAt: isoDateOffset(base, randInt(0, 3), 10, randInt(0, 59))
     };
     tasks.push(t);
     const ev = events.find(e => e.id === eventId);
     if (ev) ev.tasks.push(t.id);
   }
 
-  const expenseCats: ExpenseCategory[] = ['Venue','Decoration','Food','Music','Transport','Miscellaneous'];
+  const expenseCats: ExpenseCategory[] = ['Venue', 'Decoration', 'Food', 'Music', 'Transport', 'Miscellaneous'];
   for (let i = 1; i <= 100; i++) {
     const eventId = ((i - 1) % events.length) + 1;
     const amount = parseFloat((randInt(50, 2000) + Math.random()).toFixed(2));
@@ -187,7 +191,7 @@ export async function generateAndSaveAllWithImages() {
       name: `Expense ${i} for Event ${eventId}`,
       amount,
       category: expenseCats[i % expenseCats.length],
-      date: isoDateOffset(base, i % 30, 12, randInt(0,59)),
+      date: isoDateOffset(base, i % 30, 12, randInt(0, 59)),
       notes: i % 5 === 0 ? 'Auto-generated note' : undefined
     };
     expenses.push(ex);
@@ -205,7 +209,7 @@ export async function generateAndSaveAllWithImages() {
       eventId,
       rating,
       comment: rating >= 4 ? `Great event ${eventId}` : `Could improve event ${eventId}`,
-      createdAt: isoDateOffset(base, (eventId % 10) + 3, 18, randInt(0,59))
+      createdAt: isoDateOffset(base, (eventId % 10) + 3, 18, randInt(0, 59))
     };
     feedbacks.push(fb);
     const ev = events.find(e => e.id === eventId);
@@ -228,8 +232,5 @@ export async function generateAndSaveAllWithImages() {
   localStorage.setItem('expenses', JSON.stringify(expenses));
   localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
   const snapshot = { organizers, admins, guests, events, tasks, expenses, feedbacks, generatedAt: new Date().toISOString() };
-  localStorage.setItem('event_planner_seed', JSON.stringify(snapshot));
-
-  console.log('Generated and saved seed data for Event Planning System (100 ids per role/model).');
   return snapshot;
 }

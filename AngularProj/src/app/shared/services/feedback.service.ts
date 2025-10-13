@@ -31,7 +31,6 @@ export class FeedbackService {
     const guest = guests.find(g => g.id === payload.guestId);
     if (!guest) return { success: false, message: 'Guest not found' };
 
-    // Ensure guest belongs to the event
     if (guest.eventId !== payload.eventId) {
       return { success: false, message: 'Guest not associated with this event' };
     }
@@ -39,12 +38,10 @@ export class FeedbackService {
     const event = events.find(e => e.id === payload.eventId);
     if (!event) return { success: false, message: 'Event not found' };
 
-    // Only allow feedback if event status is Completed
     if (event.status !== 'Completed') {
       return { success: false, message: 'Feedback allowed only for completed events' };
     }
 
-    // Prevent duplicate feedback from same guest
     if (guest.feedbackId) {
       return { success: false, message: 'Guest has already submitted feedback' };
     }
@@ -62,16 +59,13 @@ export class FeedbackService {
     feedbacks.push(fb);
     this.save(this.keys.feedbacks, feedbacks);
 
-    // update guest
     guest.feedbackId = fb.id;
     this.save(this.keys.guests, guests);
 
-    // update event feedbacks array
     event.feedbacks = event.feedbacks || [];
     event.feedbacks.push(fb.id);
     this.save(this.keys.events, events);
 
-    // update snapshot
     const snapshot = {
       organizers: localStorage.getItem('organizers') ? JSON.parse(localStorage.getItem('organizers') as string) : [],
       admins: localStorage.getItem('admins') ? JSON.parse(localStorage.getItem('admins') as string) : [],
