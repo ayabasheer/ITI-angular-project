@@ -8,7 +8,7 @@ import { LastRouteService } from './shared/services/last-route.service';
 @Component({
   standalone: true,
   selector: 'app-root',
-  imports: [RouterOutlet, NavbarComponent, FooterComponent],
+  imports: [RouterOutlet, ],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })

@@ -29,10 +29,47 @@ export class RegisterComponent {
 
   onSubmit(e: Event) {
     e.preventDefault();
-    const user = { id: Date.now(), name: this.name, email: this.email, role: this.roleSelected };
-    this.auth.register(user);
-    const redirect = this.lastRoute.get() || '/';
-    this.lastRoute.clear();
-    this.router.navigateByUrl(redirect);
+    const roleKeyMap: Record<string, string> = { Organizer: 'organizers', Guest: 'guests', Admin: 'admins' };
+    const key = roleKeyMap[this.roleSelected] || null;
+    if (!key) {
+      alert('Please select a valid role');
+      return;
+    }
+
+    try {
+      const raw = localStorage.getItem(key);
+      const arr = raw ? JSON.parse(raw) : [];
+
+      // prevent duplicate email for the same role
+      if (arr.find((u: any) => u.email === this.email)) {
+        alert('An account with this email already exists for the selected role.');
+        return;
+      }
+
+      // auto-increment id (use numeric ids used elsewhere)
+      const newId = arr.length ? (Math.max(...arr.map((u: any) => u.id || 0)) + 1) : 1;
+
+      const now = new Date().toISOString();
+
+      // construct role-specific record (include password for demo)
+      let record: any = { id: newId, name: this.name, email: this.email, password: this.password, role: this.roleSelected, createdAt: now };
+      if (this.roleSelected === 'Guest') {
+        record = { ...record, status: 'Pending', feedbackId: null, eventId: 0 };
+      }
+
+      arr.push(record);
+      localStorage.setItem(key, JSON.stringify(arr));
+
+      // Save minimal session for app usage
+      const sessionUser = { id: record.id, name: record.name, email: record.email, role: record.role };
+      this.auth.register(sessionUser);
+
+      const redirect = this.lastRoute.get() || '/';
+      this.lastRoute.clear();
+      this.router.navigateByUrl(redirect);
+    } catch (err) {
+      console.error('Registration error', err);
+      alert('Registration failed');
+    }
   }
 }

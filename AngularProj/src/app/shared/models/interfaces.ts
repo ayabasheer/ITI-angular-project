@@ -9,6 +9,8 @@ export interface Organizer {
   name: string;
   email: string;
   phone?: string;
+  /** Plain-text password for demo purposes (optional) */
+  password?: string;
   role: Role;
   createdAt: string;
 }
@@ -18,6 +20,8 @@ export interface Guest {
   name: string;
   email: string;
   phone?: string;
+  /** Plain-text password for demo purposes (optional) */
+  password?: string;
   status: GuestStatus;
   feedbackId?: number | null;
   eventId: number;
@@ -28,6 +32,8 @@ export interface Admin {
   id: number;
   name: string;
   email: string;
+  /** Plain-text password for demo purposes (optional) */
+  password?: string;
   role: Role;
   createdAt: string;
 }

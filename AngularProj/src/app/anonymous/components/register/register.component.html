@@ -1,9 +1,9 @@
 <div class="auth">
   <h2 class="mb-3">Create account</h2>
   <div *ngIf="!roleSelected" class="d-flex gap-2">
-    <button class="btn btn-outline-primary" (click)="selectRole('admin')">Admin</button>
-    <button class="btn btn-outline-primary" (click)="selectRole('organizer')">Organizer</button>
-    <button class="btn btn-outline-primary" (click)="selectRole('guest')">Guest</button>
+    <button class="btn btn-outline-primary" (click)="selectRole('Admin')">Admin</button>
+    <button class="btn btn-outline-primary" (click)="selectRole('Organizer')">Organizer</button>
+    <button class="btn btn-outline-primary" (click)="selectRole('Guest')">Guest</button>
   </div>
 
   <form *ngIf="roleSelected" (submit)="onSubmit($event)">
