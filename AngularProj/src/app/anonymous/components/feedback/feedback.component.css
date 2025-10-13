@@ -1,4 +1,4 @@
-/* Contact Component Styles */
+/* Feedback Component Styles */
 .site-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -23,24 +23,22 @@
 }
 
 .card-creative:hover {
-  border-color: var(--primary);
   transform: translateY(-5px);
   box-shadow: 0 12px 40px var(--shadow);
-  background: var(--background);
 }
 
-.card-creative h2 {
+.card-creative h3 {
   color: var(--primary);
   margin-bottom: 1rem;
   font-weight: 600;
-  font-size: 2.5rem;
+  font-size: 2rem;
   text-align: center;
 }
 
 .card-creative p {
   color: var(--muted);
-  font-size: 1.1rem;
-  line-height: 1.8;
+  font-size: 1rem;
+  line-height: 1.6;
   margin-bottom: 2rem;
   text-align: center;
 }
@@ -88,6 +86,7 @@ textarea.form-control {
   transition: all 0.3s ease;
   text-decoration: none;
   display: inline-block;
+  width: 100%;
 }
 
 .btn-primary {
@@ -102,12 +101,27 @@ textarea.form-control {
   box-shadow: 0 4px 12px var(--shadow);
 }
 
-.p-4 {
-  padding: 2rem;
+.alert {
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
 }
 
-.mt-3 {
-  margin-top: 1rem;
+.alert-success {
+  background: rgba(157, 115, 92, 0.1);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.alert-danger {
+  background: rgba(179, 141, 115, 0.1);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.p-3 {
+  padding: 1.5rem;
 }
 
 .mb-3 {
@@ -119,12 +133,12 @@ textarea.form-control {
   .site-container {
     padding: 1rem;
   }
-
-  .card-creative h2 {
-    font-size: 2rem;
+  
+  .card-creative h3 {
+    font-size: 1.5rem;
   }
-
+  
   .card-creative p {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 }

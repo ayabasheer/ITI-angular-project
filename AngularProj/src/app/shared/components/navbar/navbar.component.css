@@ -3,10 +3,12 @@
   height:fit-content;
   display: flex;
   align-items: center;
-  background:linear-gradient(50deg, rgba(100, 100, 100, 0.5), rgba(100, 100,100, 0.5));
+  background: linear-gradient(50deg, rgba(162, 152, 145, 0.619), rgba(162, 152, 145, 0.619));
   border-radius:100px;
-  box-shadow: 0 8px 24px rgba(0, 18, 35, 0.273);
-
+  box-shadow: 0 8px 24px var(--shadow);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(148, 133, 125, 0.3);
+  transition: all 0.3s ease;
 }
 
 ul{
@@ -23,41 +25,62 @@ li{
 
 }
 .navbar a {
-  color: var(--primary);
+  color: #FFFFFF;
   font-weight: 600;
   text-decoration: none;
-  transition: color 0.3s;
+  transition: all 0.3s ease;
   font-size: 1.1rem;
-  padding: 0 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
 }
 
-.navbar a:hover, .navbar a.active {
-  color: var(--secondary);
+li a:hover, li a.active {
+  color: var(--primary);
+  background: rgba(247, 245, 244, 0.96);
+  transform: translateY(-1px);
 }
 
 .navbar .user {
   margin-right: 0.5rem;
-  color: var(--secondary);
+  color: var(--accent);
   font-weight: 600;
 }
 
 .navbar button {
   background: none;
-  color: var(--primary);
+  color: #FFFFFF;
   border: none;
   padding: 0.5rem 1rem;
-  border-radius: 5px;
+  border-radius: 20px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
 }
 
-.navbar button:hover {
-  background:none;
-  color: var(--secondary);
+.icon {
+  font-size: 1.5rem;
 }
-/*--- Desktop (keep your existing styles above; these enhance them) ---*/
+.dark-mode-toggle {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  color: #FFFFFF;
+  border-radius: 50%;
+}
+
+.dark-mode-toggle:hover {
+  transform: scale(1.1);
+  background: rgba(237, 230, 222, 0.2);
+  color: var(--primary);
+}
+
+.dark-mode-toggle .icon {
+  display: inline-block;
+}
 .hamburger {
-  display: none;                 /* hidden on desktop */
+  display: none;
   background: transparent;
   border: none;
   gap: 6px;
@@ -82,7 +105,6 @@ li{
 
 .nav-links > div { display: flex; gap: 1rem; align-items: center; }
 
-/*--- Mobile ---*/
 @media (max-width: 880px) {
   .navbar {
     width: 95%;
@@ -90,18 +112,19 @@ li{
     gap: 0.5rem;
   }
 
-  /* show hamburger, hide inline nav */
   .hamburger { display: flex; }
   .nav-links {
-    display: none;             
+    display: none;
     position: absolute;
     top: calc(100% + 10px);
     left: 50%;
     transform: translateX(-50%);
     width: min(95%, 420px);
-    background:linear-gradient(50deg, rgba(100, 100, 100, 0.5), rgba(100, 100,100, 0.5));
+    background: linear-gradient(50deg, rgba(157, 115, 92, 0.95), rgba(179, 141, 115, 0.9));
     border-radius: 12px;
-    box-shadow: 0 12px 36px rgba(0,0,0,0.14);
+    box-shadow: 0 12px 36px var(--shadow);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(157, 115, 92, 0.3);
     padding: 0.75rem;
     z-index: 1000;
     flex-direction: column;
@@ -129,14 +152,19 @@ li{
     width: 100%;
     padding: 0.65rem 0.8rem;
     border-radius: 8px;
-    color: var(--primary);
+    color: #FFFFFF;
     background: transparent;
+    transition: all 0.3s ease;
   }
-  .nav-links a:hover { background: rgba(0,0,0,0.03); color: var(--secondary); }
+  .nav-links a:hover {
+    background: rgba(237, 230, 222, 0.2);
+    color: var(--primary);
+    transform: translateX(5px);
+  }
 
-  .auth-mobile { display: flex; gap: 0.5rem; align-items: center; justify-content: space-between; padding-top: 0.5rem; border-top: 1px solid rgba(0,0,0,0.06); }
-  .auth-mobile a, .auth-mobile .mobile-link { padding: 0.55rem 0.6rem; border-radius: 8px; text-align: center; width: 48%; text-decoration: none; color: var(--primary); }
-  .auth-mobile a:hover { color: var(--secondary); }
+  .auth-mobile { display: flex; gap: 0.5rem; align-items: center; justify-content: space-between; padding-top: 0.5rem; border-top: 1px solid rgba(237, 230, 222, 0.2); }
+  .auth-mobile a, .auth-mobile .mobile-link { padding: 0.55rem 0.6rem; border-radius: 8px; text-align: center; width: 48%; text-decoration: none; color: #FFFFFF; transition: all 0.3s ease; }
+  .auth-mobile a:hover { color: var(--primary); background: rgba(237, 230, 222, 0.2); }
 
   .menu-backdrop {
     display: block;

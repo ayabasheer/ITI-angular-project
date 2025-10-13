@@ -39,8 +39,9 @@ export class HomeComponent {
 			const mapEv = new Map<number, any>();
 			this.events.forEach(e => mapEv.set(e.id, e));
 			this.feedbackEntries = this.feedbacks
+				.filter((f: any) => f.rating === 5)
 				.map((f: any) => ({ feedback: f, event: mapEv.get(f.eventId) || null }))
-				.filter((x: any) => x.event) // only keep if event exists
+				.filter((x: any) => x.event)
 				.slice(0, 8);
 
 			try {

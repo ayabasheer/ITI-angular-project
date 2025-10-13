@@ -8,10 +8,16 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
   selector: 'app-events',
   standalone: true,
   imports: [CommonModule, RouterLink, NavbarComponent ,FooterComponent],
-  templateUrl: './events.component.html'
+  templateUrl: './events.component.html',
+  styleUrls: ['./events.component.css']
 })
 export class EventsComponent {
   events: any[] = [];
+  sortedEvents: any[] = [];
+  pagedEvents: any[] = [];
+  currentPage = 1;
+  pageSize = 9;
+  totalPages = 1;
   guests: any[] = [];
   organizers: any[] = [];
   feedbacks: any[] = [];
@@ -25,17 +31,49 @@ export class EventsComponent {
       const rawF = localStorage.getItem('feedbacks');
 
   const allEvents = rawE ? JSON.parse(rawE) : [];
-  // show all events (do not filter by status)
-  this.events = allEvents;
+  this.events = allEvents.filter((e: any) => e.status === 'Completed');
       this.guests = rawG ? JSON.parse(rawG) : [];
       this.organizers = rawO ? JSON.parse(rawO) : [];
       this.feedbacks = rawF ? JSON.parse(rawF) : [];
+
+      // Compute average rating for each event
+      this.sortedEvents = this.events.map(event => {
+        let avgRating = 0;
+        if (event.feedbacks && event.feedbacks.length > 0) {
+          const ratings = event.feedbacks
+            .map((fid: number) => {
+              const fb = this.feedbacks.find((f: any) => f.id === fid);
+              return fb ? fb.rating : null;
+            })
+            .filter((r: number | null) => r !== null);
+          if (ratings.length > 0) {
+            avgRating = ratings.reduce((a: number, b: number) => a + b, 0) / ratings.length;
+          }
+        }
+        return { ...event, avgRating };
+      })
+      .sort((a, b) => b.avgRating - a.avgRating);
+
+      this.totalPages = Math.ceil(this.sortedEvents.length / this.pageSize);
+      this.setPage(1);
     } catch (err) {
       this.events = [];
       this.guests = [];
       this.organizers = [];
       this.feedbacks = [];
+      this.sortedEvents = [];
+      this.pagedEvents = [];
+      this.totalPages = 1;
     }
+  }
+
+  setPage(page: number) {
+    if (page < 1) page = 1;
+    if (page > this.totalPages) page = this.totalPages;
+    this.currentPage = page;
+    const start = (page - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    this.pagedEvents = this.sortedEvents.slice(start, end);
   }
 
   getOrganizerName(id: number) {

@@ -1,10 +1,34 @@
 :root{
-	--primary: #000; /* Navy */
-	--secondary: #ffffff; /* Gold */
-	--background: #f8f5f2; /* Cream */
-	--accent: #8b0000; /* Deep red */
-	--muted: #6c757d;
-	--text: #222;
+	--primary: #beaba0; /* Deep Rich Brown - main brand color */
+	--secondary: #B38D73; /* Warm Caramel - secondary color */
+	--background: #EDE6DE; /* Creamy Beige - light background */
+	--accent: #C8A890; /* Muted Taupe - accent color */
+	--muted: #666666; /* Dark gray for muted text */
+	--text: #000000; /* Pure black for main text */
+	--surface: #ffffff; /* Pure white for surfaces */
+	--border: #DCC5B1; /* Light Sandy Tan for borders */
+	--shadow: rgba(157, 115, 92, 0.1);
+}
+
+/* Dark mode variables using the new warm earthy palette */
+.dark-mode {
+	--primary: #beaba0; /* Deep Rich Brown - main brand color */
+	--secondary: #C8A890; /* Muted Taupe - accent color */
+	--background: #1A1A1A; /* Very dark background */
+	--accent: #B38D73; /* Warm Caramel - secondary accent */
+	--muted: #CCCCCC; /* Light gray for muted text */
+	--text: #FFFFFF; /* Pure white for main text */
+	--surface: #2A2A2A; /* Dark surface color */
+	--border: #9D735C; /* Deep Rich Brown for borders */
+	--shadow: rgba(157, 115, 92, 0.3);
+}
+body{
+  background: var(--background);
+  color: var(--text);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 h1{
@@ -48,25 +72,85 @@ h1{
 
 
 
+/* Global dark mode styles */
+body {
+  background-color: var(--background);
+  color: var(--text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 /* Auth styles */
 .auth {
   max-width: 480px;
   margin: 2rem auto;
   padding: 2rem;
-  background: white;
+  background: var(--surface);
   border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 31, 63, 0.1);
+  box-shadow: 0 6px 20px var(--shadow);
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
 }
 .auth button {
   margin-right: 0.5rem;
-  background: var(--secondary);
-  color: var(--primary);
+  background: var(--primary);
+  color: #FFFFFF;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
+  font-weight: 600;
 }
 .auth button:hover {
-  background: var(--primary);
-  color: var(--secondary);
+  background: var(--secondary);
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow);
 }
+
+/* Form elements */
+input, textarea, select {
+  background-color: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(157, 115, 92, 0.1);
+}
+
+/* Buttons */
+.btn {
+  background: var(--primary);
+  color: #FFFFFF;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: var(--secondary);
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.btn-secondary {
+  background: var(--accent);
+  color: #000000;
+}
+
+.btn-secondary:hover {
+  background: var(--secondary);
+  color: #000000;
+}
+

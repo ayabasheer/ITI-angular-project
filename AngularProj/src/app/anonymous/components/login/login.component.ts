@@ -5,12 +5,14 @@ import { LastRouteService } from '../../../shared/services/last-route.service';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NavbarComponent } from "../../../shared/components/navbar/navbar.component";
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
   roleSelected = '';
@@ -33,7 +35,6 @@ export class LoginComponent {
 
   onSubmit(e: Event) {
     e.preventDefault();
-    // Attempt to find a matching user in localStorage for the selected role
     const roleKeyMap: Record<string, string> = { Organizer: 'organizers', Guest: 'guests', Admin: 'admins' };
     const key = roleKeyMap[this.roleSelected] || null;
     if (!key) {
@@ -48,7 +49,6 @@ export class LoginComponent {
         alert('Invalid credentials');
         return;
       }
-      // Only store a minimal user object in AuthService
       const user = { id: matched.id, name: matched.name, email: matched.email, role: matched.role };
       this.auth.login(user);
       const redirect = this.lastRoute.get() || '/';

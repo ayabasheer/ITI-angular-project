@@ -121,7 +121,7 @@ export async function generateAndSaveAllWithImages() {
     events.push({
       id: i,
       name: `Event ${i} — ${category}`,
-      description: `Role-based frontend demo event (#${i}) for category ${category}.`,
+      description: `demo description for event ${i} for <br> category ${category}.`,
       category,
       location: `Venue ${(i % 25) + 1}`,
       image: chosenImage,
@@ -199,25 +199,89 @@ export async function generateAndSaveAllWithImages() {
     if (ev) ev.expenses.push(ex.id);
   }
 
-  for (let i = 1; i <= 100; i++) {
-    const guestId = i;
-    const eventId = ((i - 1) % events.length) + 1;
+  let nextTaskId = tasks.length + 1;
+  for (const ev of events) {
+    const extraCount = randInt(1, 4);
+    for (let k = 0; k < extraCount; k++) {
+      const t: Task = {
+        id: nextTaskId,
+        eventId: ev.id,
+        title: `Extra Task ${nextTaskId} for Event ${ev.id}`,
+        description: `Auto extra task ${nextTaskId} for event ${ev.id}`,
+        assignedTo: ((nextTaskId - 1) % organizers.length) + 1,
+        priority: (['Low', 'Medium', 'High', 'Critical'] as Priority[])[nextTaskId % 4],
+        deadline: isoDateOffset(base, ((ev.id + k) % 10) + 1, 17),
+        status: ['Not Started', 'In Progress', 'Completed'][nextTaskId % 3] as any,
+        comments: [`Auto-generated extra task ${nextTaskId}`],
+        createdAt: isoDateOffset(base, -randInt(1, 5), 9, randInt(0, 59)),
+        updatedAt: isoDateOffset(base, randInt(0, 3), 10, randInt(0, 59))
+      };
+      tasks.push(t);
+      ev.tasks.push(t.id);
+      nextTaskId++;
+    }
+  }
+
+  const completedEventIds = events.filter(e => e.status === 'Completed').map(e => e.id);
+
+  if (completedEventIds.length === 0) {
+    for (let i = 0; i < 5 && i < events.length; i++) {
+      events[i].status = 'Completed';
+      completedEventIds.push(events[i].id);
+    }
+  }
+
+  let nextFeedbackId = feedbacks.length + 1;
+
+
+  for (const g of guests) {
+    if (completedEventIds.length === 0) break; // safety
+    const giveFeedback = Math.random() < 0.85; // 85% chance
+    if (!giveFeedback) continue;
+
+    const eventId = randChoice(completedEventIds);
+
+    const rating = randInt(1, 5);
+    const comment = rating >= 4 ? `Great event ${eventId}` : `Could improve event ${eventId}`;
+    const fb: Feedback = {
+      id: nextFeedbackId,
+      guestId: g.id,
+      eventId,
+      rating,
+      comment,
+      createdAt: isoDateOffset(base, (eventId % 10) + 3, 18, randInt(0, 59))
+    };
+
+    feedbacks.push(fb);
+    const ev = events.find(e => e.id === eventId);
+    if (ev) ev.feedbacks.push(fb.id);
+    g.feedbackId = fb.id;
+
+    nextFeedbackId++;
+  }
+
+  const additionalFeedbacks = Math.floor(guests.length * 0.15);
+  for (let i = 0; i < additionalFeedbacks; i++) {
+    const guestCandidate = guests[randInt(0, guests.length - 1)];
+    if (guestCandidate.feedbackId) continue;
+    const eventId = randChoice(completedEventIds);
     const rating = randInt(1, 5);
     const fb: Feedback = {
-      id: i,
-      guestId,
+      id: nextFeedbackId,
+      guestId: guestCandidate.id,
       eventId,
       rating,
       comment: rating >= 4 ? `Great event ${eventId}` : `Could improve event ${eventId}`,
-      createdAt: isoDateOffset(base, (eventId % 10) + 3, 18, randInt(0, 59))
+      createdAt: isoDateOffset(base, (eventId % 10) + 4, 18, randInt(0, 59))
     };
     feedbacks.push(fb);
     const ev = events.find(e => e.id === eventId);
     if (ev) ev.feedbacks.push(fb.id);
-    const g = guests.find(gg => gg.id === guestId);
-    if (g) g.feedbackId = fb.id;
+    guestCandidate.feedbackId = fb.id;
+    nextFeedbackId++;
   }
 
+  // Ensure each event's guestCount reflects actual guests array length
   events.forEach(ev => {
     ev.guestCount = ev.guests.length;
     if (ev.guestCount > 300) ev.guestCount = 300;

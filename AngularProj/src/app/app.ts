@@ -19,12 +19,10 @@ export class App {
     router: Router,
     lastRoute: LastRouteService
   ) {
-    // Seed localStorage only if empty
     if (!eventGen.isSeeded()) {
       eventGen.generateAndSaveAll();
     }
 
-    // Track last non-auth route for redirect after login/register
     router.events.subscribe((evt) => {
       if (evt instanceof NavigationEnd) {
         const url = evt.urlAfterRedirects || evt.url;
