@@ -1,0 +1,43 @@
+<div class="site-container">
+  <h2>Events</h2>
+  <div *ngIf="events.length === 0" class="alert alert-info">No completed events available.</div>
+
+  <div class="row g-3">
+    <div class="col-md-6" *ngFor="let e of events">
+      <div class="card mb-3">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img [src]="e.image || defaultImage" class="img-fluid rounded-start" alt="event image" />
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title">{{e.title}}</h5>
+              <p class="card-text text-muted">Category: {{e.category || 'General'}}</p>
+              <p class="card-text">{{e.description}}</p>
+              <p class="card-text"><small class="text-muted">Organizer: {{getOrganizerName(e.organizerId)}}</small></p>
+
+              <div *ngIf="e.feedbacks && e.feedbacks.length">
+                <h6>Feedbacks</h6>
+                <ul class="list-unstyled">
+                  <li *ngFor="let fid of e.feedbacks">
+                    <div class="border rounded p-2 mb-2">
+                      <strong>{{getGuestNameByFeedbackId(fid)}}</strong>
+                      <div class="small text-muted">Rating: {{getFeedbackById(fid)?.rating}}</div>
+                      <div>{{getFeedbackById(fid)?.comment}}</div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <div *ngIf="!e.feedbacks || e.feedbacks.length === 0" class="text-muted">No feedback yet.</div>
+
+              <div class="mt-2">
+                <a [routerLink]="['/events', e.id, 'feedback']" class="btn btn-sm btn-outline-primary">Leave Feedback</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+<div class="site-container">
+  <div class="card card-creative p-3">
+    <h3>Submit Feedback</h3>
+    <p class="text-muted">Only guests associated with completed events can submit feedback.</p>
+
+    <form (submit)="submit($event)">
+      <div class="mb-3">
+        <label class="form-label">Guest ID</label>
+        <input class="form-control" [(ngModel)]="guestId" name="guestId" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Rating (1-5)</label>
+        <input class="form-control" type="number" [(ngModel)]="rating" name="rating" min="1" max="5" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Comment</label>
+        <textarea class="form-control" [(ngModel)]="comment" name="comment"></textarea>
+      </div>
+      <div *ngIf="message" class="alert" [class.alert-success]="ok" [class.alert-danger]="!ok">{{message}}</div>
+      <button class="btn btn-primary">Submit Feedback</button>
+    </form>
+  </div>
+</div>

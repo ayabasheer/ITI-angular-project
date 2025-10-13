@@ -1,1 +1,72 @@
-/* You can add global styles to this file, and also import other style files */
+:root{
+	--primary: #000; /* Navy */
+	--secondary: #ffffff; /* Gold */
+	--background: #f8f5f2; /* Cream */
+	--accent: #8b0000; /* Deep red */
+	--muted: #6c757d;
+	--text: #222;
+}
+
+h1{
+  text-transform: capitalize;
+}
+
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes heroSlide {
+  from { opacity: 0; transform: translateX(-50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.fade-in {
+  animation: fadeIn 1s ease-out forwards;
+}
+
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+.hover-scale {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+}
+
+
+
+/* Auth styles */
+.auth {
+  max-width: 480px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 31, 63, 0.1);
+}
+.auth button {
+  margin-right: 0.5rem;
+  background: var(--secondary);
+  color: var(--primary);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  transition: background 0.3s;
+}
+.auth button:hover {
+  background: var(--primary);
+  color: var(--secondary);
+}

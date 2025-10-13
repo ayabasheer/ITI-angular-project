@@ -1,0 +1,24 @@
+<nav class="navbar fixed-top mt-2 m-auto px-3 "> <a class="logo" routerLink="/home" outerLinkActive="active"> <img
+      src="assets/logoW.png" alt="Eventura Logo" height="50px"> </a> <button class="hamburger" (click)="toggleMenu()"
+    aria-label="Toggle navigation"> <span [class.open]="isOpen"></span> <span [class.open]="isOpen"></span> <span
+      [class.open]="isOpen"></span> </button>
+  <ul class="nav-links" [class.open]="isOpen">
+    <div>
+      <li> <a routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+          (click)="isOpen=false">Home</a> </li>
+      <li> <a routerLink="/events" routerLinkActive="active" (click)="isOpen=false">Events</a> </li>
+      <li> <a routerLink="/about" routerLinkActive="active" (click)="isOpen=false">About</a> </li>
+      <li> <a routerLink="/contact" routerLinkActive="active" (click)="isOpen=false">Contact</a> </li>
+    </div>
+
+
+    <div>
+      <li class="auth-mobile" [hidden]="auth.currentUser"> <a class="mobile-link" routerLink="/login"
+          routerLinkActive="active" (click)="isOpen=false">Login</a> <a class="mobile-link" routerLink="/register"
+          routerLinkActive="active" (click)="isOpen=false">Register</a> </li>
+      <li class="auth-mobile" [hidden]="!auth.currentUser"> <a class="mobile-link" href="/profile"
+          (click)="isOpen=false"><span class="user">{{ auth.currentUser?.name }}</span></a> <a class="mobile-link"
+          href="#" (click)="logout(); isOpen=false; $event.preventDefault()">Logout</a> </li>
+    </div>
+  </ul>
+</nav>
