@@ -1,9 +1,9 @@
 /* Profile Component Styles */
 .site-container {
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 7% auto;
   padding: 2rem;
-  min-height: 80vh;
+  min-height: fit-content;
 }
 
 .card {
@@ -171,18 +171,18 @@
   .site-container {
     padding: 1rem;
   }
-  
+
   .col-md-6,
   .col-md-4,
   .col-md-8 {
     flex: 0 0 100%;
     max-width: 100%;
   }
-  
+
   .card-creative h2 {
     font-size: 2rem;
   }
-  
+
   .card-creative h3 {
     font-size: 1.5rem;
   }

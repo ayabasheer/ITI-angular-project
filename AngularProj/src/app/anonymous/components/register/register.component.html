@@ -24,4 +24,7 @@
       <button type="button" class="btn btn-link ms-2" (click)="reset()">Back</button>
     </div>
   </form>
+    <div *ngIf="roleSelected" class="mt-2">
+    <a class="btn btn-link ms-2" routerLink="/login" routerLinkActive="active">Login</a>
+  </div>
 </div>

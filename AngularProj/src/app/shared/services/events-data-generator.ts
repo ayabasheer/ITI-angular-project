@@ -121,7 +121,7 @@ export async function generateAndSaveAllWithImages() {
     events.push({
       id: i,
       name: `Event ${i} — ${category}`,
-      description: `demo description for event ${i} for <br> category ${category}.`,
+      description: `demo description for event ${i} for category ${category}.`,
       category,
       location: `Venue ${(i % 25) + 1}`,
       image: chosenImage,

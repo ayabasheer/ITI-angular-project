@@ -27,7 +27,7 @@
             </div>
             <div *ngIf="!e.feedbacks || e.feedbacks.length === 0" class="text-muted">No feedback yet.</div>
             <div class="mt-2">
-              <a [routerLink]="['/events', e.id, 'feedback']" class="btn btn-sm btn-outline-primary" (click)="$event.stopPropagation(); $event.preventDefault();">Leave Feedback</a>
+              <button class="btn btn-sm btn-outline-primary" (click)="onLeaveFeedback(e.id, $event)">Leave Feedback</button>
             </div>
           </div>
         </div>

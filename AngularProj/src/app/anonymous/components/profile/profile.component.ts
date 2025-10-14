@@ -62,5 +62,6 @@ export class ProfileComponent {
 
   logout() {
     this.auth.logout();
+    window.location.href = '/';
   }
 }

@@ -43,4 +43,12 @@ export class NavbarComponent implements OnInit {
 	logout() {
 		this.auth.logout();
 	}
+
+	onUserNameClick() {
+		if (this.auth.currentUser?.role === 'Organizer') {
+			this.router.navigate(['/dashboard']);
+		} else {
+			this.router.navigate(['/profile']);
+		}
+	}
 }

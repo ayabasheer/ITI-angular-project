@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../../../shared/services/auth.service';
 import { LastRouteService } from '../../../shared/services/last-route.service';
 
@@ -10,7 +10,7 @@ import { NavbarComponent } from "../../../shared/components/navbar/navbar.compon
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule ,RouterLink],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })

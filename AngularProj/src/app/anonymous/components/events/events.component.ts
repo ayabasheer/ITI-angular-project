@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../shared/services/auth.service';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
@@ -23,7 +25,7 @@ export class EventsComponent {
   feedbacks: any[] = [];
   defaultImage = 'https://via.placeholder.com/400x250?text=Event';
 
-  constructor() {
+  constructor(private router: Router, private auth: AuthService) {
     try {
       const rawE = localStorage.getItem('events');
       const rawG = localStorage.getItem('guests');
@@ -90,5 +92,16 @@ export class EventsComponent {
     if (!fb) return 'Guest';
     const g = this.guests.find((x: any) => x.id === fb.guestId);
     return g ? g.name || g.email || ('Guest #' + g.id) : 'Guest';
+  }
+
+  onLeaveFeedback(eventId: number, $event: Event) {
+    $event.stopPropagation();
+    $event.preventDefault();
+    const user = this.auth.currentUser;
+    if (!user || user.role !== 'Guest') {
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.router.navigate(['/events', eventId, 'feedback']);
   }
 }

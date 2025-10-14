@@ -25,9 +25,10 @@
       <li class="auth-mobile" [hidden]="auth.currentUser">
         <a class="mobile-link" routerLink="/login"routerLinkActive="active" (click)="isOpen=false">Login</a>
         <a class="mobile-link" routerLink="/register"routerLinkActive="active" (click)="isOpen=false">Register</a> </li>
-      <li class="auth-mobile" [hidden]="!auth.currentUser"> <a class="mobile-link" href="/profile"
-          (click)="isOpen=false"><span class="user">{{ auth.currentUser?.name }}</span></a> <a class="mobile-link"
-          href="#" (click)="logout(); isOpen=false; $event.preventDefault()">Logout</a> </li>
+      <li class="auth-mobile" [hidden]="!auth.currentUser">
+        <a class="mobile-link" href="#" (click)="onUserNameClick(); isOpen=false; $event.preventDefault()"><span class="user">{{ auth.currentUser?.name }}</span></a>
+        <a class="mobile-link"href="#" (click)="logout(); isOpen=false; $event.preventDefault()">Logout</a>
+      </li>
     </div>
   </ul>
 </nav>
