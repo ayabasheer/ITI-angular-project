@@ -26,13 +26,14 @@ export interface Guest {
   feedbackId?: number | null;
   eventId: number;
   createdAt: string;
+  role: Role;
+
 }
 
 export interface Admin {
   id: number;
   name: string;
   email: string;
-  /** Plain-text password for demo purposes (optional) */
   password?: string;
   role: Role;
   createdAt: string;
