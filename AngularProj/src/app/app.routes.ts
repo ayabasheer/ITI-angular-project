@@ -12,6 +12,7 @@ import { ProfileComponent } from './anonymous/components/profile/profile.compone
 import { CreateEvent } from './organizer/components/create-event/create-event';
 
 
+
 export const routes: Routes = [
 	{ path: '', component: HomeComponent },
 	{ path: 'about', component: AboutComponent },
