@@ -1,1 +1,32 @@
-<p>events works!</p>
+<div class="events-container container py-4">
+  <h2 class="mb-4">My Events</h2>
+
+  <input type="text" [(ngModel)]="searchQuery" class="form-control mb-3" placeholder="Search events...">
+
+  <div class="row">
+    <div *ngFor="let inv of filteredInvitations" class="col-md-6 mb-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ inv.eventName }}</h5>
+          <p class="card-text">{{ inv.eventDate }} - {{ inv.location }}</p>
+          <span class="badge" [ngClass]="{
+            'bg-warning text-dark': inv.status==='pending',
+            'bg-success': inv.status==='accepted',
+            'bg-danger': inv.status==='declined'
+          }">{{ inv.status }}</span>
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+          <button class="btn btn-primary btn-sm" (click)="openEventDetail(inv)">Details</button>
+          <div>
+            <button *ngIf="inv.status==='pending'" class="btn btn-success btn-sm me-2" (click)="accept(inv)">Accept</button>
+            <button *ngIf="inv.status==='pending'" class="btn btn-danger btn-sm" (click)="decline(inv)">Decline</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="filteredInvitations.length === 0" class="text-center mt-4">
+    <p>No events found.</p>
+  </div>
+</div>

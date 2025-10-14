@@ -1,1 +1,24 @@
-<p>profile works!</p>
+<div class="profile-container container py-4">
+  <h2 class="mb-4">My Profile</h2>
+
+  <div class="card p-4">
+    <div class="mb-3">
+      <label class="form-label">Name</label>
+      <input class="form-control" [(ngModel)]="user.name" [readonly]="!editMode"/>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input class="form-control" [(ngModel)]="user.email" [readonly]="!editMode"/>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Phone</label>
+      <input class="form-control" [(ngModel)]="user.phone" [readonly]="!editMode"/>
+    </div>
+
+    <button class="btn btn-primary me-2" *ngIf="!editMode" (click)="toggleEdit()">Edit</button>
+    <button class="btn btn-success me-2" *ngIf="editMode" (click)="saveProfile()">Save</button>
+    <button class="btn btn-secondary" *ngIf="editMode" (click)="toggleEdit()">Cancel</button>
+  </div>
+</div>

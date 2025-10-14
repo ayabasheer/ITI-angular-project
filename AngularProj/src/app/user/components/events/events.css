@@ -1,0 +1,15 @@
+.events-container .card {
+  border-radius: 10px;
+  transition: transform 0.2s;
+}
+
+.events-container .card:hover {
+  transform: translateY(-5px);
+}
+
+.events-container .badge {
+  font-size: 0.9rem;
+  padding: 0.4em 0.8em;
+  border-radius: 0.5rem;
+}
+
