@@ -151,6 +151,7 @@ export async function generateAndSaveAllWithImages() {
       phone: `+20111${900000 + i}`,
       status: statusOpts[i % statusOpts.length],
       feedbackId: null,
+      role: 'Guest',
       eventId: assignedEvent,
       createdAt: isoDateOffset(base, -randInt(1, 20), 9, randInt(0, 59))
     };
