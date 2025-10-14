@@ -75,3 +75,4 @@ export interface GuestStats {
   averageRatingGiven: number;
   feedbackProvided: number;
 }
+
