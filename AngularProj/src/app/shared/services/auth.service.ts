@@ -32,6 +32,7 @@ export class AuthService {
   }
 
   logout() {
+    // Only remove the current session, not user data
     try {
       localStorage.removeItem(this.key);
     } catch {}

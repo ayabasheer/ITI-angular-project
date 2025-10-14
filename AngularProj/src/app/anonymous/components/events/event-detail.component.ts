@@ -7,7 +7,7 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
 @Component({
   selector: 'app-event-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink , NavbarComponent, FooterComponent],
+  imports: [CommonModule,NavbarComponent, FooterComponent],
   templateUrl: './event-detail.component.html',
   styleUrls: ['./event-detail.component.css']
 })

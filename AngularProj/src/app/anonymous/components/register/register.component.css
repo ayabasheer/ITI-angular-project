@@ -1,6 +1,6 @@
 .auth {
   max-width: 480px;
-  margin: 10% auto;
+  margin: 7% auto;
   padding: 2rem;
   background: var(--surface);
   border-radius: 12px;
@@ -88,20 +88,12 @@
   transform: none;
 }
 
-.d-flex {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
+
+/* Responsive */
+@media (max-width: 600px) {
+  .auth {
+    margin: 5% 1rem;
+    padding: 1.5rem;
+  }
 }
 
-.gap-2 {
-  gap: 0.5rem;
-}
-
-.ms-2 {
-  margin-left: 0.5rem;
-}
-
-.mb-3 {
-  margin-bottom: 1rem;
-}
