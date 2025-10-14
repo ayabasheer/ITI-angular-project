@@ -1,23 +1,131 @@
 
 .footer {
-  margin-top: 5rem;
-  padding: 3rem 1rem;
-  background: var(--primary);
-  color: var(--secondary);
-  text-align: center;
+  margin-top: 4rem;
+  padding: 2.5rem 1rem;
+  background: var(--primary, #0d1b2a);
+  color: var(--on-primary, #ffffff);
+  font-size: 0.95rem;
 }
 
-.footer p {
-  margin: 0;
-  opacity: 0.9;
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
 }
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 1.25rem 2rem;
+  align-items: start;
+}
+
+.footer-brand .brand {
+  font-size: 1.25rem;
+  letter-spacing: 0.4px;
+}
+
+.footer-brand .tagline {
+  margin: 0.5rem 0 0.25rem;
+  opacity: 0.95;
+}
+
+.muted { opacity: 0.85; margin: 0.25rem 0 0.5rem; }
+
+.footer-links h4,
+.footer-resources h4,
+.footer-social h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.05rem;
+}
+
+.footer-links ul,
+.footer-resources ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li,
+.footer-resources li { margin: 0.35rem 0; }
 
 .footer a {
-  color: var(--secondary);
+  color: var(--on-primary, #fff);
   text-decoration: none;
+  transition: color 120ms ease, opacity 120ms ease;
+}
+.footer.light a { color: var(--on-primary, #fff); }
+.footer.dark a { color: var(--text); }
+.footer a:hover { opacity: 0.85; }
+
+.social-icons { display:flex; gap:0.5rem; margin-bottom:0.6rem; }
+.social-icons .icon {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:36px; height:36px; border-radius:6px; background: rgba(255,255,255,0.06);
+  color: var(--on-primary, #fff); text-decoration:none; font-weight:600;
 }
 
-.footer a:hover {
-  text-decoration: underline;
+.newsletter-form { display:flex; gap:0.5rem; align-items:center; }
+.newsletter-form input{
+  flex:1; padding:0.45rem 0.6rem; border-radius:6px; border:1px solid rgba(255,255,255,0.08);
+  background: transparent; color: inherit;
+}
+.footer-email { color: inherit; background: transparent; }
+.newsletter-form button{
+  padding:0.45rem 0.8rem; border-radius:6px; border:0; cursor:pointer;
+  background: rgba(255,255,255,0.12); color: inherit; font-weight:600;
+}
+
+/* Use global button styles where appropriate */
+.footer .btn, .footer .btn-secondary {
+  display: inline-flex; align-items:center; justify-content:center;
+}
+
+.footer .btn-secondary { background: rgba(255,255,255,0.08); color: var(--on-primary); }
+
+/* Dark-mode specific tweaks */
+body.dark-mode .footer {
+  background: var(--surface);
+  color: var(--text);
+}
+body.dark-mode .footer .footer-brand .brand { color: var(--text); }
+body.dark-mode .footer a { color: var(--text); opacity: 0.95; }
+/* social icons: subtle light tint on dark surface for contrast */
+body.dark-mode .footer .social-icons .icon {
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.03);
+}
+body.dark-mode .footer .newsletter-form input { border-color: rgba(255,255,255,0.06); color: var(--text); }
+/* footer buttons: make secondary buttons slightly translucent on dark mode for readable contrast */
+body.dark-mode .footer .btn-secondary {
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+body.dark-mode .footer .btn-secondary:hover {
+  background: rgba(255,255,255,0.08);
+  color: var(--text);
+}
+
+.footer-bottom { margin-top:1.25rem; text-align:center; opacity:0.85; }
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 520px) {
+  .footer-grid { grid-template-columns: 1fr; gap:1rem; }
+  .newsletter-form { flex-direction:column; }
+  .newsletter-form input, .newsletter-form button { width:100%; }
+}
+
+/* Accessibility helper */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+  border: 0; padding: 0; margin: -1px;
 }
 

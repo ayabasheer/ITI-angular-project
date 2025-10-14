@@ -42,7 +42,12 @@ li a:hover, li a.active {
 
 .navbar .user {
   margin-right: 0.5rem;
-  color: var(--accent);
+  color: var(--user);
+  font-weight: 600;
+}
+.navbar .user:hover, .navbar .user.active {
+  margin-right: 0.5rem;
+  color: var(--user);
   font-weight: 600;
 }
 
@@ -120,7 +125,7 @@ li a:hover, li a.active {
     left: 50%;
     transform: translateX(-50%);
     width: min(95%, 420px);
-    background: linear-gradient(50deg, rgba(157, 115, 92, 0.95), rgba(179, 141, 115, 0.9));
+  background: linear-gradient(50deg, rgba(162, 152, 145, 0.619), rgba(162, 152, 145, 0.619));
     border-radius: 12px;
     box-shadow: 0 12px 36px var(--shadow);
     backdrop-filter: blur(10px);
