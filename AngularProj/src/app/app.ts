@@ -1,14 +1,35 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { Navbar } from "./shared/components/navbar/navbar";
-import { Footer } from "./shared/components/footer/footer";
+import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
+import { NavbarComponent } from './shared/components/navbar/navbar.component';
+import { FooterComponent } from './shared/components/footer/footer.component';
+import { EventGeneratorService } from './shared/services/event-generator.service';
+import { LastRouteService } from './shared/services/last-route.service';
 
 @Component({
+  standalone: true,
   selector: 'app-root',
-  imports: [RouterOutlet, Navbar, Footer],
+  imports: [RouterOutlet, ],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrls: ['./app.css']
 })
 export class App {
   protected readonly title = signal('AngularProj');
+  constructor(
+    eventGen: EventGeneratorService,
+    router: Router,
+    lastRoute: LastRouteService
+  ) {
+    if (!eventGen.isSeeded()) {
+      eventGen.generateAndSaveAll();
+    }
+
+    router.events.subscribe((evt) => {
+      if (evt instanceof NavigationEnd) {
+        const url = evt.urlAfterRedirects || evt.url;
+        if (!url.startsWith('/login') && !url.startsWith('/register')) {
+          lastRoute.set(url);
+        }
+      }
+    });
+  }
 }

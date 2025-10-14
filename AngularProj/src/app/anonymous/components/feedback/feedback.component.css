@@ -1,0 +1,144 @@
+/* Feedback Component Styles */
+.site-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.card-creative {
+  max-width: 600px;
+  width: 100%;
+}
+
+.card-creative:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px var(--shadow);
+}
+
+.card-creative h3 {
+  color: var(--primary);
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.card-creative p {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.text-muted {
+  color: var(--muted) !important;
+}
+
+.form-label {
+  color: var(--text);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--background);
+  color: var(--text);
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+  font-family: inherit;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(157, 115, 92, 0.1);
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #FFFFFF;
+}
+
+.btn-primary:hover {
+  background: var(--secondary);
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
+}
+
+.alert-success {
+  background: rgba(157, 115, 92, 0.1);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.alert-danger {
+  background: rgba(179, 141, 115, 0.1);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.p-3 {
+  padding: 1.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .site-container {
+    padding: 1rem;
+  }
+  
+  .card-creative h3 {
+    font-size: 1.5rem;
+  }
+  
+  .card-creative p {
+    font-size: 0.9rem;
+  }
+}

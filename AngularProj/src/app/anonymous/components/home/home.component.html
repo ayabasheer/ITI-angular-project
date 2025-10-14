@@ -1,0 +1,106 @@
+
+<app-navbar></app-navbar>
+<div class="video w-100" >
+    <video #heroVideo src="assets\images\From KlickPin CF [Video] wedding vide _ Dekorasi pernikahan buatan sendiri Dekorasi pernikahan Ide dekorasi.mp4" autoplay muted loop playsinline preload="auto"></video>
+
+</div>
+
+<div class="hero fade-in" >
+    <div class=" align-items-center text-center ">
+          <img src="assets/logo.png" alt="Eventura Logo" height="300" class="fade-in">
+
+      <!-- <h1 class="hero-slide fade-in ">Eventura</h1> -->
+      <p>We create unforgettable weddings and events with elegance and precision.</p>
+    </div>
+</div>
+
+<div class="site-container  m-5">
+    <div class="services-row fade-in">
+        <div class="col">
+            <div class="card card-creative hover-scale">
+                <span style="font-size: 2rem;"></span>
+                <h5>Design & Styling</h5>
+                <p>Bespoke design tailored to your unique story and vision.</p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card card-creative hover-scale">
+                <span style="font-size: 2rem;"></span>
+                <h5>Logistics</h5>
+                <p>Comprehensive planning and flawless execution from start to finish.</p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card card-creative hover-scale">
+                <span style="font-size: 2rem;"></span>
+                <h5>Vendor Management</h5>
+                <p>Curated top vendors and seamless partnerships to bring your vision to life.</p>
+            </div>
+        </div>
+    </div>
+
+    <section class="fade-in" style="text-align: center; margin: 4rem 0;">
+    <h2>Why Choose Eventura?</h2>
+        <div class="services-row" style="margin-top: 2rem;">
+            <div class="col">
+                <div class="card card-creative">
+                    <span style="font-size: 2rem;"></span>
+                    <h5>Award-Winning Expertise</h5>
+                    <p>Over 15 years of experience in NYC and Boston event planning.</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card card-creative">
+                    <span style="font-size: 2rem;"></span>
+                    <h5>Luxury & Attention to Detail</h5>
+                    <p>Every event is crafted with the highest standards of luxury.</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card card-creative">
+                    <span style="font-size: 2rem;"></span>
+                    <h5>Personalized Service</h5>
+                    <p>Dedicated to making your special day truly unforgettable.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials fade-in">
+        <h2>What Our Clients Say</h2>
+        <div class="testimonial-list">
+            <div class="testimonial-card" *ngFor="let t of feedbackEntries">
+                <div class="testimonial-photo">
+                    <img [src]="t.event?.image || 'assets/event-images/default.jpg'" [alt]="t.event?.name || 'Event'" />
+                </div>
+                <div class="testimonial-body">
+                    <p>"{{ t.feedback?.comment || 'Great event!' }}"</p>
+                    <cite>- {{ t.feedback?.guestId ? ('Guest ' + t.feedback.guestId) : 'A Guest' }}, {{ t.event?.location || '' }}</cite>
+                </div>
+            </div>
+            <div *ngIf="!feedbackEntries || feedbackEntries.length === 0" class="text-muted">No feedbacks yet.</div>
+        </div>
+    </section>
+
+    <section class="fade-in">
+        <h2 style="text-align: center; margin-bottom: 2rem;">Our Portfolio</h2>
+        <div class="portfolio-grid">
+            <div class="portfolio-item hover-scale" *ngFor="let event of (featuredEvents.length ? featuredEvents : events.slice(0,3)); let i = index">
+                <img [src]="event?.image ? event.image : ('assets/event-images/image' + (i + 1) + '.jpg')" [alt]="event?.title || ('Event ' + (i + 1))" />
+                <div class="portfolio-overlay">
+                    <h5>{{ event?.title }}</h5>
+                    <p>{{ event?.description || 'A stunning event crafted with care.' }}</p>
+                </div>
+            </div>
+        </div>
+    <a class="btn pulse" routerLink="/events">Show All</a>
+
+    </section>
+
+    <div class="cta-banner fade-in">
+        <h2>Ready to Plan Your Dream Event?</h2>
+        <p>Contact us today for a free consultation.</p>
+    <a class="btn pulse" routerLink="/create-event">Create Event</a>
+    </div>
+</div>
+<app-footer></app-footer>
