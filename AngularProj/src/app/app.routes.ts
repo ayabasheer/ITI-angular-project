@@ -10,6 +10,8 @@ import { EventsComponent } from './anonymous/components/events/events.component'
 import { EventDetailComponent } from './anonymous/components/events/event-detail.component';
 import { ProfileComponent } from './anonymous/components/profile/profile.component';
 import { CreateEvent } from './organizer/components/create-event/create-event';
+import { UserModule } from './user/user-module';
+
 
 export const routes: Routes = [
 	{ path: '', component: HomeComponent },
@@ -23,5 +25,6 @@ export const routes: Routes = [
 	{ path: 'events', component: EventsComponent },
 	{ path: 'create-event', component: CreateEvent },
 	{path:"dashboard", loadChildren: () => import('./organizer/organizer-module').then(m => m.OrganizerModule)},
+	{path:"user", loadChildren: () => import('./user/user-module').then(m => m.UserModule)},
 	{ path: '**', redirectTo: '' }
 ];

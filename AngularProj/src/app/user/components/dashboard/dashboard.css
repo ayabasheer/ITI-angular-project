@@ -1,0 +1,45 @@
+.dashboard {
+  transition: background 0.3s, color 0.3s;
+}
+
+.sidebar {
+  width: 250px;
+  transition: width 0.3s;
+  background-color: #f8f9fa;
+}
+
+.sidebar.closed {
+  width: 70px;
+}
+
+.sidebar ul.nav li {
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: 5px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sidebar ul.nav li.active,
+.sidebar ul.nav li:hover {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+.dark-mode .sidebar {
+  background-color: #1f1f1f;
+}
+
+.dark-mode .sidebar ul.nav li.active,
+.dark-mode .sidebar ul.nav li:hover {
+  background-color: #bb86fc;
+  color: #121212;
+}
+
+.card {
+  border-radius: 10px;
+}
