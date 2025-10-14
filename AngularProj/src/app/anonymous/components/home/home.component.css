@@ -159,9 +159,9 @@
 
 /* CTA Banner */
 .cta-banner {
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  color: #FFFFFF;
-  padding: 4rem 2rem;
+  background: linear-gradient(135deg, var(--primary), var(--shadow));
+  color: var(--on-primary);
+  padding: 2rem 2rem;
   text-align: center;
   margin: 4rem 0;
   border-radius: 12px;
@@ -173,19 +173,19 @@
   font-weight: 600;
 }
 .cta-banner .btn {
-  background: #FFFFFF;
+  background: var(--surface);
   color: var(--primary);
   padding: 1rem 2rem;
   border-radius: 50px;
   text-decoration: none;
   font-weight: 600;
   transition: all 0.3s ease;
-  border: 2px solid #FFFFFF;
+  border: 2px solid var(--surface);
 }
 .cta-banner .btn:hover {
-  background: transparent;
-  color: #FFFFFF;
-  border-color: #FFFFFF;
+  background: var(--accent);
+  color: var(--primary);
+  border-color: var(--primary);
   transform: translateY(-2px);
 }
 
@@ -233,6 +233,34 @@
 .portfolio-item:hover .portfolio-overlay {
   transform: translateY(0);
 }
+.btn {
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+  padding: .375rem .75rem;
+}
+
+.btn-outline-primary {
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+
+.btn-outline-primary:hover ,.btn-outline-primary.active {
+  background: var(--primary);
+  color: #FFFFFF;
+  transform: translateY(-2px);
+  border: var(--primary);
+}
+
+.btn-sm {
+  font-size: 0.875rem;
+}
+
 
 /* Responsive */
 @media (max-width: 768px) {

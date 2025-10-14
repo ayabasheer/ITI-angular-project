@@ -132,12 +132,12 @@ a{
   border: 2px solid var(--primary);
 }
 
-.btn-outline-primary:hover {
+.btn-outline-primary:hover ,.btn-outline-primary.active {
   background: var(--primary);
   color: #FFFFFF;
   transform: translateY(-2px);
+  border: var(--primary);
 }
-
 .btn-sm {
   font-size: 0.875rem;
 }
