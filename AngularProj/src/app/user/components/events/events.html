@@ -1,1 +1,221 @@
-<p>events works!</p>
+<div class="container-fluid p-0">
+  <!-- Top Header Bar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm border-bottom">
+    <div class="container-fluid">
+      <div class="d-flex align-items-center">
+        <h1 class="navbar-brand mb-0 fw-bold text-primary">Event Planning System</h1>
+      </div>
+      <div class="d-flex align-items-center">
+        <button class="btn btn-outline-secondary me-3" (click)="onDarkModeToggle()">
+          <i class="bi bi-moon"></i> Dark Mode
+        </button>
+        <div class="dropdown">
+          <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" 
+                  type="button" 
+                  id="userDropdown" 
+                  data-bs-toggle="dropdown" 
+                  aria-expanded="false"
+                  (click)="onUserProfileClick()">
+            <i class="bi bi-person-circle me-2"></i>
+            John Doe
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="#" (click)="onViewProfile()"><i class="bi bi-person me-2"></i>Profile</a></li>
+            <li><a class="dropdown-item" href="#" (click)="onSettings()"><i class="bi bi-gear me-2"></i>Settings</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#" (click)="onLogout()"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="row g-0">
+    <!-- Left Navigation Sidebar -->
+    <div class="col-md-3 col-lg-2">
+      <div class="bg-light h-100 p-3">
+        <nav class="nav flex-column">
+          <a class="nav-link d-flex align-items-center mb-2" 
+             href="#" 
+             (click)="onNavItemClick('Dashboard', $event)">
+            <i class="bi bi-house-door me-2"></i>
+            Dashboard
+          </a>
+          <a class="nav-link active d-flex align-items-center mb-2" 
+             href="#" 
+             (click)="onNavItemClick('Invitations', $event)">
+            <i class="bi bi-envelope me-2"></i>
+            My Invitations
+          </a>
+          <a class="nav-link d-flex align-items-center mb-2" 
+             href="#" 
+             (click)="onNavItemClick('Upcoming', $event)">
+            <i class="bi bi-calendar-event me-2"></i>
+            Upcoming Events
+          </a>
+          <a class="nav-link d-flex align-items-center mb-2" 
+             href="#" 
+             (click)="onNavItemClick('Attended', $event)">
+            <i class="bi bi-check-circle me-2"></i>
+            Attended Events
+          </a>
+          <a class="nav-link d-flex align-items-center mb-2" 
+             href="#" 
+             (click)="onNavItemClick('Feedback', $event)">
+            <i class="bi bi-star me-2"></i>
+            My Feedback
+          </a>
+          <a class="nav-link d-flex align-items-center mb-2" 
+             href="#" 
+             (click)="onNavItemClick('Profile', $event)">
+            <i class="bi bi-person me-2"></i>
+            Profile
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="col-md-9 col-lg-10">
+      <div class="p-4">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 class="h3 mb-1">{{ getPageTitle() }}</h2>
+            <p class="text-muted mb-0">{{ getPageSubtitle() }}</p>
+          </div>
+          <div class="btn-group" role="group">
+            <button class="btn btn-primary" (click)="onRefreshInvitations()">
+              <i class="bi bi-arrow-clockwise me-2"></i>Refresh
+            </button>
+          </div>
+        </div>
+
+  <!-- Filters and Search -->
+  <div class="filters-section">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input 
+        type="text" 
+        placeholder="Search events..." 
+        [(ngModel)]="searchQuery"
+        (input)="onSearchChange()"
+        class="search-input">
+    </div>
+    <div class="filter-buttons">
+      <button 
+        class="filter-btn" 
+        [class.active]="selectedFilter === 'all'"
+        (click)="onFilterChange('all')">
+        All Invitations
+      </button>
+      <button 
+        class="filter-btn" 
+        [class.active]="selectedFilter === 'pending'"
+        (click)="onFilterChange('pending')">
+        Pending RSVP
+      </button>
+      <button 
+        class="filter-btn" 
+        [class.active]="selectedFilter === 'accepted'"
+        (click)="onFilterChange('accepted')">
+        Accepted
+      </button>
+      <button 
+        class="filter-btn" 
+        [class.active]="selectedFilter === 'declined'"
+        (click)="onFilterChange('declined')">
+        Declined
+      </button>
+    </div>
+  </div>
+
+  <!-- Invitations Grid -->
+  <div class="events-grid">
+    <div 
+      class="invitation-card" 
+      *ngFor="let invitation of filteredInvitations; trackBy: trackByInvitationId"
+      (click)="onInvitationClick(invitation)">
+      <div class="invitation-image">
+        <img [src]="invitation.eventImage" [alt]="invitation.eventName" *ngIf="invitation.eventImage">
+        <div class="invitation-image-placeholder" *ngIf="!invitation.eventImage">
+          <span class="placeholder-icon">📅</span>
+        </div>
+        <div class="invitation-status" [ngClass]="invitation.status">
+          {{ invitation.status | titlecase }}
+        </div>
+      </div>
+      
+      <div class="invitation-content">
+        <div class="invitation-header">
+          <h3 class="invitation-title">{{ invitation.eventName }}</h3>
+          <div class="invitation-actions" *ngIf="invitation.status === 'pending'">
+            <button class="action-btn accept" (click)="onAcceptInvitation(invitation, $event)">
+              ✅
+            </button>
+            <button class="action-btn decline" (click)="onDeclineInvitation(invitation, $event)">
+              ❌
+            </button>
+          </div>
+        </div>
+        
+        <p class="invitation-description">{{ invitation.eventDescription }}</p>
+        
+        <div class="invitation-details">
+          <div class="detail-item">
+            <span class="detail-icon">📅</span>
+            <span class="detail-text">{{ invitation.eventDate | date:'MMM dd, yyyy' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-icon">🕐</span>
+            <span class="detail-text">{{ invitation.eventTime }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-icon">📍</span>
+            <span class="detail-text">{{ invitation.location }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-icon">👤</span>
+            <span class="detail-text">{{ invitation.organizerName }}</span>
+          </div>
+        </div>
+        
+        <div class="invitation-footer">
+          <div class="invitation-info">
+            <span class="info-item">
+              <span class="info-icon">📧</span>
+              Invited: {{ invitation.invitedDate | date:'MMM dd' }}
+            </span>
+            <span class="info-item" *ngIf="invitation.respondedDate">
+              <span class="info-icon">✅</span>
+              Responded: {{ invitation.respondedDate | date:'MMM dd' }}
+            </span>
+          </div>
+          <div class="feedback-section" *ngIf="invitation.status === 'accepted' && invitation.canProvideFeedback">
+            <button class="feedback-btn" (click)="onProvideFeedback(invitation, $event)">
+              ⭐ Feedback
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="filteredInvitations.length === 0">
+    <div class="empty-icon">📧</div>
+    <h3 class="empty-title">No invitations found</h3>
+    <p class="empty-description">
+      {{ searchQuery ? 'Try adjusting your search or filters' : 'You haven\'t received any event invitations yet' }}
+    </p>
+    <button class="empty-action-btn" (click)="onRefreshInvitations()" *ngIf="!searchQuery">
+      Refresh Invitations
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Loading invitations...</p>
+  </div>
+</div>

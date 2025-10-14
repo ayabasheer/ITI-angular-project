@@ -1,0 +1,167 @@
+<div class="container-fluid p-0">
+  <!-- Top Header Bar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm border-bottom">
+    <div class="container-fluid">
+      <div class="d-flex align-items-center">
+        <h1 class="navbar-brand mb-0 fw-bold text-primary">Event Planning System</h1>
+      </div>
+      <div class="d-flex align-items-center">
+        <button class="btn btn-outline-secondary me-3" (click)="onDarkModeToggle()">
+          <i class="bi bi-moon"></i> Dark Mode
+        </button>
+        <div class="dropdown">
+          <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" 
+                  type="button" 
+                  id="userDropdown" 
+                  data-bs-toggle="dropdown" 
+                  aria-expanded="false"
+                  (click)="onUserProfileClick()">
+            <i class="bi bi-person-circle me-2"></i>
+            John Doe
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="#" (click)="onViewProfile()"><i class="bi bi-person me-2"></i>Profile</a></li>
+            <li><a class="dropdown-item" href="#" (click)="onSettings()"><i class="bi bi-gear me-2"></i>Settings</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#" (click)="onLogout()"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="row g-0">
+    <!-- Left Navigation Sidebar -->
+    <div class="col-md-3 col-lg-2">
+      <div class="bg-light h-100 p-3">
+        <nav class="nav flex-column">
+          <a class="nav-link d-flex align-items-center mb-2" 
+             href="#" 
+             (click)="onNavItemClick('Events', $event)">
+            <i class="bi bi-calendar-event me-2"></i>
+            Events
+          </a>
+          <a class="nav-link active d-flex align-items-center mb-2" 
+             href="#" 
+             (click)="onNavItemClick('Feedback', $event)">
+            <i class="bi bi-star me-2"></i>
+            Feedback
+          </a>
+          <a class="nav-link d-flex align-items-center mb-2" 
+             href="#" 
+             (click)="onNavItemClick('Profile', $event)">
+            <i class="bi bi-person me-2"></i>
+            Profile
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="col-md-9 col-lg-10">
+      <div class="p-4">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 class="h3 mb-1">Event Feedback</h2>
+            <p class="text-muted mb-0">Rate and review events you've attended</p>
+          </div>
+          <button class="btn btn-primary" (click)="onAddFeedback()">
+            <i class="bi bi-plus me-2"></i>Add Feedback
+          </button>
+        </div>
+
+        <!-- Feedback Form -->
+        <div class="card mb-4" *ngIf="showFeedbackForm">
+          <div class="card-header">
+            <h5 class="mb-0">Add New Feedback</h5>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="feedbackForm" (ngSubmit)="onSubmitFeedback()">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="eventSelect" class="form-label">Select Event</label>
+                  <select class="form-select" id="eventSelect" formControlName="eventId">
+                    <option value="">Choose an event...</option>
+                    <option *ngFor="let event of availableEvents" [value]="event.id">
+                      {{ event.name }} - {{ event.date | date:'MMM dd, yyyy' }}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Rating</label>
+                  <div class="star-rating">
+                    <span *ngFor="let star of stars; let i = index" 
+                          class="star" 
+                          [class.filled]="i < feedbackForm.get('rating')?.value"
+                          (click)="setRating(i + 1)">
+                      ★
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="comment" class="form-label">Comment</label>
+                <textarea class="form-control" 
+                          id="comment" 
+                          rows="4" 
+                          formControlName="comment"
+                          placeholder="Share your experience..."></textarea>
+              </div>
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary" [disabled]="feedbackForm.invalid">
+                  <i class="bi bi-check me-2"></i>Submit Feedback
+                </button>
+                <button type="button" class="btn btn-secondary" (click)="onCancelFeedback()">
+                  <i class="bi bi-x me-2"></i>Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Feedback List -->
+        <div class="row">
+          <div class="col-12" *ngFor="let feedback of feedbackList">
+            <div class="card mb-3">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div>
+                    <h6 class="card-title mb-1">{{ feedback.eventName }}</h6>
+                    <small class="text-muted">{{ feedback.createdAt | date:'MMM dd, yyyy' }}</small>
+                  </div>
+                  <div class="rating-display">
+                    <span *ngFor="let star of getStars(feedback.rating)" 
+                          class="star-display" 
+                          [class.filled]="star === 'filled'">
+                      ★
+                    </span>
+                  </div>
+                </div>
+                <p class="card-text">{{ feedback.comment }}</p>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-outline-primary" (click)="onEditFeedback(feedback)">
+                    <i class="bi bi-pencil me-1"></i>Edit
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" (click)="onDeleteFeedback(feedback)">
+                    <i class="bi bi-trash me-1"></i>Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="text-center py-5" *ngIf="feedbackList.length === 0">
+          <i class="bi bi-star display-1 text-muted"></i>
+          <h4 class="mt-3">No feedback yet</h4>
+          <p class="text-muted">Start by adding feedback for events you've attended.</p>
+          <button class="btn btn-primary" (click)="onAddFeedback()">
+            <i class="bi bi-plus me-2"></i>Add Your First Feedback
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

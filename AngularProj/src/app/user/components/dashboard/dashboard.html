@@ -1,1 +1,426 @@
-<p>dashboard works!</p>
+<div class="dashboard-container" [class.dark-mode]="isDarkMode">
+  <!-- Top Header Bar -->
+  <nav class="navbar navbar-expand-lg" [class.navbar-dark]="isDarkMode" [class.bg-primary]="!isDarkMode" [class.bg-dark]="isDarkMode">
+    <div class="container-fluid">
+      <div class="d-flex align-items-center">
+        <h1 class="navbar-brand mb-0 fw-bold">Event Planning System</h1>
+      </div>
+      <div class="d-flex align-items-center">
+        <button class="btn me-3" 
+                [class.btn-outline-light]="!isDarkMode" 
+                [class.btn-outline-secondary]="isDarkMode"
+                (click)="toggleDarkMode()"
+                title="{{ isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode' }}">
+          <i [class]="isDarkMode ? 'bi bi-sun-fill' : 'bi bi-moon-fill'"></i>
+        </button>
+        <div class="dropdown">
+          <button class="btn dropdown-toggle d-flex align-items-center" 
+                  [class.btn-outline-light]="!isDarkMode" 
+                  [class.btn-outline-secondary]="isDarkMode"
+                  type="button" 
+                  id="userDropdown" 
+                  data-bs-toggle="dropdown" 
+                  aria-expanded="false"
+                  (click)="onUserProfileClick()">
+            <i class="bi bi-person-circle me-2"></i>
+            John Doe
+    </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="#" (click)="onViewProfile()"><i class="bi bi-person me-2"></i>Profile</a></li>
+            <li><a class="dropdown-item" href="#" (click)="onSettings()"><i class="bi bi-gear me-2"></i>Settings</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#" (click)="onLogout()"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+          </ul>
+        </div>
+  </div>
+    </div>
+  </nav>
+
+  <div class="row g-0">
+    <!-- Left Navigation Sidebar -->
+    <div class="col-md-3 col-lg-2">
+      <div class="sidebar h-100 p-3" [class.sidebar-dark]="isDarkMode">
+        <nav class="nav flex-column">
+          <a class="nav-link d-flex align-items-center mb-3" 
+             [class.active]="activeTab === 'Dashboard'"
+             href="#" 
+             (click)="onNavItemClick('Dashboard', $event)">
+            <i class="bi bi-house-door-fill me-3"></i>
+            <span class="nav-text">Dashboard</span>
+          </a>
+          <a class="nav-link d-flex align-items-center mb-3" 
+             [class.active]="activeTab === 'Events'"
+             href="#" 
+             (click)="onNavItemClick('Events', $event)">
+            <i class="bi bi-calendar-event-fill me-3"></i>
+            <span class="nav-text">Events</span>
+          </a>
+          <a class="nav-link d-flex align-items-center mb-3" 
+             [class.active]="activeTab === 'Feedback'"
+             href="#" 
+             (click)="onNavItemClick('Feedback', $event)">
+            <i class="bi bi-star-fill me-3"></i>
+            <span class="nav-text">Feedback</span>
+          </a>
+          <a class="nav-link d-flex align-items-center mb-3" 
+             [class.active]="activeTab === 'Profile'"
+             href="#" 
+             (click)="onNavItemClick('Profile', $event)">
+            <i class="bi bi-person-fill me-3"></i>
+            <span class="nav-text">Profile</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="col-md-9 col-lg-10">
+      <div class="main-content p-4" [class.main-content-dark]="isDarkMode">
+        
+        <!-- Dashboard Content -->
+        <div *ngIf="activeTab === 'Dashboard'">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h2 class="h3 mb-1">Dashboard</h2>
+            </div>
+            <button class="btn btn-primary" (click)="onViewInvitations()">
+              <i class="bi bi-plus me-2"></i>Add Event
+            </button>
+          </div>
+
+          <!-- Key Metrics Section -->
+          <div class="row g-4 mb-4">
+            <div class="col-sm-6 col-lg-3">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                  <div class="text-primary mb-2">
+                    <i class="bi bi-calendar-event fs-1"></i>
+                  </div>
+                  <h3 class="card-title text-primary">{{ totalEvents }}</h3>
+                  <p class="card-text text-muted">Total Events</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                  <div class="text-primary mb-2">
+                    <i class="bi bi-calendar-check fs-1"></i>
+                  </div>
+                  <h3 class="card-title text-primary">{{ upcomingEvents }}</h3>
+                  <p class="card-text text-muted">Upcoming</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                  <div class="text-success mb-2">
+                    <i class="bi bi-check-circle fs-1"></i>
+                  </div>
+                  <h3 class="card-title text-success">{{ completedEventsCount }}</h3>
+                  <p class="card-text text-muted">Completed</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                  <div class="text-info mb-2">
+                    <i class="bi bi-people fs-1"></i>
+                  </div>
+                  <h3 class="card-title text-info">{{ totalGuests }}</h3>
+                  <p class="card-text text-muted">Total Guests</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Section -->
+          <div class="row g-4 mb-4">
+            <!-- Expenses by Category -->
+            <div class="col-lg-6">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                  <h5 class="card-title mb-0">Expenses by Category</h5>
+                </div>
+                <div class="card-body text-center">
+                  <div class="position-relative d-inline-block mb-3">
+                    <div class="donut-chart">
+                      <div class="donut-center">
+                        <div class="donut-total">${{ totalExpenses }}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row g-2">
+                    <div class="col-6">
+                      <div class="d-flex align-items-center">
+                        <span class="badge bg-primary me-2">●</span>
+                        <small>Venue</small>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="d-flex align-items-center">
+                        <span class="badge bg-info me-2">●</span>
+                        <small>Decoration</small>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="d-flex align-items-center">
+                        <span class="badge bg-success me-2">●</span>
+                        <small>Food</small>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="d-flex align-items-center">
+                        <span class="badge bg-warning me-2">●</span>
+                        <small>Music</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Events by Month -->
+            <div class="col-lg-6">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0">
+                  <h5 class="card-title mb-0">Events by Month</h5>
+                </div>
+                <div class="card-body">
+                  <div class="bar-chart">
+                    <div class="bar" *ngFor="let month of monthlyEvents; let i = index" 
+                         [style.height.%]="(month.value / maxMonthlyEvents) * 100">
+                      <div class="bar-value">{{ month.value }}</div>
+                    </div>
+                  </div>
+                  <div class="bar-labels">
+                    <span *ngFor="let month of monthlyEvents">{{ month.label }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Event Progress Section -->
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-0">
+              <h5 class="card-title mb-0">Event Progress</h5>
+            </div>
+            <div class="card-body">
+              <div class="progress-container">
+                <div class="progress" style="height: 8px;">
+                  <div class="progress-bar" role="progressbar" [style.width.%]="eventProgress" 
+                       [attr.aria-valuenow]="eventProgress" aria-valuemin="0" aria-valuemax="100">
+                  </div>
+                </div>
+                <span class="progress-text">{{ eventProgress }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Events Content -->
+        <div *ngIf="activeTab === 'Events'">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h2 class="h3 mb-1">My Events</h2>
+              <p class="text-muted mb-0">View and manage your event invitations</p>
+            </div>
+          </div>
+
+          <!-- Event Status Tabs -->
+          <ul class="nav nav-tabs mb-4">
+            <li class="nav-item">
+              <a class="nav-link" [class.active]="eventFilter === 'all'" (click)="setEventFilter('all')">
+                <i class="bi bi-list-ul me-1"></i>All Events ({{ allEvents.length }})
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" [class.active]="eventFilter === 'accepted'" (click)="setEventFilter('accepted')">
+                <i class="bi bi-check-circle me-1"></i>Accepted ({{ acceptedEvents.length }})
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" [class.active]="eventFilter === 'pending'" (click)="setEventFilter('pending')">
+                <i class="bi bi-clock me-1"></i>Pending ({{ pendingEvents.length }})
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" [class.active]="eventFilter === 'completed'" (click)="setEventFilter('completed')">
+                <i class="bi bi-check2-all me-1"></i>Completed ({{ completedEvents.length }})
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" [class.active]="eventFilter === 'declined'" (click)="setEventFilter('declined')">
+                <i class="bi bi-x-circle me-1"></i>Declined ({{ declinedEvents.length }})
+              </a>
+            </li>
+          </ul>
+
+          <!-- Events List -->
+          <div class="row g-3">
+            <div class="col-12" *ngFor="let event of filteredEvents">
+              <div class="card border-0 shadow-sm event-card">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="flex-grow-1">
+                      <h6 class="card-title mb-1 event-title">{{ event.name }}</h6>
+                      <small class="text-muted event-date">
+                        <i class="bi bi-calendar3 me-1"></i>{{ event.date | date:'MMM dd, yyyy' }} at {{ event.time }}
+                      </small>
+                    </div>
+                    <span class="badge status-badge" [ngClass]="getStatusBadgeClass(event.status)">
+                      {{ event.status | titlecase }}
+                    </span>
+                  </div>
+                  <p class="card-text event-description">{{ event.description }}</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted event-location">
+                      <i class="bi bi-geo-alt-fill me-1"></i>{{ event.location }}
+                    </small>
+                    <div class="event-actions">
+                      <button class="btn btn-sm btn-outline-primary me-2" (click)="showEventDetails(event)">
+                        <i class="bi bi-eye-fill me-1"></i>View Details
+                      </button>
+                      <button *ngIf="event.status === 'completed'" 
+                              class="btn btn-sm btn-warning" 
+                              (click)="showAddFeedbackModal(event)">
+                        <i class="bi bi-star-fill me-1"></i>Feedback
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div class="text-center py-5" *ngIf="filteredEvents.length === 0">
+            <i class="bi bi-calendar-x display-1 text-muted"></i>
+            <h4 class="mt-3">No events found</h4>
+            <p class="text-muted">No events match your current filter.</p>
+          </div>
+        </div>
+
+        <!-- Feedback Content -->
+        <div *ngIf="activeTab === 'Feedback'">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h2 class="h3 mb-1">My Feedback</h2>
+              <p class="text-muted mb-0">Rate and review events you've attended</p>
+            </div>
+            <button class="btn btn-primary" (click)="showAddFeedbackModal()">
+              <i class="bi bi-plus me-2"></i>Add Feedback
+            </button>
+          </div>
+
+          <!-- Feedback List -->
+          <div class="row g-3">
+            <div class="col-12" *ngFor="let feedback of feedbackList">
+              <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                      <h6 class="card-title mb-1">{{ feedback.eventName }}</h6>
+                      <small class="text-muted">{{ feedback.createdAt | date:'MMM dd, yyyy' }}</small>
+                    </div>
+                    <div class="rating-display">
+                      <span *ngFor="let star of getStars(feedback.rating)" 
+                            class="star-display" 
+                            [class.filled]="star === 'filled'">
+                        ★
+                      </span>
+                    </div>
+                  </div>
+                  <p class="card-text">{{ feedback.comment }}</p>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary" (click)="editFeedback(feedback)">
+                      <i class="bi bi-pencil me-1"></i>Edit
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" (click)="deleteFeedback(feedback)">
+                      <i class="bi bi-trash me-1"></i>Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div class="text-center py-5" *ngIf="feedbackList.length === 0">
+            <i class="bi bi-star display-1 text-muted"></i>
+            <h4 class="mt-3">No feedback yet</h4>
+            <p class="text-muted">Start by adding feedback for events you've attended.</p>
+            <button class="btn btn-primary" (click)="showAddFeedbackModal()">
+              <i class="bi bi-plus me-2"></i>Add Your First Feedback
+            </button>
+          </div>
+        </div>
+
+        <!-- Profile Content -->
+        <div *ngIf="activeTab === 'Profile'">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h2 class="h3 mb-1">Profile</h2>
+              <p class="text-muted mb-0">Manage your account settings and preferences</p>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                  <h5 class="card-title mb-0">Personal Information</h5>
+                </div>
+                <div class="card-body">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label">Full Name</label>
+                      <input type="text" class="form-control" value="John Doe" readonly>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Email</label>
+                      <input type="email" class="form-control" value="john.doe@example.com" readonly>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Phone</label>
+                      <input type="tel" class="form-control" value="+1 (555) 123-4567" readonly>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Location</label>
+                      <input type="text" class="form-control" value="New York, NY" readonly>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                  <h5 class="card-title mb-0">Statistics</h5>
+                </div>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Total Events</span>
+                    <strong>{{ totalEvents }}</strong>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Feedback Given</span>
+                    <strong>{{ feedbackList.length }}</strong>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Average Rating</span>
+                    <strong>{{ getAverageRating() }}</strong>
+                  </div>
+                </div>
+              </div>
+    </div>
+    </div>
+  </div>
+
+      </div>
+    </div>
+  </div>
+</div>
