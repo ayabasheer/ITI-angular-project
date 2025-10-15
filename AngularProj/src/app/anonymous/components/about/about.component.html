@@ -1,11 +1,76 @@
 <app-navbar></app-navbar>
-<div class="site-container">
-  <div class="card card-creative p-4">
-    <h2>About Eventura</h2>
-    <p class="text-muted">We are an award-winning event planning studio serving NYC and Boston. We create thoughtful, one-of-a-kind events that tell your story.</p>
-    <div class="mt-3">
-      <a class="btn btn-outline-primary" routerLink="/contact">Get in touch</a>
+
+<section class="about-hero">
+  <div class="site-container">
+    <div class="hero-grid card-creative">
+      <div class="hero-text">
+        <h1>About Eventura</h1>
+        <p class="lead">We craft intentional, memorable events — from intimate weddings to large-scale corporate experiences — mixing creativity with meticulous planning.</p>
+        <p class="text-muted">With teams in NYC and Boston we combine local expertise with global standards of service.</p>
+        <a class="btn btn-outline-primary mt-3" routerLink="/contact">Get in touch</a>
+      </div>
+      <div class="hero-image">
+        <img src="assets/event-images/default.jpg" alt="Event" />
+      </div>
     </div>
   </div>
-</div>
+</section>
+
+<section class="site-container mission">
+  <div class="card-creative">
+    <h2>Our mission</h2>
+    <p>We believe every event is an opportunity to tell a story. Our mission is to create experiences that feel personal, thoughtfully designed, and flawlessly executed.</p>
+    <div class="values">
+      <div class="value">
+        <h4>Creativity</h4>
+        <p class="text-muted">Design-forward approach tailored to each client.</p>
+      </div>
+      <div class="value">
+        <h4>Reliability</h4>
+        <p class="text-muted">Transparent planning and clear communication at every step.</p>
+      </div>
+      <div class="value">
+        <h4>Care</h4>
+        <p class="text-muted">We obsess over details so you don't have to.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="site-container">
+  <div class="counters">
+    <div class="counter">
+      <h3>{{ eventsCount }}</h3>
+      <p>Events</p>
+    </div>
+    <div class="counter">
+      <h3>{{ clientsCount }}</h3>
+      <p>Guests Served</p>
+    </div>
+    <div class="counter">
+      <h3>{{ years }}</h3>
+      <p>Years in Business</p>
+    </div>
+  </div>
+</section>
+
+<section class="site-container testimonials">
+  <h2 style="text-align:center; margin-bottom:1rem;">Testimonials</h2>
+  <div class="testimonial-list">
+    <div *ngFor="let t of testimonials" class="testimonial-item">
+      <p>"{{ t.comment }}"</p>
+      <cite>- {{ t.guestName || 'A Guest' }}</cite>
+    </div>
+    <div *ngIf="!testimonials || testimonials.length === 0" class="text-muted">No testimonials yet.</div>
+  </div>
+</section>
+
+
+<section class="site-container">
+  <div class="card-creative text-center">
+    <h3>Ready to start planning?</h3>
+    <a class="btn btn-primary mt-3" routerLink="/create-event">Create Event</a>
+  </div>
+</section>
+
 <app-footer></app-footer>
