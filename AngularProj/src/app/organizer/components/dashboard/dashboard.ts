@@ -17,9 +17,9 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule], //    
+  imports: [CommonModule, RouterModule], //
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css'] 
+  styleUrls: ['./dashboard.css']
 })
 export class Dashboard implements OnInit {
   total = 0;
@@ -47,33 +47,57 @@ export class Dashboard implements OnInit {
   }
 
   loadStats() {
-    const events = this.eventService.getAll();
-    this.total = events.length;
-    this.upcoming = events.filter(e => e.status === 'Upcoming').length;
-    this.completed = events.filter(e => e.status === 'Completed').length;
+    const allEvents = this.eventService.getAll();
+    const allGuests = this.guestService.getAll();
+    const allExpenses = this.expenseService.getAll();
+    const allTasks = this.taskService.getAll();
 
-    const guests = this.guestService.getAll();
-    this.totalGuests = guests.length;
+    const user = this.currentUser;
+    if (user && user.role === 'Organizer') {
+      const myEvents = allEvents.filter(e => e.createdBy === user.id);
+      this.total = myEvents.length;
+      this.upcoming = myEvents.filter(e => e.status === 'Upcoming').length;
+      this.completed = myEvents.filter(e => e.status === 'Completed').length;
 
-    // Compute expense percentages
-    const expenses = this.expenseService.getAll();
-    const categories: string[] = ['Venue', 'Decoration', 'Food', 'Music'];
-    const totalExpense = expenses.reduce((sum: number, exp: any) => sum + (exp.amount || 0), 0);
-    this.expensePercentages = categories.map(cat => {
-      const catTotal = expenses.filter((exp: any) => exp.category === cat).reduce((sum: number, exp: any) => sum + (exp.amount || 0), 0);
-      return totalExpense > 0 ? Math.round((catTotal / totalExpense) * 100) : 0;
-    });
+      const myEventIds = new Set<number>(myEvents.map(e => e.id));
 
-    // Compute events by month (Jan-May)
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May'];
-    this.eventsByMonth = months.map(month => {
-      return events.filter(event => {
-        if (!event.startDate) return false;
-        const eventDate = new Date(event.startDate);
-        const eventMonth = eventDate.toLocaleString('default', { month: 'short' });
-        return eventMonth === month;
-      }).length;
-    });
+      // Guests for organizer's events
+      this.totalGuests = allGuests.filter((g: any) => myEventIds.has(g.eventId)).length;
+
+      // Expenses for organizer's events
+      const expenses = allExpenses.filter((exp: any) => myEventIds.has(exp.eventId));
+      const categories: string[] = ['Venue', 'Decoration', 'Food', 'Music'];
+      const totalExpense = expenses.reduce((sum: number, exp: any) => sum + (exp.amount || 0), 0);
+      this.expensePercentages = categories.map(cat => {
+        const catTotal = expenses
+          .filter((exp: any) => exp.category === cat)
+          .reduce((sum: number, exp: any) => sum + (exp.amount || 0), 0);
+        return totalExpense > 0 ? Math.round((catTotal / totalExpense) * 100) : 0;
+      });
+
+      // Events by month (Jan-May) for organizer events
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May'];
+      this.eventsByMonth = months.map(month => {
+        return myEvents.filter(event => {
+          if (!event.startDate) return false;
+          const eventDate = new Date(event.startDate);
+          const eventMonth = eventDate.toLocaleString('default', { month: 'short' });
+          return eventMonth === month;
+        }).length;
+      });
+
+      // Optionally use tasks for other UI pieces - filter tasks to organizer events
+      const tasks = allTasks.filter((t: any) => myEventIds.has(t.eventId));
+      // (No direct UI binding yet, but data is available if needed)
+    } else {
+      // Not an organizer or not authenticated — show empty stats
+      this.total = 0;
+      this.upcoming = 0;
+      this.completed = 0;
+      this.totalGuests = 0;
+      this.expensePercentages = [0, 0, 0, 0];
+      this.eventsByMonth = [0, 0, 0, 0, 0];
+    }
   }
 
   initCharts() {

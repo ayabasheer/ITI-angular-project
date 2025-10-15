@@ -42,6 +42,17 @@
   margin-bottom: 2rem;
 }
 
+.counters { display:flex; gap:1.5rem; justify-content:center; margin-top:1rem; }
+.counter { background: rgba(0,0,0,0.03); padding:1rem 1.25rem; border-radius:8px; min-width:120px; }
+.counter h3 { margin:0; color:var(--primary); font-size:1.5rem; }
+.counter p { margin:0; color:var(--muted); }
+
+.testimonials { margin-top:2rem; }
+.testimonial-list { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+.testimonial-item { max-width:320px; padding:1rem; background:var(--surface); border-radius:8px; box-shadow: 0 6px 20px var(--shadow); border:1px solid var(--border); }
+.testimonial-item p { margin:0 0 .5rem; color:var(--muted); }
+.testimonial-item cite { color:var(--primary); font-weight:600; }
+
 .text-muted {
   color: var(--muted) !important;
 }
@@ -83,11 +94,11 @@
   .site-container {
     padding: 1rem;
   }
-  
+
   .card-creative h2 {
     font-size: 2rem;
   }
-  
+
   .card-creative p {
     font-size: 1rem;
   }
