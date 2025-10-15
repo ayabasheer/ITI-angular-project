@@ -1,50 +1,155 @@
-<div class="dashboard-root">
-    <div class="header-row">
-        <h1>Dashboard</h1>
-        <button routerLink="/organizer/events" class="add-btn">+ Add Event</button>
-    </div>
-
-    <div class="cards-grid">
-        <a class="stat-card" routerLink="/organizer/events" title="View Events">
-            <div class="icon">📅</div>
-            <div class="stat">
-                <div class="num">{{ total }}</div>
-                <div class="label">Total Events</div>
-            </div>
-        </a>
-
-        <a class="stat-card" routerLink="/organizer/events?filter=upcoming" title="View Upcoming">
-            <div class="icon">⏳</div>
-            <div class="stat">
-                <div class="num">{{ upcoming }}</div>
-                <div class="label">Upcoming</div>
-            </div>
-        </a>
-
-        <a class="stat-card" routerLink="/organizer/events?filter=completed" title="View Completed">
-            <div class="icon">✅</div>
-            <div class="stat">
-                <div class="num">{{ completed }}</div>
-                <div class="label">Completed</div>
-            </div>
-        </a>
-
-        <a class="stat-card" routerLink="/organizer/guests" title="View Guests">
-            <div class="icon">👥</div>
-            <div class="stat">
-                <div class="num">{{ totalGuests }}</div>
-                <div class="label">Total Guests</div>
-            </div>
-        </a>
-    </div>
-
-    <!-- placeholder area for charts in future -->
-    <div class="charts-row">
-        <div class="chart-card"> <!-- left chart placeholder -->
-            Expenses by Category (coming soon)
+<div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1 class="app-title">Event<br>Planning<br>System</h1>
         </div>
-        <div class="chart-card"> <!-- right chart placeholder -->
-            Events by Month (coming soon)
+
+        <nav class="sidebar-nav">
+            <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+                <i class="bi bi-house-door"></i>
+                <span>Dashboard</span>
+            </a>
+            <a routerLink="events" routerLinkActive="active" class="nav-item">
+                <i class="bi bi-calendar-event"></i>
+                <span>Events</span>
+            </a>
+            <a routerLink="guests" routerLinkActive="active" class="nav-item">
+                <i class="bi bi-people"></i>
+                <span>Guests</span>
+            </a>
+            <a routerLink="tasks" routerLinkActive="active" class="nav-item">
+                <i class="bi bi-list-check"></i>
+                <span>Tasks</span>
+            </a>
+            <a routerLink="expenses" routerLinkActive="active" class="nav-item">
+                <i class="bi bi-cash-stack"></i>
+                <span>Expenses</span>
+            </a>
+            <a routerLink="feedback" routerLinkActive="active" class="nav-item">
+                <i class="bi bi-chat-dots"></i>
+                <span>Feedback</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="top-header">
+            <h2 class="page-title">Dashboard</h2>
+            <div class="header-actions">
+                <button class="btn-icon" aria-label="Toggle dark mode">
+                    <i class="bi bi-moon"></i>
+                </button>
+                <div class="user-dropdown">
+                    <button class="user-btn">
+                        <i class="bi bi-person-circle"></i>
+                        <span>{{ currentUser?.name || 'User' }}</span>
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                </div>
+                <button routerLink="events" class="btn btn-primary">
+                    <i class="bi bi-plus-lg"></i>
+                    Add Event
+                </button>
+            </div>
+        </header>
+        <router-outlet></router-outlet>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid" *ngIf="!router.url.includes('/dashboard/')">
+            <div class="stat-card">
+                <div class="stat-icon blue-bg">
+                    <i class="bi bi-calendar-event"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">{{ total }}</h3>
+                    <p class="stat-label">Total Events</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon blue-light-bg">
+                    <i class="bi bi-calendar-plus"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">{{ upcoming }}</h3>
+                    <p class="stat-label">Upcoming</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon blue-bg">
+                    <i class="bi bi-check-lg"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">{{ completed }}</h3>
+                    <p class="stat-label">Completed</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon blue-light-bg">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-number">{{ totalGuests }}</h3>
+                    <p class="stat-label">Total Guests</p>
+                </div>
+            </div>
         </div>
-    </div>
+
+        <!-- Charts Section -->
+        <div class="charts-grid" *ngIf="!router.url.includes('/dashboard/')">
+            <!-- Expenses by Category -->
+            <div class="chart-card">
+                <h3 class="chart-title">Expenses by Category</h3>
+                <div class="chart-content">
+                    <div class="pie-chart-container">
+                        <canvas id="expenseChart" width="200" height="200"></canvas>
+                    </div>
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <span class="legend-dot" style="background-color: #3B82F6;"></span>
+                            <span class="legend-label">Venue</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot" style="background-color: #60A5FA;"></span>
+                            <span class="legend-label">Decoration</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot" style="background-color: #93C5FD;"></span>
+                            <span class="legend-label">Food</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot" style="background-color: #BFDBFE;"></span>
+                            <span class="legend-label">Music</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Events by Month -->
+            <div class="chart-card">
+                <h3 class="chart-title">Events by Month</h3>
+                <div class="bar-chart-container">
+                    <canvas id="eventChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Progress -->
+        <div class="progress-card" *ngIf="!router.url.includes('/dashboard/')">
+            <div class="progress-header">
+                <h3 class="progress-title">Event Progress</h3>
+                <span class="progress-percentage">80%</span>
+            </div>
+            <div class="progress-bar-wrapper">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 80%;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
 </div>

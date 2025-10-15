@@ -13,6 +13,7 @@ import { CreateEvent } from './organizer/components/create-event/create-event';
 import { UserModule } from './user/user-module';
 
 
+
 export const routes: Routes = [
 	{ path: '', component: HomeComponent },
 	{ path: 'about', component: AboutComponent },
@@ -24,6 +25,7 @@ export const routes: Routes = [
 	{ path: 'events/:id', component: EventDetailComponent },
 	{ path: 'events', component: EventsComponent },
 	{ path: 'create-event', component: CreateEvent },
+	
 	{path:"dashboard", loadChildren: () => import('./organizer/organizer-module').then(m => m.OrganizerModule)},
 	{path:"user", loadChildren: () => import('./user/user-module').then(m => m.UserModule)},
 	{ path: '**', redirectTo: '' }

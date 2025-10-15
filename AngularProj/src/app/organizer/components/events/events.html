@@ -1,11 +1,16 @@
 <div style="padding:20px">
     <h2>Events</h2>
-    <div *ngIf="events.length; else no">
-        <ul>
-            <li *ngFor="let e of events">
-                {{ e.id }} - {{ e.name }} - {{ e.startDate | date:'short' }}
-            </li>
-        </ul>
+    <div *ngIf="events.length; else no" class="row">
+        <div class="col-md-4 mb-3" *ngFor="let e of events">
+            <div class="card" style="cursor: pointer;" [routerLink]="['/dashboard/events', e.id]">
+                <img [src]="e.image || defaultImage" class="card-img-top" alt="Event image" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ e.name }}</h5>
+                    <p class="card-text">{{ e.description }}</p>
+                    <p class="card-text"><small class="text-muted">{{ e.startDate | date:'short' }}</small></p>
+                </div>
+            </div>
+        </div>
     </div>
     <ng-template #no>No events found.</ng-template>
 </div>
