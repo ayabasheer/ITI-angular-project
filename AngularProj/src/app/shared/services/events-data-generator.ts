@@ -68,23 +68,10 @@ export async function loadAndStoreLocalImages(options?: { count?: number, folder
   return images;
 }
 
-/**
- * Updated generator:
- * - 100 organizers
- * - 100 admins
- * - 250 events (each created by exactly one organizer)
- *   * Each organizer creates a random number of events between 1 and 5 (sum equals 250)
- * - 600 guests distributed across events (round-robin)
- * - Exactly 50 tasks (distributed across events)
- * - Exactly 50 expenses (distributed across events)
- * - Feedbacks generated only for guests of Completed events; attempt to create 600 feedbacks (may reuse guests cyclically if needed)
- *
- * The rest of the structure and persistence to localStorage is preserved.
- */
+
 export async function generateAndSaveAllWithImages() {
   const base = new Date('2025-10-11T09:00:00Z');
 
-  // Counts (as requested)
   const NUM_ORGANIZERS = 100;
   const NUM_ADMINS = 100;
   const NUM_EVENTS = 300;
@@ -116,7 +103,6 @@ export async function generateAndSaveAllWithImages() {
     });
   }
 
-  // --- Admins ---
   for (let i = 1; i <= NUM_ADMINS; i++) {
     admins.push({
       id: i,
@@ -131,18 +117,14 @@ export async function generateAndSaveAllWithImages() {
   const categoryList = ['Conference', 'Meeting', 'Workshop', 'Webinar', 'Party'];
   const statusList: EventStatus[] = ['Upcoming', 'InProgress', 'Completed', 'Cancelled'];
 
-  // Determine how many events each organizer will create (1..5) while summing to NUM_EVENTS
   const minPerOrganizer = 1;
   const maxPerOrganizer = 5;
-  // start by giving each organizer the minimum
   const organizerEventCounts: number[] = Array(NUM_ORGANIZERS).fill(minPerOrganizer);
   let assigned = NUM_ORGANIZERS * minPerOrganizer; // currently assigned events
   let remaining = NUM_EVENTS - assigned;
 
-  // Distribute remaining events randomly but never exceed maxPerOrganizer
   const organizerIndices = Array.from({ length: NUM_ORGANIZERS }, (_, i) => i);
   while (remaining > 0) {
-    // shuffle indices for fairness
     for (let idx = organizerIndices.length - 1; idx > 0; idx--) {
       const j = Math.floor(Math.random() * (idx + 1));
       [organizerIndices[idx], organizerIndices[j]] = [organizerIndices[j], organizerIndices[idx]];
@@ -156,13 +138,10 @@ export async function generateAndSaveAllWithImages() {
         progress = true;
       }
     }
-    // if no progress (all reached max), break to avoid infinite loop
     if (!progress) break;
   }
 
-  // If still remaining due to inability to distribute (shouldn't happen), cap distribution evenly from start
   if (remaining > 0) {
-    // force-distribute additional events ignoring max (rare fallback)
     let idx = 0;
     while (remaining > 0) {
       organizerEventCounts[idx % NUM_ORGANIZERS]++;
@@ -171,7 +150,6 @@ export async function generateAndSaveAllWithImages() {
     }
   }
 
-  // Create events using organizerEventCounts
   let nextEventId = 1;
   for (let orgIdx = 0; orgIdx < NUM_ORGANIZERS; orgIdx++) {
     const countForOrganizer = organizerEventCounts[orgIdx];
@@ -185,7 +163,6 @@ export async function generateAndSaveAllWithImages() {
       const end = isoDateOffset(base, startDays + durationDays, 17);
       const category = categoryList[i % categoryList.length];
 
-      // Set status probabilistically but ensure a decent number of Completed events (approx 30-40%)
       let status: EventStatus;
       const r = Math.random();
       if (r < 0.35) status = 'Completed';
@@ -220,7 +197,6 @@ export async function generateAndSaveAllWithImages() {
     }
   }
 
-  // Safety: if for any reason we didn't reach NUM_EVENTS, create remaining events assigned to random organizers
   while (events.length < NUM_EVENTS) {
     const i = events.length + 1;
     const creatorId = ((i - 1) % organizers.length) + 1;
@@ -256,7 +232,6 @@ export async function generateAndSaveAllWithImages() {
     });
   }
 
-  // --- TASKS: exactly NUM_TASKS ---
   for (let i = 1; i <= NUM_TASKS; i++) {
     const eventId = ((i - 1) % events.length) + 1;
     const assignedTo = ((i - 1) % organizers.length) + 1;
@@ -279,7 +254,6 @@ export async function generateAndSaveAllWithImages() {
     if (ev) ev.tasks.push(t.id);
   }
 
-  // --- EXPENSES: exactly NUM_EXPENSES, distributed across events round-robin ---
   const expenseCats: ExpenseCategory[] = ['Venue', 'Decoration', 'Food', 'Music', 'Transport', 'Miscellaneous'];
   let nextExpenseId = 1;
   for (let i = 1; i <= NUM_EXPENSES; i++) {
@@ -300,7 +274,6 @@ export async function generateAndSaveAllWithImages() {
     nextExpenseId++;
   }
 
-  // --- GUESTS: exactly NUM_GUESTS, distribute round-robin across events ---
   const statusOpts: GuestStatus[] = ['Invited', 'Accepted', 'Declined', 'Pending'];
   let nextGuestId = 1;
   for (let i = 1; i <= NUM_GUESTS; i++) {
@@ -323,18 +296,14 @@ export async function generateAndSaveAllWithImages() {
     nextGuestId++;
   }
 
-  // Ensure events.guestCount reflects actual guests
   events.forEach(ev => {
     ev.guestCount = ev.guests.length;
     if (ev.guestCount > 300) ev.guestCount = 300;
   });
 
-  // --- FEEDBACKS: only for guests of Completed events; try to create NUM_FEEDBACKS entries ---
   const completedEventIds = events.filter(e => e.status === 'Completed').map(e => e.id);
 
-  // Ensure there are enough completed events to attach feedbacks. If too few, mark some events Completed.
   if (completedEventIds.length < Math.max(10, Math.floor(events.length * 0.25))) {
-    // mark additional events as Completed until we have approx 25% completed
     for (let i = 0; i < events.length && events.filter(e => e.status === 'Completed').length < Math.floor(events.length * 0.25); i++) {
       if (events[i].status !== 'Completed') {
         events[i].status = 'Completed';
@@ -342,29 +311,24 @@ export async function generateAndSaveAllWithImages() {
     }
   }
 
-  // Recompute completedEventIds and eligible guests
   const updatedCompletedEventIds = events.filter(e => e.status === 'Completed').map(e => e.id);
   let eligibleGuests = guests.filter(g => updatedCompletedEventIds.includes(g.eventId));
 
-  // If eligibleGuests is empty (unlikely), fallback to first N guests
   if (eligibleGuests.length === 0) {
     eligibleGuests = guests.slice(0, Math.min(10, guests.length));
   }
 
   let nextFeedbackId = 1;
-  // We may need to assign multiple feedbacks per guest if eligibleGuests.length < NUM_FEEDBACKS
   let fCount = 0;
   while (fCount < NUM_FEEDBACKS) {
     const guest = eligibleGuests[fCount % eligibleGuests.length];
     const ev = events.find(e => e.id === guest.eventId);
     if (!ev || ev.status !== 'Completed') {
-      // skip and continue (shouldn't happen often)
       fCount++;
       continue;
     }
 
-    const giveFeedbackProb = 0.85; // high chance, but we are forcing total count to NUM_FEEDBACKS
-    // If we want to respect probability and still reach NUM_FEEDBACKS, we can ignore the prob when cycling.
+    const giveFeedbackProb = 0.85;
     const rating = randInt(1, 5);
     const comment = rating >= 4 ? `Great event ${guest.eventId}` : `Could improve event ${guest.eventId}`;
     const fb: Feedback = {
@@ -384,13 +348,11 @@ export async function generateAndSaveAllWithImages() {
     fCount++;
   }
 
-  // Final consistency: update each event.guestCount (again) and clamp
   events.forEach(ev => {
     ev.guestCount = ev.guests.length;
     if (ev.guestCount > 300) ev.guestCount = 300;
   });
 
-  // Save to localStorage (preserve previous keys and structure)
   localStorage.setItem('organizers', JSON.stringify(organizers));
   localStorage.setItem('admins', JSON.stringify(admins));
   localStorage.setItem('guests', JSON.stringify(guests));
