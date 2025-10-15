@@ -81,6 +81,7 @@ export async function generateAndSaveAllWithImages() {
 
   const loadedImages = await loadAndStoreLocalImages({ count: 8, folderPath: 'assets/event-images' });
 
+  // --- Organizers ---
   for (let i = 1; i <= 100; i++) {
     organizers.push({
       id: i,
@@ -93,6 +94,7 @@ export async function generateAndSaveAllWithImages() {
     });
   }
 
+  // --- Admins ---
   for (let i = 1; i <= 100; i++) {
     admins.push({
       id: i,
@@ -104,16 +106,18 @@ export async function generateAndSaveAllWithImages() {
     });
   }
 
+  const categoryList = ['Conference', 'Meeting', 'Workshop', 'Webinar', 'Party'];
+  const statusList: EventStatus[] = ['Upcoming', 'InProgress', 'Completed', 'Cancelled'];
+
   for (let i = 1; i <= 100; i++) {
     const creatorId = ((i - 1) % organizers.length) + 1;
     const startDays = i;
     const durationDays = randInt(0, 2);
     const start = isoDateOffset(base, startDays, 9 + (i % 6));
     const end = isoDateOffset(base, startDays + durationDays, 17);
-    const categoryList = ['Conference', 'Meeting', 'Workshop', 'Webinar', 'Party'];
-    const statusList: EventStatus[] = ['Upcoming', 'InProgress', 'Completed', 'Cancelled'];
     const category = categoryList[i % categoryList.length];
     const status = statusList[i % statusList.length];
+
     const guestCount = randInt(5, 120);
 
     const chosenImage = loadedImages.length ? loadedImages[(i - 1) % loadedImages.length] : '';
@@ -140,24 +144,28 @@ export async function generateAndSaveAllWithImages() {
     });
   }
 
-  for (let i = 1; i <= 100; i++) {
-    const assignedEvent = ((i - 1) % events.length) + 1;
-    const statusOpts: GuestStatus[] = ['Invited', 'Accepted', 'Declined', 'Pending'];
-    const g: Guest = {
-      id: i,
-      name: `Guest ${i}`,
-      email: `guest${i}@example.com`,
-      password: makeDemoPassword('Guest', i),
-      phone: `+20111${900000 + i}`,
-      status: statusOpts[i % statusOpts.length],
-      feedbackId: null,
-      role: 'Guest',
-      eventId: assignedEvent,
-      createdAt: isoDateOffset(base, -randInt(1, 20), 9, randInt(0, 59))
-    };
-    guests.push(g);
-    const ev = events.find(e => e.id === assignedEvent);
-    if (ev) ev.guests.push(g.id);
+  let nextGuestId = 1;
+  for (const ev of events) {
+    const numGuests = Math.min(ev.guestCount ?? randInt(5, 20), 300); // safety cap
+    ev.guests = [];
+    for (let g = 0; g < numGuests; g++) {
+      const guest: Guest = {
+        id: nextGuestId,
+        name: `Guest ${nextGuestId}`,
+        email: `guest${nextGuestId}@example.com`,
+        password: makeDemoPassword('Guest', nextGuestId),
+        phone: `+20111${900000 + nextGuestId}`,
+        status: (['Invited', 'Accepted', 'Declined', 'Pending'] as GuestStatus[])[nextGuestId % 4],
+        feedbackId: null,
+        role: 'Guest',
+        eventId: ev.id,
+        createdAt: isoDateOffset(base, -randInt(1, 20), 9, randInt(0, 59))
+      };
+      guests.push(guest);
+      ev.guests.push(guest.id);
+      nextGuestId++;
+    }
+    ev.guestCount = ev.guests.length;
   }
 
   for (let i = 1; i <= 100; i++) {
@@ -180,24 +188,6 @@ export async function generateAndSaveAllWithImages() {
     tasks.push(t);
     const ev = events.find(e => e.id === eventId);
     if (ev) ev.tasks.push(t.id);
-  }
-
-  const expenseCats: ExpenseCategory[] = ['Venue', 'Decoration', 'Food', 'Music', 'Transport', 'Miscellaneous'];
-  for (let i = 1; i <= 100; i++) {
-    const eventId = ((i - 1) % events.length) + 1;
-    const amount = parseFloat((randInt(50, 2000) + Math.random()).toFixed(2));
-    const ex: Expense = {
-      id: i,
-      eventId,
-      name: `Expense ${i} for Event ${eventId}`,
-      amount,
-      category: expenseCats[i % expenseCats.length],
-      date: isoDateOffset(base, i % 30, 12, randInt(0, 59)),
-      notes: i % 5 === 0 ? 'Auto-generated note' : undefined
-    };
-    expenses.push(ex);
-    const ev = events.find(e => e.id === eventId);
-    if (ev) ev.expenses.push(ex.id);
   }
 
   let nextTaskId = tasks.length + 1;
@@ -223,8 +213,28 @@ export async function generateAndSaveAllWithImages() {
     }
   }
 
-  const completedEventIds = events.filter(e => e.status === 'Completed').map(e => e.id);
+  const expenseCats: ExpenseCategory[] = ['Venue', 'Decoration', 'Food', 'Music', 'Transport', 'Miscellaneous'];
+  let nextExpenseId = 1;
+  for (const ev of events) {
+    const numExpenses = randInt(1, 6);
+    for (let x = 0; x < numExpenses; x++) {
+      const amount = parseFloat((randInt(50, 2000) + Math.random()).toFixed(2));
+      const ex: Expense = {
+        id: nextExpenseId,
+        eventId: ev.id,
+        name: `Expense ${nextExpenseId} for Event ${ev.id}`,
+        amount,
+        category: expenseCats[nextExpenseId % expenseCats.length],
+        date: isoDateOffset(base, (ev.id % 30) + x, 12, randInt(0, 59)),
+        notes: nextExpenseId % 5 === 0 ? 'Auto-generated note' : undefined
+      };
+      expenses.push(ex);
+      ev.expenses.push(ex.id);
+      nextExpenseId++;
+    }
+  }
 
+  const completedEventIds = events.filter(e => e.status === 'Completed').map(e => e.id);
   if (completedEventIds.length === 0) {
     for (let i = 0; i < 5 && i < events.length; i++) {
       events[i].status = 'Completed';
@@ -232,57 +242,34 @@ export async function generateAndSaveAllWithImages() {
     }
   }
 
-  let nextFeedbackId = feedbacks.length + 1;
+  let nextFeedbackId = 1;
+  for (const ev of events.filter(e => e.status === 'Completed')) {
 
+    const guestIdsForEvent = ev.guests ?? [];
+    for (const guestId of guestIdsForEvent) {
+      const giveFeedback = Math.random() < 0.6; // 60% chance
+      if (!giveFeedback) continue;
 
-  for (const g of guests) {
-    if (completedEventIds.length === 0) break; // safety
-    const giveFeedback = Math.random() < 0.85; // 85% chance
-    if (!giveFeedback) continue;
+      const rating = randInt(1, 5);
+      const comment = rating >= 4 ? `Great event ${ev.id}` : `Could improve event ${ev.id}`;
+      const fb: Feedback = {
+        id: nextFeedbackId,
+        guestId,
+        eventId: ev.id,
+        rating,
+        comment,
+        createdAt: isoDateOffset(base, (ev.id % 10) + 3, 18, randInt(0, 59))
+      };
+      feedbacks.push(fb);
+      ev.feedbacks.push(fb.id);
 
-    const eventId = randChoice(completedEventIds);
+      const guestObj = guests.find(g => g.id === guestId);
+      if (guestObj) guestObj.feedbackId = fb.id;
 
-    const rating = randInt(1, 5);
-    const comment = rating >= 4 ? `Great event ${eventId}` : `Could improve event ${eventId}`;
-    const fb: Feedback = {
-      id: nextFeedbackId,
-      guestId: g.id,
-      eventId,
-      rating,
-      comment,
-      createdAt: isoDateOffset(base, (eventId % 10) + 3, 18, randInt(0, 59))
-    };
-
-    feedbacks.push(fb);
-    const ev = events.find(e => e.id === eventId);
-    if (ev) ev.feedbacks.push(fb.id);
-    g.feedbackId = fb.id;
-
-    nextFeedbackId++;
+      nextFeedbackId++;
+    }
   }
 
-  const additionalFeedbacks = Math.floor(guests.length * 0.15);
-  for (let i = 0; i < additionalFeedbacks; i++) {
-    const guestCandidate = guests[randInt(0, guests.length - 1)];
-    if (guestCandidate.feedbackId) continue;
-    const eventId = randChoice(completedEventIds);
-    const rating = randInt(1, 5);
-    const fb: Feedback = {
-      id: nextFeedbackId,
-      guestId: guestCandidate.id,
-      eventId,
-      rating,
-      comment: rating >= 4 ? `Great event ${eventId}` : `Could improve event ${eventId}`,
-      createdAt: isoDateOffset(base, (eventId % 10) + 4, 18, randInt(0, 59))
-    };
-    feedbacks.push(fb);
-    const ev = events.find(e => e.id === eventId);
-    if (ev) ev.feedbacks.push(fb.id);
-    guestCandidate.feedbackId = fb.id;
-    nextFeedbackId++;
-  }
-
-  // Ensure each event's guestCount reflects actual guests array length
   events.forEach(ev => {
     ev.guestCount = ev.guests.length;
     if (ev.guestCount > 300) ev.guestCount = 300;

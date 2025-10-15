@@ -2,8 +2,8 @@
 .footer {
   margin-top: 4rem;
   padding: 2.5rem 1rem;
-  background: var(--primary, #0d1b2a);
-  color: var(--on-primary, #ffffff);
+  background: var(--footer-bg, var(--primary));
+  color: var(--footer-on, var(--on-primary));
   font-size: 0.95rem;
 }
 
@@ -49,25 +49,25 @@
 .footer-resources li { margin: 0.35rem 0; }
 
 .footer a {
-  color: var(--on-primary, #fff);
+  color: var(--footer-on, var(--on-primary));
   text-decoration: none;
   transition: color 120ms ease, opacity 120ms ease;
 }
-.footer.light a { color: var(--on-primary, #fff); }
-.footer.dark a { color: var(--text); }
+.footer.light a { color: var(--footer-on, var(--on-primary)); }
+.footer.dark a { color: var(--footer-on); }
 .footer a:hover { opacity: 0.85; }
 
 .social-icons { display:flex; gap:0.5rem; margin-bottom:0.6rem; }
 .social-icons .icon {
   display:inline-flex; align-items:center; justify-content:center;
   width:36px; height:36px; border-radius:6px; background: rgba(255,255,255,0.06);
-  color: var(--on-primary, #fff); text-decoration:none; font-weight:600;
+  color: var(--footer-on, var(--on-primary)); text-decoration:none; font-weight:600;
 }
 
 .newsletter-form { display:flex; gap:0.5rem; align-items:center; }
 .newsletter-form input{
   flex:1; padding:0.45rem 0.6rem; border-radius:6px; border:1px solid rgba(255,255,255,0.08);
-  background: transparent; color: inherit;
+  background: transparent; color: var(--footer-on);
 }
 .footer-email { color: inherit; background: transparent; }
 .newsletter-form button{
@@ -80,32 +80,18 @@
   display: inline-flex; align-items:center; justify-content:center;
 }
 
-.footer .btn-secondary { background: rgba(255,255,255,0.08); color: var(--on-primary); }
+.footer .btn-secondary { background: rgba(255,255,255,0.08); color: var(--footer-on); }
 
 /* Dark-mode specific tweaks */
-body.dark-mode .footer {
-  background: var(--surface);
-  color: var(--text);
-}
-body.dark-mode .footer .footer-brand .brand { color: var(--text); }
-body.dark-mode .footer a { color: var(--text); opacity: 0.95; }
-/* social icons: subtle light tint on dark surface for contrast */
+/* The footer color variables switch between light/dark mode; specific minor overrides below */
 body.dark-mode .footer .social-icons .icon {
   background: rgba(255,255,255,0.04);
-  color: var(--text);
+  color: var(--footer-on);
   border: 1px solid rgba(255,255,255,0.03);
 }
-body.dark-mode .footer .newsletter-form input { border-color: rgba(255,255,255,0.06); color: var(--text); }
-/* footer buttons: make secondary buttons slightly translucent on dark mode for readable contrast */
-body.dark-mode .footer .btn-secondary {
-  background: rgba(255,255,255,0.04);
-  color: var(--text);
-  border: 1px solid rgba(255,255,255,0.06);
-}
-body.dark-mode .footer .btn-secondary:hover {
-  background: rgba(255,255,255,0.08);
-  color: var(--text);
-}
+body.dark-mode .footer .newsletter-form input { border-color: rgba(255,255,255,0.06); color: var(--footer-on); }
+body.dark-mode .footer .btn-secondary { background: rgba(255,255,255,0.04); color: var(--footer-on); border: 1px solid rgba(255,255,255,0.06); }
+body.dark-mode .footer .btn-secondary:hover { background: rgba(255,255,255,0.08); color: var(--footer-on); }
 
 .footer-bottom { margin-top:1.25rem; text-align:center; opacity:0.85; }
 

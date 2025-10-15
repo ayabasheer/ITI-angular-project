@@ -9,6 +9,10 @@
   --on-primary: #463c2e; /* text color to use on primary backgrounds */
 	--border: #DCC5B1; /* Light Sandy Tan for borders */
 	--shadow: rgba(157, 115, 92, 0.1);
+  /* Footer specific colors (defaults for light mode) */
+  --footer-bg: var(--primary);
+  --footer-on: var(--on-primary);
+  --footer-muted: rgba(0,0,0,0.65);
     --user:rgba(24, 17, 15, 0.714);
 }
 /* Dark mode variables using the new warm earthy palette */
@@ -23,6 +27,10 @@
   --on-primary: rgba(35, 21, 8, 0.87); /* text color to use on primary backgrounds */
 	--border: #9D735C; /* Deep Rich Brown for borders */
 	--shadow: rgba(157, 115, 92, 0.3);
+  /* Footer colors for dark mode */
+  --footer-bg: var(--surface);
+  --footer-on: var(--text);
+  --footer-muted: rgba(255,255,255,0.75);
     --user:rgba(24, 17, 15, 0.714);
 
 }
