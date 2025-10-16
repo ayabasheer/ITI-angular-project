@@ -1,32 +1,76 @@
-<div class="events-container container py-4">
-  <h2 class="mb-4">My Events</h2>
+<div class="events-container">
+  <h2 class="title">My Events</h2>
 
-  <input type="text" [(ngModel)]="searchQuery" class="form-control mb-3" placeholder="Search events...">
-
-  <div class="row">
-    <div *ngFor="let inv of filteredInvitations" class="col-md-6 mb-3">
-      <div class="card shadow-sm h-100">
-        <div class="card-body">
-          <h5 class="card-title">{{ inv.eventName }}</h5>
-          <p class="card-text">{{ inv.eventDate }} - {{ inv.location }}</p>
-          <span class="badge" [ngClass]="{
-            'bg-warning text-dark': inv.status==='pending',
-            'bg-success': inv.status==='accepted',
-            'bg-danger': inv.status==='declined'
-          }">{{ inv.status }}</span>
-        </div>
-        <div class="card-footer d-flex justify-content-between">
-          <button class="btn btn-primary btn-sm" (click)="openEventDetail(inv)">Details</button>
-          <div>
-            <button *ngIf="inv.status==='pending'" class="btn btn-success btn-sm me-2" (click)="accept(inv)">Accept</button>
-            <button *ngIf="inv.status==='pending'" class="btn btn-danger btn-sm" (click)="decline(inv)">Decline</button>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn" [class.active]="activeTab==='All'" (click)="setTab('All')">All</button>
+    <button class="tab-btn" [class.active]="activeTab==='Pending'" (click)="setTab('Pending')">Pending</button>
+    <button class="tab-btn" [class.active]="activeTab==='Accepted'" (click)="setTab('Accepted')">Accepted</button>
+    <button class="tab-btn" [class.active]="activeTab==='Refused'" (click)="setTab('Refused')">Refused</button>
   </div>
 
-  <div *ngIf="filteredInvitations.length === 0" class="text-center mt-4">
-    <p>No events found.</p>
+  <div *ngIf="!filteredEvents.length" class="empty">
+    <p>No events in this category.</p>
+  </div>
+
+  <div class="events-grid" *ngIf="filteredEvents.length">
+    <mat-card *ngFor="let ev of filteredEvents" class="event-card" [ngClass]="ev.status?.toLowerCase()">
+      <img mat-card-image [src]="ev.image" alt="{{ ev.name }}">
+      <mat-card-header>
+        <mat-card-title>{{ ev.name }}</mat-card-title>
+        <mat-card-subtitle>
+          {{ ev.category }}
+          <span class="status-chip" [ngClass]="{
+            'accepted': ev.status==='Accepted',
+            'refused': ev.status==='Refused',
+            'pending': ev.status==='Pending'
+          }">{{ ev.status || 'Pending' }}</span>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="description">{{ ev.description }}</p>
+        <p><strong>Location:</strong> {{ ev.location }}</p>
+        <p><strong>Start:</strong> {{ ev.startDate | date:'medium' }}</p>
+        <p><strong>End:</strong> {{ ev.endDate | date:'medium' }}</p>
+        <p><strong>Guests:</strong> {{ ev.guests?.length || 0 }} (Accepted: {{ getAcceptedGuests(ev) }})</p>
+        <p><strong>Tasks:</strong> {{ ev.tasks?.length || 0 }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-stroked-button color="primary" (click)="viewDetails(ev)">View Details</button>
+        <ng-container *ngIf="ev.status==='Pending'">
+          <button mat-flat-button color="accent" (click)="acceptEvent(ev)">Accept</button>
+          <button mat-flat-button color="warn" (click)="refuseEvent(ev)">Refuse</button>
+        </ng-container>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- Event Details Overlay -->
+  <div class="event-details-overlay" *ngIf="selectedEvent">
+    <div class="event-details-card">
+      <button class="close-btn" (click)="closeDetails()">✖</button>
+      <h3>{{ selectedEvent.name }}</h3>
+      <img [src]="selectedEvent.image" alt="{{ selectedEvent.name }}">
+      <p><strong>Category:</strong> {{ selectedEvent.category }}</p>
+      <p><strong>Status:</strong>
+        <span class="status-chip" [ngClass]="{
+          'accepted': selectedEvent.status==='Accepted',
+          'refused': selectedEvent.status==='Refused',
+          'pending': selectedEvent.status==='Pending'
+        }">{{ selectedEvent.status || 'Pending' }}</span>
+      </p>
+      <p><strong>Location:</strong> {{ selectedEvent.location }}</p>
+      <p><strong>Start:</strong> {{ selectedEvent.startDate | date:'medium' }}</p>
+      <p><strong>End:</strong> {{ selectedEvent.endDate | date:'medium' }}</p>
+      <p><strong>Description:</strong> {{ selectedEvent.description }}</p>
+      <p><strong>Budget:</strong> {{ selectedEvent.budget || 0 }}</p>
+      <p><strong>Guests:</strong> {{ selectedEvent.guests?.length || 0 }} (Accepted: {{ getAcceptedGuests(selectedEvent) }})</p>
+      <p><strong>Tasks:</strong> {{ selectedEvent.tasks?.length || 0 }}</p>
+
+      <div *ngIf="selectedEvent.status==='Pending'" class="details-actions">
+        <button mat-flat-button color="accent" (click)="acceptEvent(selectedEvent)">Accept</button>
+        <button mat-flat-button color="warn" (click)="refuseEvent(selectedEvent)">Refuse</button>
+      </div>
+    </div>
   </div>
 </div>

@@ -1,45 +1,268 @@
+/* 🌗 Base Layout */
 .dashboard {
-  transition: background 0.3s, color 0.3s;
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: #f9f6f2;
+  color: #2e2e2e;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
 }
 
+.dashboard.dark {
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+}
+
+/* 🧭 Sidebar Styling */
 .sidebar {
   width: 250px;
-  transition: width 0.3s;
-  background-color: #f8f9fa;
+  height: 100vh;
+  background: linear-gradient(180deg, #f2e8dc 0%, #e8dcc9 100%);
+  color: #3a3a3a;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 15px 0;
+  transition: all 0.3s ease-in-out;
+  flex-shrink: 0;
 }
 
-.sidebar.closed {
-  width: 70px;
+.sidebar-header {
+  text-align: center;
+  margin-bottom: 10px;
 }
 
-.sidebar ul.nav li {
-  cursor: pointer;
-  padding: 10px 12px;
-  border-radius: 5px;
-  transition: background 0.2s, color 0.2s;
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 
-.sidebar ul.nav li.active,
-.sidebar ul.nav li:hover {
-  background-color: #0d6efd;
+.logo-main {
+  color: #8b6a3f;
+}
+
+.logo-accent {
+  color: #d4af37;
+}
+
+.sidebar-footer {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: auto;
+}
+
+/* 🌙 Dark Mode for Sidebar */
+.dashboard.dark .sidebar {
+  background: linear-gradient(180deg, #292929 0%, #1f1f1f 100%);
+  color: #f1f1f1;
+}
+
+.dashboard.dark .logo-main {
+  color: #f5deb3;
+}
+
+.dashboard.dark .logo-accent {
+  color: #d4af37;
+}
+
+.dashboard.dark .sidebar-footer {
+  color: #aaa;
+}
+
+/* 🧩 Sidebar Buttons */
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-list button {
+  color: #4b3f2f;
+  font-weight: 500;
+  border-radius: 12px;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  -ms-border-radius: 12px;
+  -o-border-radius: 12px;
+}
+.menu-list button mat-icon {
+  color: #292929;
+  margin-right: 10px;
+ 
+}
+
+.menu-list button span {
+  color: #a67c52; 
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.menu-list button mat-icon {
+  color: #7a6b55;
+  font-size: 22px;
+  transition: color 0.3s;
+}
+
+.menu-list button:hover {
+  background: rgba(212, 175, 55, 0.15);
+  color: #b08d57;
+}
+
+.menu-list button:hover mat-icon {
+  color: #b08d57;
+}
+
+.menu-list button.active {
+  background: linear-gradient(135deg, #d4af37, #b9975b);
   color: #fff;
 }
 
-.dark-mode {
-  background-color: #121212;
-  color: #e0e0e0;
+.menu-list button.active mat-icon {
+  color: #fff;
+}
+.menu-list button.active span {
+  color: #fff; 
 }
 
-.dark-mode .sidebar {
-  background-color: #1f1f1f;
+/* 🌑 Dark Mode for Sidebar Buttons */
+.dashboard.dark .menu-list button {
+  color: #ccc;
 }
 
-.dark-mode .sidebar ul.nav li.active,
-.dark-mode .sidebar ul.nav li:hover {
-  background-color: #bb86fc;
-  color: #121212;
+.dashboard.dark .menu-list button mat-icon {
+  color: #ccc;
 }
 
-.card {
-  border-radius: 10px;
+.dashboard.dark .menu-list button:hover {
+  background: rgba(212, 175, 55, 0.2);
+  color: #f5deb3;
+}
+
+.dashboard.dark .menu-list button:hover mat-icon {
+  color: #f5deb3;
+}
+
+.dashboard.dark .menu-list button.active {
+  background: linear-gradient(135deg, #c9a227, #b08d57);
+  color: #fff;
+}
+
+.dashboard.dark .menu-list button.active mat-icon {
+  color: #fff;
+}
+
+/* 🧭 Navbar Styling */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 25px;
+  background: #ffffff;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.navbar .left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar .welcome {
+  font-weight: 500;
+}
+
+.navbar .welcome span {
+  color: #b08d57;
+}
+
+.navbar .right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.theme-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 20px;
+  border: 1px solid #d4af37;
+  color: #b08d57;
+  font-weight: 500;
+}
+
+.theme-btn:hover {
+  background-color: rgba(212, 175, 55, 0.1);
+}
+
+/* 🌙 Dark Mode for Navbar */
+.dashboard.dark .navbar {
+  background: #222;
+  border-bottom: 1px solid #444;
+}
+
+.dashboard.dark .navbar .welcome span {
+  color: #d4af37;
+}
+
+.dashboard.dark .theme-btn {
+  border-color: #d4af37;
+  color: #f5deb3;
+}
+
+.dashboard.dark .theme-btn:hover {
+  background-color: rgba(212, 175, 55, 0.15);
+}
+
+/* 🌟 Main Content */
+.mat-sidenav-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: auto;
+}
+
+.page-content {
+  flex: 1;
+  padding: 1.5rem;
+  background-color: #f9f6f2;
+  color: #2e2e2e;
+  min-height: 100%;
+  transition: all 0.3s ease-in-out;
+}
+
+.dashboard.dark .page-content {
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+}
+
+/* 📱 Responsive Fixes */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 220px;
+  }
+
+  .navbar {
+    padding: 10px 15px;
+  }
+
+  .menu-list button {
+    font-size: 0.95rem;
+  }
 }

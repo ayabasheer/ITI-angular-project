@@ -1,9 +1,62 @@
 .profile-container {
+  
   max-width: 600px;
-  margin: auto;
+  margin: 2rem auto;
 }
 
-.card {
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+.profile-card {
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+  background: #fff;
+  color: #222;
+}
+
+.profile-card.dark-card {
+  background: #121212;
+  color: #fff;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+mat-form-field input {
+  background: #fff;
+  border-radius: 6px;
+}
+mat-card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  margin-bottom: 1em;
+}
+.profile-card.dark-card mat-form-field input {
+  background: #1e1e1e;
+  color: #fff;
+}
+
+.error {
+  color: #f44336;
+  font-size: 0.8rem;
+  margin-top: 0.2rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+button {
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }

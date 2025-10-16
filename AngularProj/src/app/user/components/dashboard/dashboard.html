@@ -1,72 +1,68 @@
-<div [class.dark-mode]="isDarkMode" class="dashboard d-flex min-vh-100">
+<mat-sidenav-container class="dashboard">
+  <mat-sidenav #sidenav 
+               class="sidebar"
+               [mode]="isMobile ? 'over' : 'side'"
+               [opened]="sidebarOpen"
+               (backdropClick)="onBackdropClick()"
+               role="navigation"
+               aria-label="Main navigation">
 
-  <!-- Sidebar -->
-  <aside [class.closed]="!sidebarOpen" class="sidebar bg-light shadow-sm p-3 d-flex flex-column">
-    <div class="sidebar-header d-flex justify-content-between align-items-center mb-4">
-      <h4 class="m-0">Dashboard</h4>
-      <button class="btn btn-sm btn-outline-secondary d-md-none" (click)="toggleSidebar()">☰</button>
+    <!-- Logo Section -->
+    <div class="sidebar-header">
+      <h2 class="logo">
+        <span class="logo-main">Event</span>
+        <span class="logo-accent">ura</span>
+      </h2>
     </div>
 
-    <ul class="nav flex-column">
-      <li class="nav-item mb-2" [class.active]="activeTab==='Dashboard'" (click)="onNavItemClick('Dashboard')">
-        <i class="bi bi-speedometer2 me-2"></i> Overview
-      </li>
-      <li class="nav-item mb-2" [class.active]="activeTab==='Events'" (click)="onNavItemClick('Events')">
-        <i class="bi bi-calendar-event me-2"></i> Events
-      </li>
-      <li class="nav-item mb-2" [class.active]="activeTab==='Feedback'" (click)="onNavItemClick('Feedback')">
-        <i class="bi bi-chat-left-text me-2"></i> Feedback
-      </li>
-      <li class="nav-item mb-2" [class.active]="activeTab==='Profile'" (click)="onNavItemClick('Profile')">
-        <i class="bi bi-person-circle me-2"></i> Profile
-      </li>
-    </ul>
+    <!-- Tabs Section -->
+    <mat-nav-list class="menu-list">
+      <button mat-list-item (click)="selectTab('overview')" [class.active]="currentTab==='overview'">
+        <mat-icon>dashboard</mat-icon>
+        <span>Overview</span>
+      </button>
 
-    <hr class="my-3">
+      <button mat-list-item (click)="selectTab('feedback')" [class.active]="currentTab==='feedback'">
+        <mat-icon>feedback</mat-icon>
+        <span>Feedback</span>
+      </button>
 
-    <div class="form-check form-switch mt-auto">
-      <input class="form-check-input" type="checkbox" id="darkModeToggle" [checked]="isDarkMode" (change)="toggleDarkMode()">
-      <label class="form-check-label" for="darkModeToggle">Dark Mode</label>
+      <button mat-list-item (click)="selectTab('events')" [class.active]="currentTab==='events'">
+        <mat-icon>event</mat-icon>
+        <span>Event</span>
+      </button>
+
+      <button mat-list-item (click)="selectTab('profile')" [class.active]="currentTab==='profile'">
+        <mat-icon>person</mat-icon>
+        <span>Profile</span>
+      </button>
+    </mat-nav-list>
+
+    <!-- Footer -->
+    <div class="sidebar-footer">
+      <small>© 2025 Eventura</small>
     </div>
-  </aside>
+  </mat-sidenav>
 
-  <!-- Main Content -->
-  <main class="flex-grow-1 p-4">
-    <div *ngIf="activeTab==='Dashboard'" class="overview">
-      <h2>Welcome, {{ userData.name || 'User' }}!</h2>
-      <p>Here’s your quick overview:</p>
-
-      <div class="row mt-4">
-        <div class="col-md-4 mb-3">
-          <div class="card shadow-sm">
-            <div class="card-body text-center">
-              <h5>Accepted Events</h5>
-              <p class="display-6">{{ acceptedEventsCount }}</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 mb-3">
-          <div class="card shadow-sm">
-            <div class="card-body text-center">
-              <h5>Pending Events</h5>
-              <p class="display-6">{{ pendingEventsCount }}</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 mb-3">
-          <div class="card shadow-sm">
-            <div class="card-body text-center">
-              <h5>Declined Events</h5>
-              <p class="display-6">{{ declinedEventsCount }}</p>
-            </div>
-          </div>
-        </div>
+  <mat-sidenav-content class="main-content">
+    <header class="navbar">
+      <div class="left">
+        <button mat-icon-button class="nav-toggler" (click)="toggleSidebar()">
+          <mat-icon>{{ sidebarOpen ? 'menu_open' : 'menu' }}</mat-icon>
+        </button>
+        <div class="welcome">👋 Welcome, <span>{{ currentUser?.name || 'Guest' }}</span></div>
       </div>
-    </div>
 
-    <ng-container *ngIf="activeTab==='Events'"><app-events></app-events></ng-container>
-    <ng-container *ngIf="activeTab==='Feedback'"><app-feedback></app-feedback></ng-container>
-    <ng-container *ngIf="activeTab==='Profile'"><app-profile></app-profile></ng-container>
-  </main>
+      <div class="right">
+        <button mat-stroked-button class="theme-btn" (click)="toggleTheme()" aria-label="Toggle theme mode">
+          <mat-icon>{{ darkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
+          <span>{{ darkMode ? 'Light' : 'Dark' }}</span>
+        </button>
+      </div>
+    </header>
 
-</div>
+    <main class="page-content fade-in">
+      <ng-container [ngComponentOutlet]="currentComponent"></ng-container>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

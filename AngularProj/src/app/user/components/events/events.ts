@@ -1,101 +1,111 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-
-interface GuestInvitation {
-  id: number;
-  userId: string;
-  eventName: string;
-  eventDate: string;
-  location: string;
-  status: 'pending' | 'accepted' | 'declined';
-  description?: string;
-}
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import Swal from 'sweetalert2';
+import { Event, GuestUser } from '../../interfaces/guest.interface';
 
 @Component({
   selector: 'app-events',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule],
   templateUrl: './events.html',
   styleUrls: ['./events.css']
 })
-export class Events implements OnInit {
-  searchQuery: string = '';
-  userId: string = '';
-  invitations: GuestInvitation[] = [];
+export class EventsComponent implements OnInit {
+  events: Event[] = [];
+  filteredEvents: Event[] = [];
+  currentUser: GuestUser | null = null;
+  selectedEvent: Event | null = null;
+  activeTab: 'All' | 'Pending' | 'Accepted' | 'Refused' = 'All';
 
-  constructor(private dialog: MatDialog) {}
+  ngOnInit(): void {
+    this.loadUser();
+    this.loadEvents();
+    this.filterEvents();
+  }
 
-  ngOnInit() {
-    const userData = localStorage.getItem('currentUser');
-    if (userData) this.userId = JSON.parse(userData).id;
+  private loadUser(): void {
+    const user = localStorage.getItem('currentUser');
+    this.currentUser = user ? JSON.parse(user) : null;
+  }
 
-    const storedInvitations = localStorage.getItem('invitations');
-    if (storedInvitations) {
-      this.invitations = JSON.parse(storedInvitations).filter((inv: GuestInvitation) => inv.userId === this.userId);
+  private loadEvents(): void {
+    const stored = localStorage.getItem('events');
+    if (!stored || !this.currentUser) return;
+    const allEvents: Event[] = JSON.parse(stored);
+    this.events = allEvents.filter(e => Array.isArray(e.guests) && e.guests.includes(this.currentUser!.id));
+  }
+
+  viewDetails(event: Event): void {
+    this.selectedEvent = event;
+  }
+
+  closeDetails(): void {
+    this.selectedEvent = null;
+  }
+
+  setTab(tab: 'All' | 'Pending' | 'Accepted' | 'Refused'): void {
+    this.activeTab = tab;
+    this.filterEvents();
+  }
+
+  private filterEvents(): void {
+    if (this.activeTab === 'All') {
+      this.filteredEvents = [...this.events];
+    } else {
+      this.filteredEvents = this.events.filter(e => e.status === this.activeTab);
     }
   }
 
-  get filteredInvitations() {
-    if (!this.searchQuery.trim()) return this.invitations;
-    return this.invitations.filter(inv =>
-      inv.eventName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-      inv.location.toLowerCase().includes(this.searchQuery.toLowerCase())
-    );
-  }
-
-  accept(inv: GuestInvitation) {
-    inv.status = 'accepted';
-    this.updateLocalStorage();
-  }
-
-  decline(inv: GuestInvitation) {
-    inv.status = 'declined';
-    this.updateLocalStorage();
-  }
-
-  // Open Event as a modal (inline template)
-  openEventDetail(inv: GuestInvitation) {
-    const dialogRef = this.dialog.open(EventDetailModal, {
-      width: '400px',
-      data: inv
+  acceptEvent(event: Event): void {
+    Swal.fire({
+      icon: 'question',
+      title: 'Accept Event',
+      text: `Are you sure you want to accept "${event.name}"?`,
+      showCancelButton: true,
+      confirmButtonText: 'Yes, accept',
+      cancelButtonText: 'Cancel'
+    }).then(result => {
+      if (result.isConfirmed) {
+        event.status = 'Accepted';
+        this.saveEvents();
+        this.filterEvents();
+        Swal.fire('Accepted!', `You accepted "${event.name}".`, 'success');
+      }
     });
   }
 
-  private updateLocalStorage() {
-    const allInvitations = JSON.parse(localStorage.getItem('invitations') || '[]');
-    const updatedInvitations = allInvitations.map((i: GuestInvitation) =>
-      i.id === i.id ? i : i
-    );
-    localStorage.setItem('invitations', JSON.stringify(updatedInvitations));
+  refuseEvent(event: Event): void {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Refuse Event',
+      text: `Are you sure you want to refuse "${event.name}"?`,
+      showCancelButton: true,
+      confirmButtonText: 'Yes, refuse',
+      cancelButtonText: 'Cancel'
+    }).then(result => {
+      if (result.isConfirmed) {
+        event.status = 'Refused';
+        this.saveEvents();
+        this.filterEvents();
+        Swal.fire('Refused!', `You refused "${event.name}".`, 'success');
+      }
+    });
   }
-}
 
-// Modal component defined inside the same file
-import { Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+  private saveEvents(): void {
+    localStorage.setItem('events', JSON.stringify(this.events));
+  }
 
-@Component({
-  selector: 'event-detail-modal',
-  standalone: true,
-  imports: [CommonModule, MatDialogModule],
-  template: `
-    <h2 mat-dialog-title>{{ data.eventName }}</h2>
-    <mat-dialog-content>
-      <p><strong>Date:</strong> {{ data.eventDate }}</p>
-      <p><strong>Location:</strong> {{ data.location }}</p>
-      <p><strong>Status:</strong> {{ data.status }}</p>
-      <p *ngIf="data.description"><strong>Description:</strong> {{ data.description }}</p>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="dialogRef.close()">Close</button>
-    </mat-dialog-actions>
-  `
-})
-export class EventDetailModal {
-  constructor(
-    public dialogRef: MatDialogRef<EventDetailModal>,
-    @Inject(MAT_DIALOG_DATA) public data: GuestInvitation
-  ) {}
+  // عدد الضيوف الذين قبلوا الدعوة
+  getAcceptedGuests(event: Event): number {
+    if (!event.guests) return 0;
+    const storedUsers = localStorage.getItem('users'); // users list in localStorage
+    if (!storedUsers) return 0;
+    const allUsers: GuestUser[] = JSON.parse(storedUsers);
+    return event.guests
+      .map(id => allUsers.find(u => u.id === id))
+      .filter(u => u && u.status === 'Accepted').length;
+  }
 }

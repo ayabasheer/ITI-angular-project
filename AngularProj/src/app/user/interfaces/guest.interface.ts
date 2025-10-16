@@ -1,72 +1,55 @@
-export interface GuestInvitation {
-  id: number;
-  eventId: number;
-  eventName: string;
-  eventDescription: string;
-  eventDate: Date;
-  eventTime: string;
-  location: string;
-  organizerName: string;
-  status: 'pending' | 'accepted' | 'declined';
-  invitedDate: Date;
-  respondedDate: Date | null;
-  canProvideFeedback: boolean;
-  eventImage: string | null;
-}
-
-export interface GuestFeedback {
-  id: number;
-  eventId: number;
-  eventName: string;
-  rating: number;
-  comment: string;
-  createdAt: Date;
-}
-
-export interface UpcomingEvent {
+export interface GuestUser {
   id: number;
   name: string;
-  startDate: Date;
-  status: 'pending' | 'accepted' | 'declined';
+  email: string;
+  password?: string;
+  phone?: string;
+  role?: string;
+  status?: 'Accepted' | 'Pending' | 'Declined';
+  createdAt?: string;
+  eventId?: number | null;
+  feedbackId?: number | null;
+  expenses?: Expense[];
 }
 
-export interface EventDetails {
+export interface Expense {
   id: number;
-  name: string;
-  description: string;
-  category: string;
-  location: string;
-  startDate: Date;
-  endDate: Date;
-  time: string;
-  organizerName: string;
-  guestCount: number;
-  budget: number;
-  progress: number;
-  status: 'upcoming' | 'in-progress' | 'completed' | 'cancelled';
-  image: string | null;
-  tasks: EventTask[];
-  expenses: EventExpense[];
-}
-
-export interface EventTask {
-  id: number;
-  title: string;
-  description: string;
-  assignedTo: string;
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  deadline: Date;
-  status: 'not-started' | 'in-progress' | 'completed';
-  comments: string[];
-}
-
-export interface EventExpense {
-  id: number;
+  eventId: number;
   name: string;
   amount: number;
-  category: 'venue' | 'decoration' | 'food' | 'music' | 'transport' | 'miscellaneous';
-  date: Date;
-  notes: string;
+  category: string;
+  date?: string;
+}
+
+export interface Event {
+  id: number;
+  name: string;
+  description?: string;
+  location?: string;
+  startDate: string;
+  endDate: string;
+  budget?: number;
+  createdAt?: string;
+  createdBy?: number;
+  updatedAt?: string;
+  status?: 'Pending' | 'Accepted' | 'Refused' | 'InProgress' | 'Completed' | 'Cancelled';
+  guests?: number[]; // ← array of guest IDs
+  guestCount?: number;
+  expenses?: Expense[];
+  feedbacks?: Feedback[];
+  tasks?: number[];
+  image?: string;
+  category?: string;
+}
+
+
+export interface Feedback {
+  id: number;
+  guestId: number;
+  eventId: number;
+  comment: string;
+  rating: number;
+  createdAt: string;
 }
 
 export interface GuestStats {
@@ -76,3 +59,14 @@ export interface GuestStats {
   feedbackProvided: number;
 }
 
+export interface AppSettings {
+  darkMode: boolean;
+} 
+export interface Invention {
+  id: number;
+  name: string;
+  description: string;
+  guestId: number; // id of the guest who owns it
+  image?: string;
+  status?: 'Pending' | 'Approved' | 'Rejected';
+}
