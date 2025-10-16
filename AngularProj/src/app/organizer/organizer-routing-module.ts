@@ -6,11 +6,11 @@ import { Expenses } from './components/expenses/expenses';
 import { Guests } from './components/guest/guest';
 import { Tasks } from './components/tasks/tasks';
 import { Events } from './components/events/events';
-import { FeedbackComponent } from '../anonymous/components/feedback/feedback.component';
-import { EventDetailComponent } from '../anonymous/components/events/event-detail.component';
-
-
-
+import { EventDetails } from './components/event-details/event-details';
+import { GuestDetails } from './components/guest-details/guest-details';
+import { TaskDetails } from './components/task-details/task-details';
+import { ExpenseDetails } from './components/expense-details/expense-details';
+import { OrganizerFeedback } from './components/feedback/feedback';
 
 export const routes: Routes = [
   {
@@ -18,11 +18,14 @@ export const routes: Routes = [
     component: Dashboard,
     children: [
       { path: 'events', component: Events },
-      { path: 'events/:id', component: EventDetailComponent },
+      { path: 'events/:id', component: EventDetails},
       { path: 'guests', component: Guests },
+      { path: 'guests/:id', component: GuestDetails },
       { path: 'tasks', component: Tasks },
+      { path: 'tasks/:id', component: TaskDetails },
       { path: 'expenses', component: Expenses },
-      { path: 'feedback', component: FeedbackComponent }
+      { path: 'expenses/:id', component: ExpenseDetails },
+      { path: 'feedback', component: OrganizerFeedback },
     ]
   }
 ];

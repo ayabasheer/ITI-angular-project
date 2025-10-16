@@ -1,6 +1,17 @@
 <div style="padding:20px">
     <h2>Expenses</h2>
-    <ul>
-        <li *ngFor="let ex of expenses">{{ ex.id }} - {{ ex.name }} - {{ ex.amount | number:'1.2-2' }}</li>
-    </ul>
+    <div *ngIf="expenses.length; else no" class="row">
+        <div class="col-md-4 mb-3" *ngFor="let ex of expenses">
+            <div class="card" style="cursor: pointer;" [routerLink]="['/dashboard/expenses', ex.id]">
+                <div class="card-body">
+                    <h5 class="card-title">{{ ex.name }}</h5>
+                    <p class="card-text">{{ ex.amount | currency }}</p>
+                    <p class="card-text"><small class="text-muted">Category: {{ ex.category }}</small></p>
+                    <p class="card-text"><small class="text-muted">Date: {{ ex.date | date:'short' }}</small></p>
+                    <p class="card-text"><small class="text-muted">Event: {{ getEventName(ex.eventId) }}</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ng-template #no>No expenses found.</ng-template>
 </div>

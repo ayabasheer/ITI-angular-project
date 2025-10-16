@@ -1,6 +1,16 @@
 <div style="padding:20px">
     <h2>Guests</h2>
-    <ul>
-        <li *ngFor="let g of guests">{{ g.id }} - {{ g.name }} - {{ g.email }}</li>
-    </ul>
+    <div *ngIf="guests.length; else no" class="row">
+        <div class="col-md-4 mb-3" *ngFor="let g of guests">
+            <div class="card" style="cursor: pointer;" [routerLink]="['/dashboard/guests', g.id]">
+                <div class="card-body">
+                    <h5 class="card-title">{{ g.name }}</h5>
+                    <p class="card-text">{{ g.email }}</p>
+                    <p class="card-text"><small class="text-muted">Status: {{ g.status }}</small></p>
+                    <p class="card-text"><small class="text-muted">Event: {{ getEventName(g.eventId) }}</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ng-template #no>No guests found.</ng-template>
 </div>

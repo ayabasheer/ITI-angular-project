@@ -1,0 +1,20 @@
+<div class="site-container">
+    <div *ngIf="!guest" class="alert alert-danger">Guest not found.</div>
+    <div *ngIf="guest">
+        <h2>{{ guest.name }}</h2>
+        <p><strong>Email:</strong> {{ guest.email }}</p>
+        <p><strong>Phone:</strong> {{ guest.phone || 'N/A' }}</p>
+        <p><strong>Status:</strong> {{ guest.status }}</p>
+        <p><strong>Event:</strong> {{ event?.name || 'Unknown Event' }}</p>
+        <p><strong>Role:</strong> {{ guest.role }}</p>
+        <p><strong>Created At:</strong> {{ guest.createdAt | date:'medium' }}</p>
+        <div *ngIf="feedback">
+            <h4>Feedback</h4>
+            <div class="border rounded p-2 mb-2">
+                <div>Rating: {{ feedback.rating }}</div>
+                <div>{{ feedback.comment }}</div>
+            </div>
+        </div>
+        <div *ngIf="!feedback" class="text-muted">No feedback provided.</div>
+    </div>
+</div>

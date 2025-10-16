@@ -1,0 +1,11 @@
+<div class="site-container">
+    <div *ngIf="!expense" class="alert alert-danger">Expense not found.</div>
+    <div *ngIf="expense">
+        <h2>{{ expense.name }}</h2>
+        <p><strong>Amount:</strong> {{ expense.amount | currency }}</p>
+        <p><strong>Category:</strong> {{ expense.category }}</p>
+        <p><strong>Date:</strong> {{ expense.date | date:'medium' }}</p>
+        <p><strong>Event:</strong> {{ event?.name || 'Unknown Event' }}</p>
+        <p *ngIf="expense.notes"><strong>Notes:</strong> {{ expense.notes }}</p>
+    </div>
+</div>
