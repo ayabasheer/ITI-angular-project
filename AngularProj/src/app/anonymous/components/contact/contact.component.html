@@ -1,28 +1,42 @@
 <app-navbar></app-navbar>
-<div class="site-container">
-  <div class="card card-creative p-4">
-    <h2>Contact Us</h2>
-    <p class="text-muted">Tell us about your event and we'll be in touch.</p>
 
-    <form class="mt-3" #f="ngForm" (ngSubmit)="submit(f)">
-      <div *ngIf="submitted" class="alert alert-success">Thank you — your message has been sent.</div>
-      <div class="mb-3">
-        <label class="form-label">Name</label>
-        <input name="name" class="form-control" [(ngModel)]="model.name" required #name="ngModel" />
-        <div *ngIf="name.invalid && name.touched" class="text-danger">Name is required.</div>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Email</label>
-        <input name="email" class="form-control" [(ngModel)]="model.email" required email #email="ngModel" />
-        <div *ngIf="email.invalid && email.touched" class="text-danger">Please enter a valid email.</div>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Message</label>
-        <textarea name="message" class="form-control" rows="4" [(ngModel)]="model.message" required #message="ngModel"></textarea>
-        <div *ngIf="message.invalid && message.touched" class="text-danger">Message is required.</div>
-      </div>
-      <button class="btn btn-primary" [disabled]="f.invalid">Send</button>
-    </form>
-  </div>
+<section class="hero ">
+	<div class="hero-content mb-5 fade-in" >
+		<h1>Contact Us</h1>
+		<p>Tell us about your event and we'll be in touch.</p>
+	</div>
+</section>
+
+<div class="site-container">
+	<div class="contact-auth">
+		<form class="mt-3 contact-form" #f="ngForm" (ngSubmit)="submit(f)" id="contact-form">
+				<div *ngIf="submitted" class="contact-success">Thank you — your message has been sent.</div>
+
+				<div class="row">
+					<div>
+						<label class="form-label">Name</label>
+						<input name="name" class="form-control" [(ngModel)]="model.name" required #name="ngModel" />
+						<div *ngIf="name.invalid && name.touched" class="text-danger">Name is required.</div>
+					</div>
+
+					<div>
+						<label class="form-label">Email</label>
+						<input name="email" class="form-control" [(ngModel)]="model.email" required email #email="ngModel" />
+						<div *ngIf="email.invalid && email.touched" class="text-danger">Please enter a valid email.</div>
+					</div>
+				</div>
+
+				<div class="full">
+					<label class="form-label">Message</label>
+					<textarea name="message" class="form-control" rows="6" [(ngModel)]="model.message" required #message="ngModel"></textarea>
+					<div *ngIf="message.invalid && message.touched" class="text-danger">Message is required.</div>
+				</div>
+
+				<div style="display:flex;justify-content:center;margin-top:1rem">
+					<button class="btn btn-primary">Send</button>
+				</div>
+			</form>
+		</div>
 </div>
+
 <app-footer></app-footer>

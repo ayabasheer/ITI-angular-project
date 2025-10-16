@@ -15,6 +15,7 @@ export class AboutComponent implements OnInit {
 	clientsCount = 0;
 	years = 0;
 	testimonials: Array<{ comment: string; guestName?: string; eventTitle?: string }> = [];
+	topFeedbacks: Array<{ rating: number; comment?: string; guestName?: string; eventTitle?: string }> = [];
 
 	ngOnInit(): void {
 		try {
@@ -23,15 +24,16 @@ export class AboutComponent implements OnInit {
 			const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
 
 			this.eventsCount = Array.isArray(events) ? events.length : 0;
-			this.clientsCount = Array.isArray(guests) ? guests.length : 0;
-			this.years = 5; // default baseline; could be computed from data
+			this.clientsCount = Array.isArray(guests) ? guests.length *7: 0;
+			this.years = 5;
 
-			// pick up to 4 top testimonials by rating
-			const topFeedbacks = Array.isArray(feedbacks) ? feedbacks.slice(0, 6) : [];
-			for (const fb of topFeedbacks) {
-				const guest = guests.find((g: any) => g.id === fb.guestId) || {};
-				this.testimonials.push({ comment: fb.comment || '', guestName: guest.name || ('Guest ' + fb.guestId) });
+			const recentFeedbacks = Array.isArray(feedbacks) ? feedbacks.slice(-6).reverse() : [];
+			for (const fb of recentFeedbacks) {
+				const guest = (Array.isArray(guests) ? guests.find((g: any) => g.id === fb.guestId) : null) || {};
+				const event = (Array.isArray(events) ? events.find((e: any) => e.id === fb.eventId) : null) || {};
+				this.testimonials.push({ comment: fb.comment || '', guestName: guest.name || ('Guest ' + fb.guestId), eventTitle: event.name || '' });
 			}
+
 		} catch (e) {
 			console.warn('Unable to load about metrics from localStorage', e);
 		}
@@ -43,15 +45,17 @@ export class AboutComponent implements OnInit {
 		// simple incremental animation
 		const dur = 800;
 		const steps = 30;
-		const eStep = Math.max(1, Math.floor(this.eventsCount / steps));
-		const cStep = Math.max(1, Math.floor(this.clientsCount / steps));
+		const eTarget = this.eventsCount;
+		const cTarget = this.clientsCount;
+		const eStep = Math.max(1, Math.floor(eTarget / steps));
+		const cStep = Math.max(1, Math.floor(cTarget / steps));
 		let e = 0, c = 0;
 		const iv = setInterval(() => {
-			e = Math.min(this.eventsCount, e + eStep);
-			c = Math.min(this.clientsCount, c + cStep);
+			e = Math.min(eTarget, e + eStep);
+			c = Math.min(cTarget, c + cStep);
 			this.eventsCount = e;
 			this.clientsCount = c;
-			if (e >= this.eventsCount && c >= this.clientsCount) {
+			if (e >= eTarget && c >= cTarget) {
 				clearInterval(iv);
 			}
 		}, Math.max(10, Math.floor(dur / steps)));
