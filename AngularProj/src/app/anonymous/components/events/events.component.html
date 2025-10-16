@@ -4,9 +4,9 @@
   <div *ngIf="events.length === 0" class="alert alert-info">No completed events available.</div>
 
   <div class="row" *ngIf="pagedEvents.length > 0">
-    <div class="w-25" *ngFor="let e of pagedEvents">
+    <div class="w-25" *ngFor="let e of pagedEvents; let i = index">
       <a [routerLink]="['/events', e.id]" class="event-link">
-        <div class="card mb-3">
+        <div class="card mb-3" [style.animation-delay.ms]="i * 100">
           <img height="200" [src]="e.image || defaultImage" class="img-fluid rounded-start" alt="event image"  />
           <div class="card-body">
             <h5 class="card-title">{{e.title}}</h5>
