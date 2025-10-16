@@ -1,0 +1,17 @@
+<div style="padding:20px">
+    <h2>Feedback</h2>
+    <div *ngIf="feedbacks.length; else no" class="row">
+        <div class="col-md-4 mb-3" *ngFor="let f of feedbacks">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ getGuestName(f.guestId) }}</h5>
+                    <p class="card-text">{{ f.comment }}</p>
+                    <p class="card-text"><small class="text-muted">Rating: {{ f.rating }}/5</small></p>
+                    <p class="card-text"><small class="text-muted">Event: {{ getEventName(f.eventId) }}</small></p>
+                    <p class="card-text"><small class="text-muted">{{ f.createdAt | date:'short' }}</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ng-template #no>No feedback found.</ng-template>
+</div>

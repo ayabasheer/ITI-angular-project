@@ -1,0 +1,23 @@
+<div class="site-container">
+    <div *ngIf="!task" class="alert alert-danger">Task not found.</div>
+    <div *ngIf="task">
+        <h2>{{ task.title }}</h2>
+        <p><strong>Description:</strong> {{ task.description || 'N/A' }}</p>
+        <p><strong>Priority:</strong> {{ task.priority }}</p>
+        <p><strong>Status:</strong> {{ task.status }}</p>
+        <p><strong>Deadline:</strong> {{ task.deadline | date:'medium' }}</p>
+        <p><strong>Assigned To:</strong> {{ assignedTo?.name || 'Unassigned' }}</p>
+        <p><strong>Event:</strong> {{ event?.name || 'Unknown Event' }}</p>
+        <p><strong>Created At:</strong> {{ task.createdAt | date:'medium' }}</p>
+        <p><strong>Updated At:</strong> {{ task.updatedAt | date:'medium' }}</p>
+        <div *ngIf="task.comments && task.comments.length">
+            <h4>Comments</h4>
+            <ul class="list-unstyled">
+                <li *ngFor="let comment of task.comments" class="border rounded p-2 mb-2">
+                    {{ comment }}
+                </li>
+            </ul>
+        </div>
+        <div *ngIf="!task.comments || !task.comments.length" class="text-muted">No comments.</div>
+    </div>
+</div>
