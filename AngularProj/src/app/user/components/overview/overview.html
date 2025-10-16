@@ -1,0 +1,51 @@
+<div class="overview-container">
+  <h2 class="overview-title">Event Overview</h2>
+
+  <div class="stats-grid">
+    <mat-card class="stat-card">
+      <mat-icon color="primary">event</mat-icon>
+      <div class="stat-content">
+        <h3>{{ stats.totalInvitations }}</h3>
+        <p>Total Invitations</p>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-icon color="accent">check_circle</mat-icon>
+      <div class="stat-content">
+        <h3>{{ stats.acceptedEvents }}</h3>
+        <p>Completed Events</p>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-icon color="warn">star</mat-icon>
+      <div class="stat-content">
+        <h3>{{ stats.averageRatingGiven }}</h3>
+        <p>Avg Rating</p>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-icon color="primary">feedback</mat-icon>
+      <div class="stat-content">
+        <h3>{{ stats.feedbackProvided }}</h3>
+        <p>Feedback Given</p>
+      </div>
+    </mat-card>
+  </div>
+
+  <h3 class="recent-title">Recent Events</h3>
+  <div class="event-list">
+    <mat-card *ngFor="let event of events.slice(-3)" class="event-card">
+      <img *ngIf="event.image" [src]="event.image" alt="{{ event.name }}" class="event-image" />
+      <div class="event-details">
+        <h4>{{ event.name }}</h4>
+        <p class="desc">{{ event.description || 'No description available' }}</p>
+        <div class="status" [style.color]="getStatusColor(event.status)">
+          <mat-icon>circle</mat-icon> {{ event.status }}
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div>

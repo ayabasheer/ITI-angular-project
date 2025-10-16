@@ -1,39 +1,51 @@
-<div class="feedback-container container py-4">
-  <h2 class="mb-4">My Feedback</h2>
+<div class="feedback-container">
+  <h2 class="title">My Feedbacks</h2>
 
-  <div class="card p-3 mb-4">
-    <h5>Submit New Feedback</h5>
-    <div class="mb-3">
-      <label for="eventSelect" class="form-label">Event</label>
-      <select id="eventSelect" class="form-select" [(ngModel)]="selectedEvent">
-        <option value="" disabled>Select Event</option>
-        <option *ngFor="let e of getEventsForUser()" [value]="e">{{ e }}</option>
-      </select>
-    </div>
-
-    <div class="mb-3">
-      <label for="comment" class="form-label">Comment</label>
-      <textarea id="comment" class="form-control" [(ngModel)]="newComment" rows="3"></textarea>
-    </div>
-
-    <div class="mb-3">
-      <label for="rating" class="form-label">Rating</label>
-      <input type="number" id="rating" class="form-control" [(ngModel)]="newRating" min="1" max="5"/>
-    </div>
-
-    <button class="btn btn-primary" (click)="submitFeedback()">Submit Feedback</button>
+  <!-- No feedback message -->
+  <div *ngIf="!feedbacks.length" class="empty">
+    <p>No feedbacks yet. Be the first to share your thoughts!</p>
   </div>
 
-  <h5>Previous Feedback</h5>
-  <div *ngIf="feedbacks.length === 0" class="alert alert-info">
-    No feedback submitted yet.
+  <!-- Feedback cards -->
+  <div class="feedback-list" *ngIf="feedbacks.length">
+    <mat-card *ngFor="let fb of feedbacks" class="feedback-card">
+      <mat-card-header>
+        <mat-card-title>{{ getEventName(fb.eventId) }}</mat-card-title>
+        <mat-card-subtitle>{{ fb.createdAt | date:'mediumDate' }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="comment">{{ fb.comment }}</p>
+        <div class="rating">
+          <span *ngFor="let r of stars" [class.filled]="r <= fb.rating">★</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
 
-  <div *ngFor="let f of feedbacks" class="card mb-3">
-    <div class="card-body">
-      <h6>{{ f.eventName }}</h6>
-      <p>{{ f.comment }}</p>
-      <p>Rating: {{ f.rating }} / 5</p>
+  <!-- Add new feedback -->
+  <div class="add-feedback" *ngIf="userEvents.length">
+    <h3>Add New Feedback</h3>
+
+    <label>Event:</label>
+    <select [(ngModel)]="selectedEventId">
+      <option *ngFor="let ev of userEvents" [value]="ev.id">{{ ev.name }}</option>
+    </select>
+
+    <label>Rating:</label>
+    <div class="stars-input">
+      <span *ngFor="let r of stars" 
+            (click)="selectRating(r)" 
+            [class.selected]="r <= newRating">★</span>
     </div>
+
+    <label>Comment:</label>
+    <textarea [(ngModel)]="newComment" rows="4" placeholder="Share your experience..."></textarea>
+
+    <button mat-raised-button color="primary" (click)="addFeedback()">Submit Feedback</button>
+  </div>
+
+  <!-- No finished events -->
+  <div *ngIf="!userEvents.length" class="empty">
+    <p>No finished events available for feedback yet.</p>
   </div>
 </div>

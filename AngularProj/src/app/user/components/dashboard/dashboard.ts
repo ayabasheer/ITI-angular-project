@@ -1,59 +1,157 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { Events } from '../events/events';
-import { Feedback } from '../feedback/feedback';
-import { Profile } from '../profile/profile';
+import { MatSidenavModule, MatSidenav } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+
+import { GuestUser } from '../../interfaces/guest.interface';
+import { FeedbackComponent } from '../feedback/feedback';
+import { EventsComponent } from '../events/events';
+import { ProfileComponent } from '../profile/profile';
+import { OverviewComponent } from '../overview/overview';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, Events, Feedback, Profile],
+  imports: [
+    CommonModule,
+    MatSidenavModule,
+    MatListModule,
+    MatIconModule,
+    MatButtonModule,
+    MatCardModule,
+    FeedbackComponent,
+    EventsComponent,
+    ProfileComponent,
+    OverviewComponent
+  ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
-export class Dashboard {
-  isDarkMode = false;
-  activeTab: 'Dashboard' | 'Events' | 'Feedback' | 'Profile' = 'Dashboard';
-  sidebarOpen: boolean = true;
+export class DashboardComponent implements OnInit {
 
-  userData: any = {};
-  invitations: any[] = [];
+  @ViewChild('sidenav') sidenav!: MatSidenav;
 
-  constructor() {
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) this.userData = JSON.parse(storedUser);
+  sidebarOpen = true;
+  darkMode = false;
+  isMobile = false;
 
-    const darkPref = localStorage.getItem('darkMode');
-    this.isDarkMode = darkPref === 'true';
+  currentTab: 'overview' | 'feedback' | 'events' | 'profile' = 'overview';
 
-    const storedInvitations = localStorage.getItem('invitations');
-    if (storedInvitations) this.invitations = JSON.parse(storedInvitations)
-      .filter((inv: any) => inv.userId === this.userData.id);
+  tabComponents: Record<string, Type<any>> = {
+    overview: OverviewComponent,
+    feedback: FeedbackComponent,
+    events: EventsComponent,
+    profile: ProfileComponent
+  };
+
+  get currentComponent(): Type<any> {
+    return this.tabComponents[this.currentTab];
   }
 
-  toggleDarkMode() {
-    this.isDarkMode = !this.isDarkMode;
-    localStorage.setItem('darkMode', String(this.isDarkMode));
+  currentUser: GuestUser | null = null;
+
+  ngOnInit(): void {
+    this.loadUser();
+    this.loadThemeMode();
+    this.applySystemThemePreference();
+    this.checkScreenSize();
   }
 
-  onNavItemClick(tab: 'Dashboard' | 'Events' | 'Feedback' | 'Profile') {
-    this.activeTab = tab;
+  @HostListener('window:resize')
+  onResize() {
+    this.checkScreenSize();
   }
 
-  toggleSidebar() {
+  checkScreenSize() {
+    this.isMobile = window.innerWidth <= 992;
+    const saved = localStorage.getItem('sidebarOpen');
+    if (this.isMobile) {
+      this.sidebarOpen = false;
+    } else {
+      this.sidebarOpen = saved ? JSON.parse(saved) : true;
+    }
+  }
+
+  toggleSidebar(): void {
     this.sidebarOpen = !this.sidebarOpen;
+    if (this.sidenav) {
+      if (this.sidebarOpen) this.sidenav.open();
+      else this.sidenav.close();
+    }
+    localStorage.setItem('sidebarOpen', JSON.stringify(this.sidebarOpen));
   }
 
-  get acceptedEventsCount() {
-    return this.invitations.filter(i => i.status === 'accepted').length;
+  selectTab(tab: 'overview' | 'feedback' | 'events' | 'profile') {
+    this.currentTab = tab;
+    if (this.isMobile && this.sidenav) {
+      this.sidenav.close();
+      this.sidebarOpen = false;
+    }
   }
 
-  get pendingEventsCount() {
-    return this.invitations.filter(i => i.status === 'pending').length;
+  onBackdropClick() {
+    this.sidebarOpen = false;
+    if (this.sidenav) this.sidenav.close();
   }
 
-  get declinedEventsCount() {
-    return this.invitations.filter(i => i.status === 'declined').length;
+  toggleTheme(): void {
+    this.darkMode = !this.darkMode;
+    localStorage.setItem('themeMode', this.darkMode ? 'dark' : 'light');
+
+    const dashboardEl = document.querySelector('.dashboard');
+    if (this.darkMode) dashboardEl?.classList.add('dark');
+    else dashboardEl?.classList.remove('dark');
+
+    this.updateCSSVariables();
+  }
+
+  private loadThemeMode(): void {
+    const savedTheme = localStorage.getItem('themeMode');
+
+    if (savedTheme) this.darkMode = savedTheme === 'dark';
+    else {
+      this.darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      localStorage.setItem('themeMode', this.darkMode ? 'dark' : 'light');
+    }
+
+    const dashboardEl = document.querySelector('.dashboard');
+    if (this.darkMode) dashboardEl?.classList.add('dark');
+    else dashboardEl?.classList.remove('dark');
+
+    this.updateCSSVariables();
+  }
+
+  private updateCSSVariables(): void {
+    const root = document.documentElement;
+    if (this.darkMode) {
+      root.style.setProperty('--bg', '#121212');
+      root.style.setProperty('--paper', '#1e1e1e');
+      root.style.setProperty('--text', '#f5f5f5');
+      root.style.setProperty('--accent', '#d4b07b');
+    } else {
+      root.style.setProperty('--bg', '#f6f3ef');
+      root.style.setProperty('--paper', '#ffffff');
+      root.style.setProperty('--text', '#2b2b2b');
+      root.style.setProperty('--accent', '#c8a97e');
+    }
+  }
+
+  private loadUser(): void {
+    const user = localStorage.getItem('currentUser');
+    this.currentUser = user ? JSON.parse(user) : null;
+  }
+
+  private applySystemThemePreference(): void {
+    if (!localStorage.getItem('themeMode')) {
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        this.darkMode = true;
+        const dashboardEl = document.querySelector('.dashboard');
+        dashboardEl?.classList.add('dark');
+        localStorage.setItem('themeMode', 'dark');
+      }
+    }
   }
 }

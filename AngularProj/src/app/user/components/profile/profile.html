@@ -1,24 +1,97 @@
-<div class="profile-container container py-4">
-  <h2 class="mb-4">My Profile</h2>
+<div class="profile-container" *ngIf="editableUser; else noUser">
+  <mat-card class="profile-card" [ngClass]="{'dark-card': isDarkMode}">
+    <mat-card-header>
+      <mat-card-title>Profile</mat-card-title>
+    </mat-card-header>
 
-  <div class="card p-4">
-    <div class="mb-3">
-      <label class="form-label">Name</label>
-      <input class="form-control" [(ngModel)]="user.name" [readonly]="!editMode"/>
-    </div>
+    <mat-card-content>
+      <form #profileForm="ngForm" (ngSubmit)="saveProfile(profileForm)">
+        
+        <!-- Name -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Name</mat-label>
+          <input
+            matInput
+            [(ngModel)]="editableUser.name"
+            (ngModelChange)="editableUser.name = $event"
+            name="name"
+            required
+            #nameModel="ngModel"
+          />
+          <div class="error" *ngIf="nameModel.invalid && nameModel.touched">
+            Name must be at least 3 letters.
+          </div>
+        </mat-form-field>
 
-    <div class="mb-3">
-      <label class="form-label">Email</label>
-      <input class="form-control" [(ngModel)]="user.email" [readonly]="!editMode"/>
-    </div>
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input
+            matInput
+            [(ngModel)]="editableUser.email"
+            (ngModelChange)="editableUser.email = $event"
+            name="email"
+            required
+            #emailModel="ngModel"
+          />
+          <div class="error" *ngIf="emailModel.invalid && emailModel.touched || !isEmailValid(editableUser.email)">
+            Enter a valid email.
+          </div>
+        </mat-form-field>
 
-    <div class="mb-3">
-      <label class="form-label">Phone</label>
-      <input class="form-control" [(ngModel)]="user.phone" [readonly]="!editMode"/>
-    </div>
+        <!-- Phone -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Phone</mat-label>
+          <input
+            matInput
+            [(ngModel)]="editableUser.phone"
+            (ngModelChange)="editableUser.phone = $event"
+            name="phone"
+            required
+            #phoneModel="ngModel"
+          />
+          <div class="error" *ngIf="phoneModel.invalid && phoneModel.touched || !isPhoneValid(editableUser.phone)">
+            Enter a valid phone starting with + and 10-15 digits.
+          </div>
+        </mat-form-field>
 
-    <button class="btn btn-primary me-2" *ngIf="!editMode" (click)="toggleEdit()">Edit</button>
-    <button class="btn btn-success me-2" *ngIf="editMode" (click)="saveProfile()">Save</button>
-    <button class="btn btn-secondary" *ngIf="editMode" (click)="toggleEdit()">Cancel</button>
-  </div>
+        <!-- Password -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            [(ngModel)]="editableUser.password"
+            (ngModelChange)="editableUser.password = $event"
+            name="password"
+            type="password"
+            required
+            #passwordModel="ngModel"
+          />
+          <div class="error" *ngIf="passwordModel.invalid && passwordModel.touched || !isPasswordValid(editableUser.password)">
+            Password must be 6+ chars, with uppercase, lowercase, number, and special char.
+          </div>
+        </mat-form-field>
+
+        <div class="actions">
+          <button
+            mat-raised-button
+            color="accent"
+            type="submit"
+            [disabled]="!isFormValid()"
+          >
+            Save
+          </button>
+          <button mat-raised-button color="warn" type="button" (click)="resetForm(profileForm)">
+            Reset
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
 </div>
+
+<ng-template #noUser>
+  <div class="no-user">
+    <p>No user data found. Please log in again.</p>
+  </div>
+</ng-template>
