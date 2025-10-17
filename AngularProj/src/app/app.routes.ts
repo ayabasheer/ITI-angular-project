@@ -8,7 +8,6 @@ import { RegisterComponent } from './anonymous/components/register/register.comp
 import { FeedbackComponent } from './anonymous/components/feedback/feedback.component';
 import { EventsComponent } from './anonymous/components/events/events.component';
 import { EventDetailComponent } from './anonymous/components/events/event-detail.component';
-import { ProfileComponent } from './anonymous/components/profile/profile.component';
 import { CreateEvent } from './organizer/components/create-event/create-event';
 import { UserModule } from './user/user-module';
 
@@ -20,7 +19,6 @@ export const routes: Routes = [
 	{ path: 'contact', component: ContactComponent },
 	{ path: 'login', component: LoginComponent },
 	{ path: 'register', component: RegisterComponent },
-	{ path: 'profile', component: ProfileComponent },
 	{ path: 'events/:id/feedback', component: FeedbackComponent },
 	{ path: 'events/:id', component: EventDetailComponent },
 	{ path: 'events', component: EventsComponent },
