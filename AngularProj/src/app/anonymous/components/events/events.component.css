@@ -161,10 +161,10 @@ a{
 }
 
 .btn-outline-primary:hover ,.btn-outline-primary.active {
-  background: var(--primary);
-  color: #FFFFFF;
-  transform: translateY(-2px);
-  border: var(--primary);
+  background: transparent;
+  color:var(--primary);
+  transform: translateY(-3px);
+  border:1px solid var(--primary);
 }
 .btn-sm {
   font-size: 0.875rem;

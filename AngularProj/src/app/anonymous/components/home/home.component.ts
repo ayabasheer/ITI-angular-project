@@ -1,5 +1,5 @@
 
-import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, ViewChild , ViewEncapsulation} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
@@ -10,7 +10,8 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
 	standalone: true,
 	imports: [CommonModule, RouterLink , NavbarComponent ,FooterComponent],
 	templateUrl: './home.component.html',
-	styleUrls: ['./home.component.css']
+	styleUrls: ['./home.component.css', '../../anonstyles.css'],
+	encapsulation: ViewEncapsulation.None
 })
 export class HomeComponent {
 	events: any[] = [];

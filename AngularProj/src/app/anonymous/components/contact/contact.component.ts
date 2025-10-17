@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component ,ViewEncapsulation } from '@angular/core';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { CommonModule, NgIf } from '@angular/common';
@@ -9,7 +9,8 @@ import { FormsModule } from '@angular/forms';
 	standalone: true,
 	templateUrl: './contact.component.html',
 		imports: [CommonModule, NavbarComponent, FooterComponent, FormsModule],
-	styleUrls: ['./contact.component.css']
+	styleUrls: ['./contact.component.css', '../../anonstyles.css'],
+	encapsulation: ViewEncapsulation.None
 })
 export class ContactComponent {
 	model = { name: '', email: '', message: '' };

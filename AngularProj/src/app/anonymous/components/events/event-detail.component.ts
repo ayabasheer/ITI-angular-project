@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input ,ViewEncapsulation} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
@@ -9,7 +9,8 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
   standalone: true,
   imports: [CommonModule,NavbarComponent, FooterComponent],
   templateUrl: './event-detail.component.html',
-  styleUrls: ['./event-detail.component.css']
+  styleUrls: ['./event-detail.component.css', '../../anonstyles.css'],
+	encapsulation: ViewEncapsulation.None
 })
 export class EventDetailComponent {
   event: any = null;

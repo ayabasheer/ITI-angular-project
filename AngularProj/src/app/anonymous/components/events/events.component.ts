@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component ,ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../shared/services/auth.service';
 import { CommonModule } from '@angular/common';
@@ -11,7 +11,8 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
   standalone: true,
   imports: [CommonModule, RouterLink, NavbarComponent ,FooterComponent],
   templateUrl: './events.component.html',
-  styleUrls: ['./events.component.css']
+  styleUrls: ['./events.component.css', '../../anonstyles.css'],
+	encapsulation: ViewEncapsulation.None
 })
 export class EventsComponent {
   events: any[] = [];

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component ,ViewEncapsulation} from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../../../shared/services/auth.service';
 import { LastRouteService } from '../../../shared/services/last-route.service';
@@ -12,7 +12,8 @@ import { NavbarComponent } from "../../../shared/components/navbar/navbar.compon
   standalone: true,
   imports: [CommonModule, FormsModule ,RouterLink],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css', '../../anonstyles.css'],
+	encapsulation: ViewEncapsulation.None
 })
 export class LoginComponent {
   roleSelected = '';

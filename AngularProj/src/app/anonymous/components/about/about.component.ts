@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { CommonModule } from '@angular/common';
@@ -8,7 +8,8 @@ import { CommonModule } from '@angular/common';
 	standalone: true,
 		imports: [CommonModule, NavbarComponent , FooterComponent],
 	templateUrl: './about.component.html',
-	styleUrls: ['./about.component.css']
+	styleUrls: ['./about.component.css', '../../anonstyles.css'],
+	encapsulation: ViewEncapsulation.None
 })
 export class AboutComponent implements OnInit {
 	eventsCount = 0;
