@@ -27,6 +27,7 @@ export class Dashboard implements OnInit {
   completed = 0;
   totalGuests = 0;
   currentUser: User | null = null;
+  isDarkMode = false;
   expensePercentages: number[] = [40, 25, 20, 15]; // Default, will be updated
   eventsByMonth: number[] = [2, 3, 4, 3, 2]; // Default, will be updated
 
@@ -43,7 +44,8 @@ export class Dashboard implements OnInit {
     this.currentUser = this.authService.currentUser;
     this.loadStats();
     setTimeout(() => this.initCharts(), 300);
-
+    this.isDarkMode = localStorage.getItem('darkMode') === 'true';
+    this.applyTheme();
   }
 
   loadStats() {
@@ -136,5 +138,36 @@ export class Dashboard implements OnInit {
         scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
       },
     });
+  }
+
+  toggleDarkMode() {
+    this.isDarkMode = !this.isDarkMode;
+    localStorage.setItem('darkMode', this.isDarkMode.toString());
+    this.applyTheme();
+  }
+
+  applyTheme() {
+    const root = document.documentElement;
+    if (this.isDarkMode) {
+      root.style.setProperty('--background', '#1a1a1a');
+      root.style.setProperty('--surface', '#2d2d2d');
+      root.style.setProperty('--text', '#ffffff');
+      root.style.setProperty('--muted', '#a1a1aa');
+      root.style.setProperty('--border', '#404040');
+      root.style.setProperty('--primary', '#3b82f6');
+      root.style.setProperty('--on-primary', '#ffffff');
+      root.style.setProperty('--secondary', '#374151');
+      root.style.setProperty('--shadow', 'rgba(0, 0, 0, 0.3)');
+    } else {
+      root.style.setProperty('--background', '#ffffff');
+      root.style.setProperty('--surface', '#f8f9fa');
+      root.style.setProperty('--text', '#1f2937');
+      root.style.setProperty('--muted', '#6b7280');
+      root.style.setProperty('--border', '#e5e7eb');
+      root.style.setProperty('--primary', '#2563eb');
+      root.style.setProperty('--on-primary', '#ffffff');
+      root.style.setProperty('--secondary', '#f3f4f6');
+      root.style.setProperty('--shadow', 'rgba(0, 0, 0, 0.1)');
+    }
   }
 }

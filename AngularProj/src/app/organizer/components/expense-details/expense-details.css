@@ -1,18 +1,31 @@
 .site-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+    max-width: 50%;
+    margin: 10% auto;
+    padding: 1rem;
+    background: var(--surface);
+    border-radius: 12px;
+    box-shadow: 0 6px 20px var(--shadow);
+    text-align: center;
+    color: var(--text);
 }
 
-.alert {
-  padding: 15px;
-  margin-bottom: 20px;
-  border: 1px solid transparent;
-  border-radius: 4px;
+h2 {
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+p {
+    color: var(--text);
+    margin-bottom: 1rem;
+}
+
+strong {
+    color: var(--text);
 }
 
 .alert-danger {
-  color: #721c24;
-  background-color: #f8d7da;
-  border-color: #f5c6cb;
+    background-color: #fee2e2;
+    border-color: #fecaca;
+    color: #dc2626;
 }
