@@ -1,0 +1,461 @@
+/* 🌗 Base Layout */
+.guest {
+  background-color: #f9f6f2;
+  color: #2e2e2e;
+  min-height: 100vh;
+  padding: 2rem;
+  transition: all 0.3s ease-in-out;
+}
+
+.guest.dark {
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+}
+
+/* 📋 Guest Container */
+.guest-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.guest.dark .guest-container {
+  background-color: #292929;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* 🏷️ Header */
+.guest-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.guest-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2e2e2e;
+  margin-bottom: 0.5rem;
+}
+
+.guest.dark .guest-title {
+  color: #f1f1f1;
+}
+
+.guest-subtitle {
+  color: #777;
+  font-size: 1rem;
+}
+
+.guest.dark .guest-subtitle {
+  color: #aaa;
+}
+
+/* 👤 Guest Info */
+.guest-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.info-item {
+  background-color: #f9f6f2;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #d4af37;
+}
+
+.guest.dark .info-item {
+  background-color: #1e1e1e;
+}
+
+.info-label {
+  font-size: 0.875rem;
+  color: #777;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.guest.dark .info-label {
+  color: #aaa;
+}
+
+.info-value {
+  font-size: 1rem;
+  color: #2e2e2e;
+  font-weight: 500;
+}
+
+.guest.dark .info-value {
+  color: #f1f1f1;
+}
+
+/* 🎫 RSVP Status */
+.rsvp-section {
+  margin-bottom: 2rem;
+}
+
+.rsvp-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #2e2e2e;
+}
+
+.guest.dark .rsvp-title {
+  color: #f1f1f1;
+}
+
+.rsvp-status {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.rsvp-attending {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+}
+
+.rsvp-not-attending {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.rsvp-pending {
+  background-color: rgba(212, 175, 55, 0.1);
+  color: #d4af37;
+}
+
+/* 💬 Notes */
+.notes-section {
+  margin-bottom: 2rem;
+}
+
+.notes-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #2e2e2e;
+}
+
+.guest.dark .notes-title {
+  color: #f1f1f1;
+}
+
+.notes-content {
+  background-color: #f9f6f2;
+  padding: 1rem;
+  border-radius: 8px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.guest.dark .notes-content {
+  background-color: #1e1e1e;
+  color: #ccc;
+}
+
+/* 🔘 Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #d4af37, #b9975b);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #b9975b, #d4af37);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.btn-secondary {
+  background-color: #f9f6f2;
+  color: #b08d57;
+  border: 1px solid #d4af37;
+}
+
+.btn-secondary:hover {
+  background-color: rgba(212, 175, 55, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.guest.dark .btn-secondary {
+  background-color: #292929;
+  color: #f5deb3;
+  border-color: #d4af37;
+}
+
+.guest.dark .btn-secondary:hover {
+  background-color: rgba(212, 175, 55, 0.2);
+}
+
+/* 📱 Responsive */
+@media (max-width: 1200px) {
+  .guest-container {
+    max-width: 700px;
+  }
+}
+
+@media (max-width: 992px) {
+  .guest-container {
+    max-width: 600px;
+  }
+
+  .guest-title {
+    font-size: 1.75rem;
+  }
+
+  .guest-subtitle {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .guest {
+    padding: 1rem;
+  }
+
+  .guest-container {
+    padding: 1.5rem;
+    max-width: 100%;
+  }
+
+  .guest-title {
+    font-size: 1.5rem;
+  }
+
+  .guest-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .guest-info {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .info-item {
+    padding: 0.875rem;
+  }
+
+  .info-label {
+    font-size: 0.8rem;
+  }
+
+  .info-value {
+    font-size: 0.95rem;
+  }
+
+  .rsvp-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .rsvp-title {
+    font-size: 1rem;
+  }
+
+  .rsvp-status {
+    font-size: 0.8rem;
+  }
+
+  .notes-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .notes-title {
+    font-size: 1rem;
+  }
+
+  .notes-content {
+    padding: 0.875rem;
+    font-size: 0.9rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .guest {
+    padding: 0.75rem;
+  }
+
+  .guest-container {
+    padding: 1rem;
+  }
+
+  .guest-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .guest-title {
+    font-size: 1.25rem;
+  }
+
+  .guest-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .guest-info {
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .info-item {
+    padding: 0.75rem;
+  }
+
+  .info-label {
+    font-size: 0.75rem;
+  }
+
+  .info-value {
+    font-size: 0.9rem;
+  }
+
+  .rsvp-section {
+    margin-bottom: 1.25rem;
+  }
+
+  .rsvp-title {
+    font-size: 0.95rem;
+  }
+
+  .rsvp-status {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
+
+  .notes-section {
+    margin-bottom: 1.25rem;
+  }
+
+  .notes-title {
+    font-size: 0.95rem;
+  }
+
+  .notes-content {
+    padding: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .action-buttons {
+    gap: 0.5rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .guest {
+    padding: 0.5rem;
+  }
+
+  .guest-container {
+    padding: 0.75rem;
+  }
+
+  .guest-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .guest-title {
+    font-size: 1.125rem;
+  }
+
+  .guest-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .guest-info {
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .info-item {
+    padding: 0.625rem;
+  }
+
+  .info-label {
+    font-size: 0.7rem;
+  }
+
+  .info-value {
+    font-size: 0.85rem;
+  }
+
+  .rsvp-section {
+    margin-bottom: 1rem;
+  }
+
+  .rsvp-title {
+    font-size: 0.9rem;
+  }
+
+  .rsvp-status {
+    padding: 0.3rem 0.625rem;
+    font-size: 0.7rem;
+  }
+
+  .notes-section {
+    margin-bottom: 1rem;
+  }
+
+  .notes-title {
+    font-size: 0.9rem;
+  }
+
+  .notes-content {
+    padding: 0.625rem;
+    font-size: 0.8rem;
+  }
+
+  .action-buttons {
+    gap: 0.375rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+}

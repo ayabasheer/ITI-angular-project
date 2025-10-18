@@ -1,0 +1,492 @@
+/* 🌗 Base Layout */
+.events {
+  background-color: #f9f6f2;
+  color: #2e2e2e;
+  min-height: 100vh;
+  padding: 2rem;
+  transition: all 0.3s ease-in-out;
+}
+
+.events.dark {
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+}
+
+/* 📋 Events Container */
+.events-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 🔍 Search and Filters */
+.search-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: #ffffff;
+  color: #2e2e2e;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #d4af37;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.events.dark .search-input {
+  background-color: #1e1e1e;
+  border-color: #444;
+  color: #f1f1f1;
+}
+
+.events.dark .search-input:focus {
+  border-color: #d4af37;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+.filter-btn {
+  padding: 0.75rem 1.5rem;
+  background-color: #f9f6f2;
+  color: #b08d57;
+  border: 1px solid #d4af37;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+  background-color: rgba(212, 175, 55, 0.1);
+}
+
+.events.dark .filter-btn {
+  background-color: #292929;
+  color: #f5deb3;
+  border-color: #d4af37;
+}
+
+.events.dark .filter-btn:hover {
+  background-color: rgba(212, 175, 55, 0.2);
+}
+
+/* 📅 Events Grid */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* 🎫 Event Card */
+.event-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.event-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.events.dark .event-card {
+  background-color: #292929;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.events.dark .event-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.event-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.event-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #2e2e2e;
+}
+
+.events.dark .event-title {
+  color: #f1f1f1;
+}
+
+.event-date,
+.event-location {
+  font-size: 0.875rem;
+  color: #777;
+  margin-bottom: 0.25rem;
+}
+
+.events.dark .event-date,
+.events.dark .event-location {
+  color: #aaa;
+}
+
+.event-description {
+  font-size: 0.875rem;
+  color: #555;
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.events.dark .event-description {
+  color: #ccc;
+}
+
+.event-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.event-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-upcoming {
+  background-color: rgba(212, 175, 55, 0.1);
+  color: #d4af37;
+}
+
+.status-ongoing {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+}
+
+.status-completed {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.event-btn {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #d4af37, #b9975b);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.event-btn:hover {
+  background: linear-gradient(135deg, #b9975b, #d4af37);
+  transform: translateY(-1px);
+}
+
+/* ➕ Create Event Button */
+.create-event-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #d4af37, #b9975b);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.create-event-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+}
+
+/* 📄 Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.page-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  background-color: #ffffff;
+  color: #2e2e2e;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.page-btn:hover,
+.page-btn.active {
+  background: linear-gradient(135deg, #d4af37, #b9975b);
+  color: #fff;
+  border-color: #d4af37;
+}
+
+.events.dark .page-btn {
+  background-color: #292929;
+  border-color: #444;
+  color: #f1f1f1;
+}
+
+.events.dark .page-btn:hover,
+.events.dark .page-btn.active {
+  background: linear-gradient(135deg, #d4af37, #b9975b);
+  color: #fff;
+}
+
+/* 📱 Responsive */
+@media (max-width: 1200px) {
+  .events-container {
+    max-width: 1000px;
+  }
+
+  .events-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .events-container {
+    max-width: 900px;
+  }
+
+  .events-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+
+  .event-card {
+    padding: 1.25rem;
+  }
+
+  .event-image {
+    height: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  .events {
+    padding: 1rem;
+  }
+
+  .events-container {
+    max-width: 100%;
+  }
+
+  .search-filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .search-input {
+    padding: 0.625rem;
+    font-size: 0.95rem;
+  }
+
+  .filter-btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.95rem;
+  }
+
+  .events-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .event-card {
+    padding: 1rem;
+  }
+
+  .event-image {
+    height: 160px;
+  }
+
+  .event-title {
+    font-size: 1.125rem;
+  }
+
+  .create-event-btn {
+    bottom: 1rem;
+    right: 1rem;
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .events {
+    padding: 0.75rem;
+  }
+
+  .search-filters {
+    margin-bottom: 1.5rem;
+  }
+
+  .search-input {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .filter-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .events-grid {
+    gap: 0.75rem;
+  }
+
+  .event-card {
+    padding: 0.875rem;
+  }
+
+  .event-image {
+    height: 140px;
+    margin-bottom: 0.875rem;
+  }
+
+  .event-title {
+    font-size: 1rem;
+    margin-bottom: 0.375rem;
+  }
+
+  .event-date,
+  .event-location {
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .event-description {
+    font-size: 0.8rem;
+    margin-bottom: 0.875rem;
+  }
+
+  .event-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .event-status {
+    align-self: flex-start;
+    padding: 0.2rem 0.625rem;
+    font-size: 0.7rem;
+  }
+
+  .event-btn {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .pagination {
+    margin-top: 1.5rem;
+  }
+
+  .page-btn {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .create-event-btn {
+    bottom: 0.75rem;
+    right: 0.75rem;
+    width: 45px;
+    height: 45px;
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .events {
+    padding: 0.5rem;
+  }
+
+  .search-filters {
+    margin-bottom: 1.25rem;
+  }
+
+  .events-grid {
+    gap: 0.5rem;
+  }
+
+  .event-card {
+    padding: 0.75rem;
+  }
+
+  .event-image {
+    height: 120px;
+    margin-bottom: 0.75rem;
+  }
+
+  .event-title {
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .event-date,
+  .event-location {
+    font-size: 0.75rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .event-description {
+    font-size: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .event-status {
+    padding: 0.15rem 0.5rem;
+    font-size: 0.65rem;
+  }
+
+  .event-btn {
+    padding: 0.3rem 0.625rem;
+    font-size: 0.75rem;
+  }
+
+  .pagination {
+    gap: 0.375rem;
+    margin-top: 1.25rem;
+  }
+
+  .page-btn {
+    padding: 0.3rem 0.625rem;
+    font-size: 0.8rem;
+  }
+
+  .create-event-btn {
+    bottom: 0.5rem;
+    right: 0.5rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+}

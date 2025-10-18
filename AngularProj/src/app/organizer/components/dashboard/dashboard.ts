@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
+import { MatSidenavModule, MatSidenav } from '@angular/material/sidenav';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { EventService } from '../../../shared/services/event';
 import { EventModel } from '../../../shared/models/interfaces';
 import { EventGeneratorService } from '../../../shared/services/event-generator.service';
-import { CommonModule } from '@angular/common'; // ✅ DatePipe جاي مع CommonModule}
 import { GuestService } from '../../../shared/services/guest';
 import { TaskService } from '../../../shared/services/task';
-import { ExpenseService } from '../../../shared/services/expense';  // ✅
-import { RouterModule, Router } from '@angular/router';
+import { ExpenseService } from '../../../shared/services/expense';
 import { Chart, registerables } from 'chart.js';
-import Charthart from 'chart.js/auto';
 import { DatePipe } from '@angular/common';
 import { AuthService, User } from '../../../shared/services/auth.service';
 Chart.register(...registerables);
@@ -17,17 +19,21 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule], //
+  imports: [CommonModule, RouterModule, MatSidenavModule, MatIconModule, MatButtonModule],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
 export class Dashboard implements OnInit {
+  @ViewChild('sidenav') sidenav!: MatSidenav;
+
   total = 0;
   upcoming = 0;
   completed = 0;
   totalGuests = 0;
   currentUser: User | null = null;
   isDarkMode = false;
+  sidebarOpen = true;
+  isMobile = false;
   expensePercentages: number[] = [40, 25, 20, 15]; // Default, will be updated
   eventsByMonth: number[] = [2, 3, 4, 3, 2]; // Default, will be updated
 
@@ -46,6 +52,43 @@ export class Dashboard implements OnInit {
     setTimeout(() => this.initCharts(), 300);
     this.isDarkMode = localStorage.getItem('darkMode') === 'true';
     this.applyTheme();
+    this.checkScreenSize();
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.checkScreenSize();
+  }
+
+  checkScreenSize() {
+    this.isMobile = window.innerWidth <= 992;
+    const saved = localStorage.getItem('sidebarOpen');
+    if (this.isMobile) {
+      this.sidebarOpen = false;
+    } else {
+      this.sidebarOpen = saved ? JSON.parse(saved) : true;
+    }
+  }
+
+  toggleSidebar(): void {
+    this.sidebarOpen = !this.sidebarOpen;
+    if (this.sidenav) {
+      if (this.sidebarOpen) this.sidenav.open();
+      else this.sidenav.close();
+    }
+    localStorage.setItem('sidebarOpen', JSON.stringify(this.sidebarOpen));
+  }
+
+  closeSidebarOnMobile() {
+    if (this.isMobile && this.sidenav) {
+      this.sidenav.close();
+      this.sidebarOpen = false;
+    }
+  }
+
+  onBackdropClick() {
+    this.sidebarOpen = false;
+    if (this.sidenav) this.sidenav.close();
   }
 
   loadStats() {
@@ -111,7 +154,7 @@ export class Dashboard implements OnInit {
         datasets: [
           {
             data: this.expensePercentages,
-            backgroundColor: ['#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE'],
+            backgroundColor: ['#d4af37', '#b9975b', '#a67c52', '#8b6a3f'],
             borderWidth: 0,
           },
         ],
@@ -130,7 +173,7 @@ export class Dashboard implements OnInit {
           {
             label: 'Events',
             data: this.eventsByMonth,
-            backgroundColor: '#3B82F6',
+            backgroundColor: '#d4af37',
           },
         ],
       },
@@ -147,27 +190,11 @@ export class Dashboard implements OnInit {
   }
 
   applyTheme() {
-    const root = document.documentElement;
+    const dashboardEl = document.querySelector('.dashboard-wrapper');
     if (this.isDarkMode) {
-      root.style.setProperty('--background', '#1a1a1a');
-      root.style.setProperty('--surface', '#2d2d2d');
-      root.style.setProperty('--text', '#ffffff');
-      root.style.setProperty('--muted', '#a1a1aa');
-      root.style.setProperty('--border', '#404040');
-      root.style.setProperty('--primary', '#3b82f6');
-      root.style.setProperty('--on-primary', '#ffffff');
-      root.style.setProperty('--secondary', '#374151');
-      root.style.setProperty('--shadow', 'rgba(0, 0, 0, 0.3)');
+      dashboardEl?.classList.add('dark');
     } else {
-      root.style.setProperty('--background', '#ffffff');
-      root.style.setProperty('--surface', '#f8f9fa');
-      root.style.setProperty('--text', '#1f2937');
-      root.style.setProperty('--muted', '#6b7280');
-      root.style.setProperty('--border', '#e5e7eb');
-      root.style.setProperty('--primary', '#2563eb');
-      root.style.setProperty('--on-primary', '#ffffff');
-      root.style.setProperty('--secondary', '#f3f4f6');
-      root.style.setProperty('--shadow', 'rgba(0, 0, 0, 0.1)');
+      dashboardEl?.classList.remove('dark');
     }
   }
 }
