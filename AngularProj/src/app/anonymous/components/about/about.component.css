@@ -73,7 +73,7 @@
 
 /* About Story */
 .about-story {
-    background:linear-gradient(rgb(0,0,0, 0.4 ), rgb(0,0,0,0.4)), url('/assets/images/12345.jpg') center/cover no-repeat  ;
+    background:linear-gradient(rgb(0,0,0, 0.3 ), rgb(0,0,0,0.3)), url('/assets/images/12345.jpg') center/cover no-repeat  ;
     background-attachment: fixed;
     height:70vh;
     color: white;

@@ -45,7 +45,8 @@ export class FeedbackComponent {
       this.event &&
       this.event.status === 'Completed' &&
       guest &&
-      guest.eventId === this.eventId
+      Array.isArray(guest.eventIds) && guest.eventIds.includes(this.eventId) &&
+      !guest.feedbackId
     );
   }
 

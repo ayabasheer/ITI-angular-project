@@ -24,7 +24,10 @@ export interface Guest {
   password?: string;
   status: GuestStatus;
   feedbackId?: number | null;
-  eventId: number;
+  /** Optional single event id for legacy/simple usage */
+  eventId?: number | null;
+  /** One or more event ids this guest is invited to */
+  eventIds: number[];
   createdAt: string;
   role: Role;
 

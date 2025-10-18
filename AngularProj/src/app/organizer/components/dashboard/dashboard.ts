@@ -106,11 +106,11 @@ export class Dashboard implements OnInit {
 
       const myEventIds = new Set<number>(myEvents.map(e => e.id));
 
-      // Guests for organizer's events
-      this.totalGuests = allGuests.filter((g: any) => myEventIds.has(g.eventId)).length;
+  // Guests for organizer's events - ensure g.eventId is a number before calling Set.has
+  this.totalGuests = allGuests.filter((g: any) => typeof g.eventId === 'number' && myEventIds.has(g.eventIds[0])).length;
 
       // Expenses for organizer's events
-      const expenses = allExpenses.filter((exp: any) => myEventIds.has(exp.eventId));
+  const expenses = allExpenses.filter((exp: any) => typeof exp.eventId === 'number' && myEventIds.has(exp.eventId));
       const categories: string[] = ['Venue', 'Decoration', 'Food', 'Music'];
       const totalExpense = expenses.reduce((sum: number, exp: any) => sum + (exp.amount || 0), 0);
       this.expensePercentages = categories.map(cat => {
@@ -132,7 +132,7 @@ export class Dashboard implements OnInit {
       });
 
       // Optionally use tasks for other UI pieces - filter tasks to organizer events
-      const tasks = allTasks.filter((t: any) => myEventIds.has(t.eventId));
+  const tasks = allTasks.filter((t: any) => typeof t.eventId === 'number' && myEventIds.has(t.eventId));
       // (No direct UI binding yet, but data is available if needed)
     } else {
       // Not an organizer or not authenticated — show empty stats

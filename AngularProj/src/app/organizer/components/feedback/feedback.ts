@@ -35,13 +35,14 @@ export class OrganizerFeedback implements OnInit {
       const rawGuests = localStorage.getItem('guests');
       this.guests = rawGuests ? JSON.parse(rawGuests) : [];
 
-      this.feedbacks = allFeedbacks.filter((f: FeedbackModel) => myEventIds.has(f.eventId));
+  this.feedbacks = allFeedbacks.filter((f: FeedbackModel) => typeof f.eventId === 'number' && myEventIds.has(f.eventId));
     } else {
       this.feedbacks = [];
     }
   }
 
-  getEventName(eventId: number): string {
+  getEventName(eventId?: number | null): string {
+    if (typeof eventId !== 'number') return 'Unknown Event';
     const event = this.events.find(e => e.id === eventId);
     return event ? event.name : 'Unknown Event';
   }

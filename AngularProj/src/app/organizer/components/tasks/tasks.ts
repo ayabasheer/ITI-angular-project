@@ -34,13 +34,14 @@ export class Tasks implements OnInit {
       );
       this.events = this.eventService.getAll().filter(e => myEventIds.has(e.id));
       const allTasks = this.taskService.getAll();
-      this.tasks = allTasks.filter((t: Task) => myEventIds.has(t.eventId));
+  this.tasks = allTasks.filter((t: Task) => typeof t.eventId === 'number' && myEventIds.has(t.eventId));
     } else {
       this.tasks = [];
     }
   }
 
-  getEventName(eventId: number): string {
+  getEventName(eventId?: number | null): string {
+    if (typeof eventId !== 'number') return 'Unknown Event';
     const event = this.events.find(e => e.id === eventId);
     return event ? event.name : 'Unknown Event';
   }
