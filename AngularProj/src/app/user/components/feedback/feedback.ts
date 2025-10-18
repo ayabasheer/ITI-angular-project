@@ -70,7 +70,8 @@ export class FeedbackComponent implements OnInit {
     }
   }
 
-  getEventName(eventId: number): string {
+  getEventName(eventId?: number | null): string {
+    if (typeof eventId !== 'number') return 'Unknown Event';
     const event = this.events.find(e => e.id === eventId);
     return event ? event.name : 'Unknown Event';
   }

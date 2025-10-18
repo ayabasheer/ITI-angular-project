@@ -97,3 +97,14 @@
   }
 }
 
+/* Tablet / small laptop breakpoint 825px - 1024px */
+@media (min-width: 825px) and (max-width: 1024px) {
+  .auth {
+    max-width: 600px;
+    margin: 5% auto;
+    padding: 1.75rem;
+  }
+  .form-control { padding: 0.85rem; }
+  .btn { padding: 0.85rem 1.5rem; }
+}
+

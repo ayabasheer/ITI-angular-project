@@ -34,13 +34,21 @@ export class Guests implements OnInit {
       );
       this.events = this.eventService.getAll().filter(e => myEventIds.has(e.id));
       const allGuests = this.guestService.getAll();
-      this.guests = allGuests.filter((g: Guest) => myEventIds.has(g.eventId));
+      // Some guests may have eventId undefined or null; ensure it's a number before checking the Set
+      this.guests = allGuests.filter((g: Guest) =>
+        typeof g.eventIds[0] === 'number' && myEventIds.has(g.eventIds[0])
+      );
     } else {
       this.guests = [];
     }
   }
 
-  getEventName(eventId: number): string {
+  // Accept nullable eventId because templates may pass undefined/null while
+  // type narrowing in component logic doesn't affect template type checking.
+  getEventName(eventId?: number | null): string {
+    if (typeof eventId !== 'number') {
+      return 'Unknown Event';
+    }
     const event = this.events.find(e => e.id === eventId);
     return event ? event.name : 'Unknown Event';
   }

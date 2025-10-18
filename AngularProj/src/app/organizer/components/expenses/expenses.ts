@@ -26,13 +26,14 @@ export class Expenses implements OnInit {
     if (user && user.role === 'Organizer') {
       const myEventIds = new Set((allEvents.filter(e => e.createdBy === user.id) || []).map(e => e.id));
       this.events = allEvents.filter(e => myEventIds.has(e.id));
-      this.expenses = allExpenses.filter((ex: any) => myEventIds.has(ex.eventId));
+  this.expenses = allExpenses.filter((ex: any) => typeof ex.eventId === 'number' && myEventIds.has(ex.eventId));
     } else {
       this.expenses = [];
     }
   }
 
-  getEventName(eventId: number): string {
+  getEventName(eventId?: number | null): string {
+    if (typeof eventId !== 'number') return 'Unknown Event';
     const event = this.events.find(e => e.id === eventId);
     return event ? event.name : 'Unknown Event';
   }

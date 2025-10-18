@@ -39,11 +39,28 @@ export class HomeComponent {
 		try {
 			const mapEv = new Map<number, any>();
 			this.events.forEach(e => mapEv.set(e.id, e));
-			this.feedbackEntries = this.feedbacks
+			// build 5-star feedback entries but avoid repeating the same guest/comment
+			const entries = this.feedbacks
 				.filter((f: any) => f.rating === 5)
 				.map((f: any) => ({ feedback: f, event: mapEv.get(f.eventId) || null }))
-				.filter((x: any) => x.event)
-				.slice(0, 8);
+				.filter((x: any) => x.event);
+
+			const seenGuests = new Set<number>();
+			const seenComments = new Set<string>();
+			this.feedbackEntries = [];
+			for (const eEntry of entries) {
+				const gid = eEntry.feedback?.guestId;
+				const comment = (eEntry.feedback?.comment || '').trim();
+				// prefer to dedupe by guest id, fallback to unique comment
+				if (gid && seenGuests.has(gid)) continue;
+				if (!gid && comment && seenComments.has(comment)) continue;
+
+				if (gid) seenGuests.add(gid);
+				if (comment) seenComments.add(comment);
+
+				this.feedbackEntries.push(eEntry);
+				if (this.feedbackEntries.length >= 8) break;
+			}
 
 			try {
 				const fiveStarEventIds = new Set<number>();
@@ -63,11 +80,9 @@ export class HomeComponent {
 	}
 
 	ngAfterViewInit(): void {
-		// Attempt to autoplay the hero video on initial load. Browsers allow autoplay if muted.
 		try {
 			const video = this.heroVideo?.nativeElement;
 			if (video) {
-				// ensure muted so autoplay is permitted
 				video.muted = true;
 				this.isMuted = true;
 
@@ -75,7 +90,6 @@ export class HomeComponent {
 					const p = video.play();
 					if (p && typeof p.then === 'function') {
 						p.then(() => this.isPlaying = true).catch(() => {
-							// Autoplay failed (likely due to browser policy); keep muted and wait for user interaction.
 							this.isPlaying = false;
 						});
 					}
@@ -84,14 +98,11 @@ export class HomeComponent {
 				if (video.readyState >= 2) {
 					tryPlay();
 				} else {
-					// Play when enough data is available
 					video.addEventListener('canplay', tryPlay, { once: true });
-					// Fallback: try after a short delay
 					setTimeout(tryPlay, 250);
 				}
 			}
 		} catch {
-			// ignore failures
 		}
 	}
 
