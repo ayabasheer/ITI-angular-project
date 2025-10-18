@@ -1,30 +1,46 @@
-<div class="auth">
-  <h2 class="mb-3">Create account</h2>
-  <div *ngIf="!roleSelected" class="d-flex gap-2">
-    <button class="btn btn-outline-primary" (click)="selectRole('Admin')">Admin</button>
-    <button class="btn btn-outline-primary" (click)="selectRole('Organizer')">Organizer</button>
-    <button class="btn btn-outline-primary" (click)="selectRole('Guest')">Guest</button>
+<div class="auth ">
+  <div class="img text-center">
+            <img src="assets/logo.png" alt="Eventura Logo" height="200" class="fade-in center">
+</div>
+  <h2>Create an account</h2>
+
+  <div class="role-select" *ngIf="!roleSelected">
+    <button class="role-btn" (click)="selectRole('Admin')">Admin</button>
+    <button class="role-btn" (click)="selectRole('Organizer')">Organizer</button>
+    <button class="role-btn" (click)="selectRole('Guest')">Guest</button>
   </div>
 
-  <form *ngIf="roleSelected" (submit)="onSubmit($event)">
-    <div class="mb-3">
-      <label class="form-label">Name</label>
+  <div *ngIf="roleSelected" class="role-chosen">
+    <h3 class="role-title">{{ roleSelected }}</h3>
+  </div>
+
+  <form *ngIf="roleSelected" (submit)="onSubmit($event)" novalidate>
+    <div>
+      <label class="form-label">Full name</label>
       <input class="form-control" name="name" [(ngModel)]="name" required />
+      <div class="field-error" *ngIf="name === ''">Name is required</div>
     </div>
-    <div class="mb-3">
-      <label class="form-label">Email</label>
-      <input class="form-control" name="email" [(ngModel)]="email" required />
+
+    <div>
+      <label class="form-label">Email address</label>
+      <input class="form-control" name="email" [(ngModel)]="email" required type="email" />
+  <div class="field-error" *ngIf="isEmailInvalid()">Please enter a valid email</div>
     </div>
-    <div class="mb-3">
+
+    <div>
       <label class="form-label">Password</label>
-      <input type="password" class="form-control" name="password" [(ngModel)]="password" required />
+      <input type="password" class="form-control" name="password" [(ngModel)]="password" required minlength="6" />
+      <div class="field-error" *ngIf="password && password.length < 6">Password must be at least 6 characters</div>
     </div>
-    <div class="d-flex">
-      <button type="submit" class="btn btn-primary">Register</button>
-      <button type="button" class="btn btn-link ms-2" (click)="reset()">Back</button>
+
+    <div class="actions text-center">
+      <button type="submit" class="btn btn-secondary" [disabled]="!name || !email || !password">Create Account</button>
+      <button type="button" class="btn " (click)="reset()">Change Role</button>
     </div>
   </form>
-    <div *ngIf="roleSelected" class="mt-2">
-    <a class="btn btn-link ms-2" routerLink="/login" routerLinkActive="active">Login</a>
+
+  <div class="signin-link">
+    <span>Already have an account?</span>
+    <a routerLink="/login">Sign in</a>
   </div>
 </div>

@@ -19,9 +19,9 @@ export class App {
     router: Router,
     lastRoute: LastRouteService
   ) {
-    if (!eventGen.isSeeded()) {
-      eventGen.generateAndSaveAll();
-    }
+    // Only ensure demo data exists; do not unconditionally overwrite existing events
+    // This prevents user-created events from being erased on reload.
+    eventGen.ensureDemoData();
 
     router.events.subscribe((evt) => {
       if (evt instanceof NavigationEnd) {

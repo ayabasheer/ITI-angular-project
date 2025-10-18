@@ -20,6 +20,13 @@ export class RegisterComponent {
   email = '';
   password = '';
 
+  // Helper used by the template to validate email (keeps template expressions simple)
+  isEmailInvalid(): boolean {
+    if (!this.email) return false;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return !emailRegex.test(this.email);
+  }
+
   constructor(private auth: AuthService, private router: Router, private lastRoute: LastRouteService) {}
 
   selectRole(r: string) {
