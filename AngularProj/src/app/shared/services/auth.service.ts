@@ -10,19 +10,22 @@ export interface User {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private key = 'currentUser';
+  currentUser: User | null = null; // ✅ إضافة خاصية لتخزين المستخدم الحالي في الذاكرة
 
-  get currentUser(): User | null {
+  constructor() {
+    // ✅ استرجاع المستخدم من localStorage عند بداية التطبيق
     try {
       const raw = localStorage.getItem(this.key);
-      return raw ? (JSON.parse(raw) as User) : null;
+      this.currentUser = raw ? (JSON.parse(raw) as User) : null;
     } catch {
-      return null;
+      this.currentUser = null;
     }
   }
 
   login(user: User) {
     try {
       localStorage.setItem(this.key, JSON.stringify(user));
+      this.currentUser = user; // ✅ تحديث القيمة في الذاكرة
     } catch {}
   }
 
@@ -32,9 +35,9 @@ export class AuthService {
   }
 
   logout() {
-    // Only remove the current session, not user data
     try {
       localStorage.removeItem(this.key);
+      this.currentUser = null; // ✅ مسح القيمة من الذاكرة كمان
     } catch {}
   }
 }

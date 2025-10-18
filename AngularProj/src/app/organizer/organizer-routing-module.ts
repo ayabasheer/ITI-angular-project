@@ -17,6 +17,7 @@ export const routes: Routes = [
     path: '',
     component: Dashboard,
     children: [
+      { path: 'create-event', component: CreateEvent },
       { path: 'events', component: Events },
       { path: 'events/:id', component: EventDetails},
       { path: 'guests', component: Guests },
