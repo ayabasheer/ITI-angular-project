@@ -1,26 +1,40 @@
 <div class="auth">
-  <h2 class="mb-3">Welcome back</h2>
-  <div *ngIf="!roleSelected" class="d-flex gap-2">
-    <button class="btn btn-outline-primary" (click)="selectRole('Admin')">Admin</button>
-    <button class="btn btn-outline-primary" (click)="selectRole('Organizer')">Organizer</button>
-    <button class="btn btn-outline-primary" (click)="selectRole('Guest')">Guest</button>
+    <div class="img text-center">
+            <img src="assets/logo.png" alt="Eventura Logo" height="200" class="fade-in center">
+</div>
+  <h2>Welcome back</h2>
+
+  <div class="role-select" *ngIf="!roleSelected">
+    <button class="role-btn" (click)="selectRole('Admin')">Admin</button>
+    <button class="role-btn" (click)="selectRole('Organizer')">Organizer</button>
+    <button class="role-btn" (click)="selectRole('Guest')">Guest</button>
   </div>
 
-  <form *ngIf="roleSelected" (submit)="onSubmit($event)">
-    <div class="mb-3">
-      <label class="form-label">Email</label>
-      <input class="form-control" name="email" [(ngModel)]="email" required />
+  <div *ngIf="roleSelected" class="role-chosen">
+    <h3 class="role-title">{{ roleSelected }}</h3>
+  </div>
+
+  <form *ngIf="roleSelected" (submit)="onSubmit($event)" novalidate>
+    <div>
+      <label class="form-label">Email address</label>
+      <input class="form-control" name="email" [(ngModel)]="email" required type="email" />
+      <div class="field-error" *ngIf="email && !email.includes('@')">Please enter a valid email</div>
     </div>
-    <div class="mb-3">
+
+    <div>
       <label class="form-label">Password</label>
       <input type="password" class="form-control" name="password" [(ngModel)]="password" required />
+      <div class="field-error" *ngIf="password === ''">Password is required</div>
     </div>
-    <div class="d-flex">
-      <button type="submit" class="btn btn-primary">Login</button>
-      <button type="button" class="btn btn-link ms-2" (click)="reset()">Back</button>
+
+    <div class="actions">
+      <button type="submit" class="btn btn-secondary" [disabled]="!email || !password">Login</button>
+      <button type="button" class="btn " (click)="reset()">Change Role</button>
     </div>
   </form>
-  <div *ngIf="roleSelected" class="mt-2">
-    <a class="btn btn-link ms-2" routerLink="/register" routerLinkActive="active">Register</a>
+
+  <div class="signin-link">
+    <span>Don't have an account?</span>
+    <a routerLink="/register">Register</a>
   </div>
 </div>

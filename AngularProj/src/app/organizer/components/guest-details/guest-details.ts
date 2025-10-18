@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { Guest } from '../../../shared/models/interfaces';
 
 @Component({
   selector: 'app-guest-details',
   standalone: true,
-  imports: [CommonModule, FooterComponent],
+  imports: [CommonModule],
   templateUrl: './guest-details.html',
   styleUrls: ['./guest-details.css']
 })
