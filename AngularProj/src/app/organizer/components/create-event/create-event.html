@@ -1,1 +1,96 @@
-<p>create-event works!</p>
+<div class="create-event-container">
+  <h2>Create New Event</h2>
+
+  <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="event-form">
+    <mat-form-field appearance="outline">
+      <mat-label>Event Name</mat-label>
+      <input matInput formControlName="name" placeholder="Enter event name">
+      <mat-error *ngIf="eventForm.get('name')?.invalid && eventForm.get('name')?.touched">
+        Event name is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" placeholder="Enter event description" rows="3"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="category">
+        <mat-option value="Wedding">Wedding</mat-option>
+        <mat-option value="Birthday">Birthday</mat-option>
+        <mat-option value="Corporate">Corporate</mat-option>
+        <mat-option value="Party">Party</mat-option>
+        <mat-option value="Other">Other</mat-option>
+      </mat-select>
+      <mat-error *ngIf="eventForm.get('category')?.invalid && eventForm.get('category')?.touched">
+        Category is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Location</mat-label>
+      <input matInput formControlName="location" placeholder="Enter event location">
+      <mat-error *ngIf="eventForm.get('location')?.invalid && eventForm.get('location')?.touched">
+        Location is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Start Date & Time</mat-label>
+      <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
+      <mat-error *ngIf="eventForm.get('startDate')?.invalid && eventForm.get('startDate')?.touched">
+        Start date is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>End Date & Time</mat-label>
+      <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endPicker></mat-datepicker>
+      <mat-error *ngIf="eventForm.get('endDate')?.invalid && eventForm.get('endDate')?.touched">
+        End date is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Budget</mat-label>
+      <input matInput type="number" formControlName="budget" placeholder="Enter budget amount">
+      <span matSuffix>$</span>
+      <mat-error *ngIf="eventForm.get('budget')?.invalid && eventForm.get('budget')?.touched">
+        Budget must be a positive number
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Event Image (Optional)</mat-label>
+      <input type="file" accept="image/*" (change)="onImageSelected($event)" style="display: none;" #imageInput>
+      <input matInput readonly [value]="selectedImageName || 'No file selected'" placeholder="Choose image file">
+      <button mat-icon-button matSuffix (click)="imageInput.click()">
+        <mat-icon>attach_file</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Guest Emails</mat-label>
+      <textarea matInput formControlName="guestEmails" placeholder="Enter guest emails separated by commas" rows="3"></textarea>
+      <mat-hint>Separate multiple emails with commas</mat-hint>
+      <mat-error *ngIf="eventForm.get('guestEmails')?.invalid && eventForm.get('guestEmails')?.touched">
+        At least one valid email is required
+      </mat-error>
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="eventForm.invalid">
+        Create Event
+      </button>
+      <button mat-button type="button" routerLink="/dashboard/events">
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>

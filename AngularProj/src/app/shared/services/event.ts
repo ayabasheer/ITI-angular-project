@@ -1,47 +1,56 @@
 import { Injectable } from '@angular/core';
-import type { EventModel } from '../models/interfaces';
-
-const EVENTS_KEY = 'events';
+import { EventModel } from '../models/interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class EventService {
-  private parse<T>(v: string | null): T | null {
-    if (!v) return null;
-    try { return JSON.parse(v); } catch { return null; }
-  }
+  private storageKey = 'events';
 
+  // ✅ تحميل كل الأحداث من localStorage
   getAll(): EventModel[] {
-    return this.parse<EventModel[]>(localStorage.getItem(EVENTS_KEY)) ?? [];
+    try {
+      return JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+    } catch {
+      return [];
+    }
   }
 
+  // ✅ الحصول على حدث معين
   getById(id: number): EventModel | undefined {
-    return this.getAll().find(e => e.id === id);
+    const events = this.getAll();
+    return events.find(e => e.id === id);
   }
 
-  saveAll(events: EventModel[]) {
-    localStorage.setItem(EVENTS_KEY, JSON.stringify(events));
+  // ✅ إنشاء حدث جديد
+  create(event: EventModel): EventModel {
+    const events = this.getAll();
+
+    // توليد ID جديد
+    const newId = events.length ? Math.max(...events.map(e => e.id)) + 1 : 1;
+    const newEvent = { ...event, id: newId };
+
+    // حفظ في localStorage
+    events.push(newEvent);
+    localStorage.setItem(this.storageKey, JSON.stringify(events));
+
+    return newEvent;
   }
 
-  create(event: EventModel) {
-    const arr = this.getAll();
-    // ensure unique id
-    const nextId = arr.length ? Math.max(...arr.map(e => e.id)) + 1 : 1;
-    event.id = nextId;
-    arr.push(event);
-    this.saveAll(arr);
+  // ✅ تحديث حدث
+  update(updatedEvent: EventModel): void {
+    const events = this.getAll().map(e =>
+      e.id === updatedEvent.id ? { ...updatedEvent, updatedAt: new Date().toISOString() } : e
+    );
+    localStorage.setItem(this.storageKey, JSON.stringify(events));
   }
 
-  update(id: number, patch: Partial<EventModel>) {
-    const arr = this.getAll();
-    const idx = arr.findIndex(e => e.id === id);
-    if (idx === -1) return false;
-    arr[idx] = { ...arr[idx], ...patch };
-    this.saveAll(arr);
-    return true;
+  // ✅ حذف حدث
+  delete(id: number): void {
+    const events = this.getAll().filter(e => e.id !== id);
+    localStorage.setItem(this.storageKey, JSON.stringify(events));
   }
 
-  delete(id: number) {
-    const arr = this.getAll().filter(e => e.id !== id);
-    this.saveAll(arr);
+  // ✅ الحصول على أحداث مستخدم معين
+  getByUser(userId: number): EventModel[] {
+    return this.getAll().filter(e => e.createdBy === userId);
   }
 }
