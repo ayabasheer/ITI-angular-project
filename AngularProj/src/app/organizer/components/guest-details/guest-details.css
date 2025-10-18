@@ -1,1 +1,47 @@
-/* Add any specific styles for guest details here */
+.site-container {
+    max-width: 50%;
+    margin: 10% auto;
+    padding: 1rem;
+    background: var(--surface);
+    border-radius: 12px;
+    box-shadow: 0 6px 20px var(--shadow);
+    text-align: center;
+    color: var(--text);
+}
+
+h2 {
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+p {
+    color: var(--text);
+    margin-bottom: 1rem;
+}
+
+strong {
+    color: var(--text);
+}
+
+h4 {
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.border.rounded {
+    background: var(--background);
+    border-color: var(--border) !important;
+    color: var(--text);
+}
+
+.text-muted {
+    color: var(--muted) !important;
+}
+
+.alert-danger {
+    background-color: #fee2e2;
+    border-color: #fecaca;
+    color: #dc2626;
+}

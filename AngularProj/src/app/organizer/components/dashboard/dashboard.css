@@ -1,13 +1,13 @@
 .dashboard-wrapper {
   display: flex;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: var(--background);
 }
 
 .sidebar {
   width: 260px;
-  background-color: #ffffff;
-  border-right: 1px solid #e5e7eb;
+  background-color: var(--surface);
+  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -18,7 +18,7 @@
 
 .sidebar-header {
   padding: 2rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border);
 }
 
 .app-title {
@@ -26,7 +26,7 @@
   font-weight: 700;
   line-height: 1.3;
   margin: 0;
-  color: #1f2937;
+  color: var(--text);
 }
 
 .sidebar-nav {
@@ -42,21 +42,21 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1.5rem;
-  color: #6b7280;
+  color: var(--muted);
   text-decoration: none;
   transition: all 0.2s;
   font-size: 1rem;
 }
 
 .nav-item:hover {
-  background-color: #f3f4f6;
-  color: #1f2937;
+  background-color: var(--secondary);
+  color: var(--text);
 }
 
 .nav-item.active {
-  background-color: #eff6ff;
-  color: #2563eb;
-  border-right: 3px solid #2563eb;
+  background-color: var(--primary);
+  color: var(--on-primary);
+  border-right: 3px solid var(--accent);
 }
 
 .nav-item i {
@@ -82,7 +82,7 @@
   font-size: 2rem;
   font-weight: 700;
   margin: 0;
-  color: #1f2937;
+  color: var(--text);
 }
 
 .header-actions {
@@ -91,26 +91,25 @@
   gap: 1rem;
 }
 
-.btn-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+.dark-mode-toggle {
+  background: none;
   border: none;
-  background-color: #f3f4f6;
-  color: #6b7280;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 0.5rem;
   cursor: pointer;
-  transition: all 0.2s;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  color: var(--text);
+  border-radius: 50%;
 }
 
-.btn-icon:hover {
-  background-color: #e5e7eb;
+.dark-mode-toggle:hover {
+  transform: scale(1.1);
+  background: var(--secondary);
+  color: var(--primary);
 }
 
-.btn-icon i {
-  font-size: 1.25rem;
+.dark-mode-toggle .icon {
+  display: inline-block;
 }
 
 .user-dropdown {
@@ -123,16 +122,17 @@
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   border: none;
-  background-color: #f3f4f6;
+  background-color: var(--secondary);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
-  color: #1f2937;
+  color: var(--text);
   font-size: 1rem;
 }
 
 .user-btn:hover {
-  background-color: #e5e7eb;
+  background-color: var(--primary);
+  color: var(--on-primary);
 }
 
 .user-btn i.bi-person-circle {
@@ -148,8 +148,8 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.625rem 1.5rem;
-  background-color: #2563eb;
-  color: white;
+  background-color: var(--primary);
+  color: var(--on-primary);
   border: none;
   border-radius: 8px;
   font-size: 1rem;
@@ -159,7 +159,8 @@
 }
 
 .btn-primary:hover {
-  background-color: #1d4ed8;
+  background-color: var(--secondary);
+  color: var(--text);
 }
 
 .stats-grid {
@@ -170,13 +171,13 @@
 }
 
 .stat-card {
-  background-color: white;
+  background-color: var(--surface);
   border-radius: 12px;
   padding: 1.5rem;
   display: flex;
   align-items: center;
   gap: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px var(--shadow);
 }
 
 .stat-icon {
@@ -187,15 +188,15 @@
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
-  color: white;
+  color: var(--on-primary);
 }
 
 .blue-bg {
-  background-color: #2563eb;
+  background-color: var(--primary);
 }
 
 .blue-light-bg {
-  background-color: #60a5fa;
+  background-color: var(--secondary);
 }
 
 .stat-content {
@@ -206,12 +207,12 @@
   font-size: 2rem;
   font-weight: 700;
   margin: 0;
-  color: #1f2937;
+  color: var(--text);
 }
 
 .stat-label {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--muted);
   margin: 0.25rem 0 0 0;
 }
 
@@ -223,17 +224,17 @@
 }
 
 .chart-card {
-  background-color: white;
+  background-color: var(--surface);
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px var(--shadow);
 }
 
 .chart-title {
   font-size: 1.125rem;
   font-weight: 600;
   margin: 0 0 1.5rem 0;
-  color: #1f2937;
+  color: var(--text);
 }
 
 .chart-content {
@@ -274,7 +275,7 @@
 
 .legend-label {
   font-size: 1rem;
-  color: #1f2937;
+  color: var(--text);
 }
 
 .bar-chart-container {
@@ -306,19 +307,19 @@
 .bar {
   width: 100%;
   max-width: 60px;
-  background-color: #2563eb;
+  background-color: var(--primary);
   border-radius: 6px 6px 0 0;
   transition: all 0.3s;
   position: relative;
 }
 
 .bar:hover {
-  background-color: #1d4ed8;
+  background-color: var(--secondary);
 }
 
 .bar-label {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--muted);
   font-weight: 500;
 }
 
@@ -328,15 +329,15 @@
   justify-content: space-between;
   height: 250px;
   padding: 1rem 0;
-  color: #6b7280;
+  color: var(--muted);
   font-size: 0.875rem;
 }
 
 .progress-card {
-  background-color: white;
+  background-color: var(--surface);
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px var(--shadow);
 }
 
 .progress-header {
@@ -350,13 +351,13 @@
   font-size: 1.125rem;
   font-weight: 600;
   margin: 0;
-  color: #1f2937;
+  color: var(--text);
 }
 
 .progress-percentage {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #2563eb;
+  color: var(--primary);
 }
 
 .progress-bar-wrapper {
@@ -366,14 +367,14 @@
 .progress-bar {
   width: 100%;
   height: 12px;
-  background-color: #e5e7eb;
+  background-color: var(--border);
   border-radius: 999px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background-color: #2563eb;
+  background-color: var(--primary);
   border-radius: 999px;
   transition: width 0.3s ease;
 }

@@ -39,8 +39,8 @@
         <header class="top-header">
             <h2 class="page-title">Dashboard</h2>
             <div class="header-actions">
-                <button class="btn-icon" aria-label="Toggle dark mode">
-                    <i class="bi bi-moon"></i>
+                <button class="dark-mode-toggle" (click)="toggleDarkMode()" aria-label="Toggle dark mode">
+                    <span class="icon">{{ isDarkMode ? '☀️' : '🌙' }}</span>
                 </button>
                 <div class="user-dropdown">
                     <button class="user-btn">
