@@ -1,5 +1,5 @@
 <mat-sidenav-container class="dashboard">
-  <mat-sidenav #sidenav 
+  <mat-sidenav #sidenav
                class="sidebar"
                [mode]="isMobile ? 'over' : 'side'"
                [opened]="sidebarOpen"
@@ -63,6 +63,13 @@
 
     <main class="page-content fade-in">
       <ng-container [ngComponentOutlet]="currentComponent"></ng-container>
+      <!-- Hidden references to child components so the compiler recognizes they're used by ngComponentOutlet -->
+      <div *ngIf="false" style="display:none">
+        <app-feedback></app-feedback>
+        <app-events></app-events>
+        <app-profile></app-profile>
+        <app-overview></app-overview>
+      </div>
     </main>
   </mat-sidenav-content>
 </mat-sidenav-container>

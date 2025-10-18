@@ -31,7 +31,8 @@ export class FeedbackService {
     const guest = guests.find(g => g.id === payload.guestId);
     if (!guest) return { success: false, message: 'Guest not found' };
 
-    if (guest.eventId !== payload.eventId) {
+    // guest.eventIds may be an array of event ids
+    if (!Array.isArray(guest.eventIds) || !guest.eventIds.includes(payload.eventId)) {
       return { success: false, message: 'Guest not associated with this event' };
     }
 
@@ -42,6 +43,7 @@ export class FeedbackService {
       return { success: false, message: 'Feedback allowed only for completed events' };
     }
 
+    // Enforce one feedback per guest globally (guest.feedbackId used as single-feedback marker)
     if (guest.feedbackId) {
       return { success: false, message: 'Guest has already submitted feedback' };
     }

@@ -57,7 +57,7 @@ export class RegisterComponent {
       // construct role-specific record (include password for demo)
       let record: any = { id: newId, name: this.name, email: this.email, password: this.password, role: this.roleSelected, createdAt: now };
       if (this.roleSelected === 'Guest') {
-        record = { ...record, status: 'Pending', feedbackId: null, eventId: 0 };
+        record = { ...record, status: 'Pending', feedbackId: null, eventIds: [] };
       }
 
       arr.push(record);

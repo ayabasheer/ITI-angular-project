@@ -411,3 +411,44 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     grid-template-columns: 1fr;
   }
 }
+
+/* Tablet / small laptop breakpoint requested by client: 825px - 1024px */
+@media (min-width: 825px) and (max-width: 1024px) {
+  .hero {
+    min-height: 70vh;
+    padding: 4rem 1.25rem;
+  }
+  .hero h1 {
+    font-size: 3rem; /* slightly reduce from desktop */
+  }
+  .hero p {
+    font-size: 1.1rem;
+    max-width: 520px;
+  }
+
+  /* Services: keep multi-column but reduce gaps and card sizes */
+  .services-row {
+    flex-direction: row;
+    gap: 1rem;
+  }
+  .services-row .card-creative {
+    max-width: 320px;
+    padding: 1.5rem;
+  }
+
+  /* Testimonials: shrink photo & stack fewer columns */
+  .testimonial-list { gap: 0.75rem; }
+  .testimonial-photo img { width: 200px; height: 200px; }
+  .testimonial-card { max-width: 360px; padding: 1.5rem; }
+
+  /* Portfolio grid: two columns for tablets */
+  .portfolio-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  .portfolio-item img { height: 200px; }
+
+  /* CTA adjustments */
+  .cta-banner { padding: 1.5rem; }
+  .cta-banner h2 { font-size: 2rem; }
+
+  /* Buttons slightly larger tap targets on tablet */
+  .btn { padding: 0.85rem 1.25rem; }
+}

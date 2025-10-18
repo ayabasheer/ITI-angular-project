@@ -7,7 +7,7 @@ import { Guest } from '../../../shared/models/interfaces';
 @Component({
   selector: 'app-guest-details',
   standalone: true,
-  imports: [CommonModule, FooterComponent],
+  imports: [CommonModule],
   templateUrl: './guest-details.html',
   styleUrls: ['./guest-details.css']
 })

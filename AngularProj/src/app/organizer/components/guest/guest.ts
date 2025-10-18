@@ -34,13 +34,21 @@ export class Guests implements OnInit {
       );
       this.events = this.eventService.getAll().filter(e => myEventIds.has(e.id));
       const allGuests = this.guestService.getAll();
-      this.guests = allGuests.filter((g: Guest) => myEventIds.has(g.eventId));
+      this.guests = allGuests.filter((g: Guest) => {
+        // guest.eventId may be optional (legacy single-event usage)
+        if (g.eventId != null) return myEventIds.has(g.eventId as number);
+        // otherwise check eventIds array if present
+        if (Array.isArray((g as any).eventIds)) {
+          return (g as any).eventIds.some((id: number) => myEventIds.has(id));
+        }
+        return false;
+      });
     } else {
       this.guests = [];
     }
   }
 
-  getEventName(eventId: number): string {
+  getEventName(eventId?: number | null): string {
     const event = this.events.find(e => e.id === eventId);
     return event ? event.name : 'Unknown Event';
   }

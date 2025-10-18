@@ -6,7 +6,7 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
 @Component({
   selector: 'app-event-detail',
   standalone: true,
-  imports: [CommonModule, FooterComponent],
+  imports: [CommonModule],
   templateUrl: "event-details.html",
   styleUrls: ['event-details.css']
 })
