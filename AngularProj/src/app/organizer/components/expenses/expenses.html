@@ -1,17 +1,75 @@
-<div style="padding:20px">
-    <h2>Expenses</h2>
-    <div *ngIf="expenses.length; else no" class="row">
-        <div class="col-md-4 mb-3" *ngFor="let ex of expenses">
-            <div class="card" style="cursor: pointer;" [routerLink]="['/dashboard/expenses', ex.id]">
-                <div class="card-body">
-                    <h5 class="card-title">{{ ex.name }}</h5>
-                    <p class="card-text">{{ ex.amount | currency }}</p>
-                    <p class="card-text"><small class="text-muted">Category: {{ ex.category }}</small></p>
-                    <p class="card-text"><small class="text-muted">Date: {{ ex.date | date:'short' }}</small></p>
-                    <p class="card-text"><small class="text-muted">Event: {{ getEventName(ex.eventId) }}</small></p>
+<div class="expenses" style="padding:20px">
+    <h2 class="page-title">Expenses</h2>
+
+    <div class=" d-flex gap-2 align-items-center">
+        <label class="me-2">Select event:</label>
+        <select class="form-select" [(ngModel)]="selectedEventId" (change)="selectEvent(selectedEventId)">
+            <option [ngValue]="null">-- Select event --</option>
+            <option *ngFor="let ev of events" [ngValue]="ev.id">{{ ev.name }} (Budget: {{ ev.budget | currency }})</option>
+        </select>
+    </div>
+
+    <div *ngIf="selectedEventId; else no">
+        <div class="row">
+            <div class="col-md-6 p-3 d-flex p-5 flex-column">
+                <h5>Total spent: {{ totalExpense | currency }}</h5>
+                <h6>Remaining budget: {{ remainingBudget | currency }}</h6>
+            </div>
+            <div class="col-md-6 text-center">
+                <canvas id="expensePieChart"></canvas>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4>{{ editingExpenseId ? 'Edit Expense' : 'Add Expense' }}</h4>
+                <div class="mb-2">
+                    <input class="form-control" placeholder="Name" [(ngModel)]="newExpense.name" />
                 </div>
+                <div class="mb-2 d-flex gap-2">
+                    <input class="form-control" type="number" placeholder="Amount" [(ngModel)]="newExpense.amount" />
+                    <select class="form-select" [(ngModel)]="newExpense.category">
+                        <option>Venue</option>
+                        <option>Decoration</option>
+                        <option>Food</option>
+                        <option>Music</option>
+                        <option>Transport</option>
+                        <option>Miscellaneous</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <input class="form-control" type="date" [(ngModel)]="newExpense.date" />
+                </div>
+                <div class="mb-2">
+                    <textarea class="form-control" placeholder="Notes" [(ngModel)]="newExpense.notes"></textarea>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn-primary-small" (click)="saveExpense()">{{ editingExpenseId ? 'Save' : 'Add' }}</button>
+                    <button class="action-btn" (click)="cancelEdit()">Cancel</button>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <h4>Expenses List</h4>
+                <div *ngIf="eventExpenses.length; else noEventExpenses">
+                    <div class="list-group">
+                        <div class="list-group-item d-flex justify-content-between align-items-start" *ngFor="let ex of eventExpenses">
+                            <div>
+                                <div class="fw-bold">{{ ex.name }}</div>
+                                <div>{{ ex.amount | currency }} — <small class="text-muted">{{ ex.category }}</small></div>
+                                <div><small class="text-muted">{{ ex.date | date:'short' }}</small></div>
+                            </div>
+                            <div class="btn-group">
+                                <button class="edit-btn action-btn" (click)="startEdit(ex)">Edit</button>
+                                <button class="delete-btn action-btn" (click)="removeExpense(ex.id)">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ng-template #noEventExpenses><div class="alert alert-info">No expenses for this event.</div></ng-template>
             </div>
         </div>
     </div>
-    <ng-template #no>No expenses found.</ng-template>
+
+    <ng-template #no><div class="alert alert-warning">Select an event to manage expenses.</div></ng-template>
 </div>

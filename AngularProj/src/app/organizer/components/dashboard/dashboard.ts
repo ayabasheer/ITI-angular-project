@@ -106,10 +106,11 @@ export class Dashboard implements OnInit {
 
       const myEventIds = new Set<number>(myEvents.map(e => e.id));
 
-      // Guests
-      this.totalGuests = allGuests.filter(
-        (g: any) => typeof g.eventId === 'number' && myEventIds.has(g.eventId)
-      ).length;
+      // Guests for organizer's events - handle guests that may have eventIds array or single eventId
+      this.totalGuests = allGuests.filter((g: any) => {
+        const gid = Array.isArray(g.eventIds) && g.eventIds.length ? g.eventIds[0] : g.eventId;
+        return typeof gid === 'number' && myEventIds.has(gid);
+      }).length;
 
       // Expenses
       const expenses = allExpenses.filter(

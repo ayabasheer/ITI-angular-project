@@ -1,14 +1,34 @@
 <div style="padding:20px">
     <h2>Events</h2>
-    <div *ngIf="events.length; else no" class="row">
-        <div class="col-md-4 mb-3" *ngFor="let e of events">
+
+    <div class="mb-3 d-flex gap-2 align-items-center">
+        <input class="form-control" placeholder="Search by name, description, or location" [(ngModel)]="query" />
+
+        <select class="form-select" [(ngModel)]="category" style="width:180px">
+            <option value="all">All categories</option>
+            <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+        </select>
+
+        <select class="form-select" [(ngModel)]="status" style="width:160px">
+            <option value="all">All statuses</option>
+            <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+        </select>
+    </div>
+
+    <div *ngIf="filteredEvents.length; else no" class="row">
+        <div class="col-md-4 mb-3" *ngFor="let e of filteredEvents">
             <div class="card" style="cursor: pointer;" [routerLink]="['/dashboard/events', e.id]">
                 <img [src]="e.image || defaultImage" class="card-img-top" alt="Event image" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
                     <h5 class="card-title">{{ e.name }}</h5>
                     <p class="card-text">{{ e.description }}</p>
                     <p class="card-text"><small class="text-muted">{{ e.startDate | date:'short' }}</small></p>
+                    <div class="mt-2">
+                        <button *ngIf="canModify(e)" class="btn btn-sm btn-outline-warning me-2" (click)="editEvent(e); $event.stopPropagation()">Edit</button>
+                        <button *ngIf="canModify(e)" class="btn btn-sm btn-outline-danger" (click)="deleteEvent(e); $event.stopPropagation()">Delete</button>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>

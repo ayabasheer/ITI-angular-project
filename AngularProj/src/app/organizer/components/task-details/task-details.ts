@@ -7,7 +7,7 @@ import { Task } from '../../../shared/models/interfaces';
 @Component({
   selector: 'app-task-details',
   standalone: true,
-  imports: [CommonModule, FooterComponent],
+  imports: [CommonModule],
   templateUrl: './task-details.html',
   styleUrls: ['./task-details.css']
 })

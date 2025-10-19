@@ -1,8 +1,13 @@
-<div class="auth ">
+<div class="auth position-relative">
+  <button class="dark-mode-toggle position-absolute top-0" (click)="toggleDarkMode()" aria-label="Toggle dark mode">
+    <span class="icon">{{ isDarkMode ? '☀️' : '🌙' }}</span>
+  </button>
   <div class="img text-center">
             <img src="assets/logo.png" alt="Eventura Logo" height="200" class="fade-in center">
-</div>
-  <h2>Create an account</h2>
+  </div>
+  <div class="auth-header mb-5">
+    <h2 class="m-auto">Create an account</h2>
+  </div>
 
   <div class="role-select" *ngIf="!roleSelected">
     <button class="role-btn" (click)="selectRole('Admin')">Admin</button>

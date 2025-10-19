@@ -25,7 +25,8 @@ export class GuestDetails {
     const feedbacks = rawF ? JSON.parse(rawF) : [];
     this.guest = guests.find((g: Guest) => g.id === id) || null;
     if (this.guest) {
-      this.event = events.find((e: any) => e.id === this.guest!.eventIds[0]) || null;
+      const gid = Array.isArray(this.guest.eventIds) && this.guest.eventIds.length ? this.guest.eventIds[0] : this.guest.eventId;
+      this.event = events.find((e: any) => e.id === gid) || null;
       this.feedback = this.guest!.feedbackId ? feedbacks.find((f: any) => f.id === this.guest!.feedbackId) : null;
     }
   }

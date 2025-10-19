@@ -12,6 +12,10 @@
         <p><strong>End Date:</strong> {{event.endDate | date:'medium'}}</p>
         <p><strong>Organizer:</strong> {{organizer?.name || organizer?.email || 'Organizer'}}</p>
         <p><strong>Budget:</strong> {{event.budget}}</p>
+        <div class="mb-3">
+            <button *ngIf="canModify()" class="btn btn-warning me-2" (click)="editEvent()">Edit</button>
+            <button *ngIf="canModify()" class="btn btn-danger" (click)="deleteEvent()">Delete</button>
+        </div>
         <div *ngIf="feedbacks.length">
             <h4>Feedbacks</h4>
             <ul class="list-unstyled">

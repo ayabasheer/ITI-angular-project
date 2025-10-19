@@ -19,12 +19,26 @@ export class LoginComponent {
   roleSelected = '';
   email = '';
   password = '';
+  isDarkMode = false;
 
   constructor(
     private auth: AuthService,
     private router: Router,
     private lastRoute: LastRouteService
   ) {}
+
+  ngOnInit() {
+    const saved = localStorage.getItem('darkMode');
+    this.isDarkMode = saved === 'true';
+    if (this.isDarkMode) document.body.classList.add('dark-mode');
+  }
+
+  toggleDarkMode() {
+    this.isDarkMode = !this.isDarkMode;
+    localStorage.setItem('darkMode', this.isDarkMode.toString());
+    if (this.isDarkMode) document.body.classList.add('dark-mode');
+    else document.body.classList.remove('dark-mode');
+  }
 
   selectRole(r: string) {
     this.roleSelected = r;

@@ -51,6 +51,31 @@
 .signin-link { text-align:center; margin-top:1.25rem; color:var(--muted); }
 .signin-link a { margin-left:0.5rem; color:var(--primary); text-decoration:none; font-weight:600; }
 
+.auth-header { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+
+.icon {
+  font-size: 1.5rem;
+}
+.dark-mode-toggle {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  color: #FFFFFF;
+  border-radius: 50%;
+}
+
+.dark-mode-toggle:hover {
+  transform: scale(1.1);
+  background: rgba(237, 230, 222, 0.2);
+  color: var(--primary);
+}
+
+.dark-mode-toggle .icon {
+  display: inline-block;
+}
 .btn {
   padding: 0.75rem 1.5rem;
   border: none;

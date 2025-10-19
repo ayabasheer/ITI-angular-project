@@ -73,7 +73,7 @@
 
 /* About Story */
 .about-story {
-    background:linear-gradient(rgb(0,0,0, 0.3 ), rgb(0,0,0,0.3)), url('/assets/images/12345.jpg') center/cover no-repeat  ;
+    background:linear-gradient(rgb(0,0,0, 0.2), rgb(0,0,0,0.2)), url('/assets/images/12345.jpg') center/cover no-repeat  ;
     background-attachment: fixed;
     height:70vh;
     color: white;
@@ -268,19 +268,6 @@
     text-decoration: none;
     display: inline-block;
     padding: .375rem .75rem;
-}
-
-.btn-outline-primary {
-    background: transparent;
-    color: var(--primary);
-    border: 2px solid var(--primary);
-}
-
-.btn-outline-primary:hover ,.btn-outline-primary.active {
-    background: var(--primary);
-    color: #FFFFFF;
-    transform: translateY(-2px);
-    border: var(--primary);
 }
 
 .btn-sm {

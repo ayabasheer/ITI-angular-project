@@ -19,6 +19,7 @@ export class RegisterComponent {
   name = '';
   email = '';
   password = '';
+  isDarkMode = false;
 
   // Helper used by the template to validate email (keeps template expressions simple)
   isEmailInvalid(): boolean {
@@ -28,6 +29,23 @@ export class RegisterComponent {
   }
 
   constructor(private auth: AuthService, private router: Router, private lastRoute: LastRouteService) {}
+
+  ngOnInit() {
+    const saved = localStorage.getItem('darkMode');
+    this.isDarkMode = saved === 'true';
+    this.applyDarkMode();
+  }
+
+  toggleDarkMode() {
+    this.isDarkMode = !this.isDarkMode;
+    localStorage.setItem('darkMode', this.isDarkMode.toString());
+    this.applyDarkMode();
+  }
+
+  private applyDarkMode() {
+    if (this.isDarkMode) document.body.classList.add('dark-mode');
+    else document.body.classList.remove('dark-mode');
+  }
 
   selectRole(r: string) {
     this.roleSelected = r;
