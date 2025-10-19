@@ -4,15 +4,14 @@
 
         <!-- Logo Section -->
         <div class="sidebar-header">
-      <a routerLink="/dashboard" class="logo-link">
-        <img src="assets/logo.png" alt="Eventura Logo" height="60" class="fade-in">
-      </a>
+            <a routerLink="/dashboard" class="logo-link">
+                <img src="assets/logo.png" alt="Eventura Logo" height="60" class="fade-in">
+            </a>
         </div>
 
         <!-- Navigation Section -->
         <nav class="sidebar-nav">
-            <a routerLink="/dashboard" routerLinkActive="active" class="nav-item"
-                (click)="closeSidebarOnMobile()">
+            <a routerLink="/dashboard" routerLinkActive="active" class="nav-item" (click)="closeSidebarOnMobile()">
                 <i class="bi bi-house-door"></i>
                 <span>Dashboard</span>
             </a>
@@ -36,11 +35,11 @@
                 <i class="bi bi-cash-stack"></i>
                 <span>Expenses</span>
             </a>
-            <a routerLink="/dashboard/feedback" routerLinkActive="active" class="nav-item"
+            <!-- <a routerLink="/dashboard/feedback" routerLinkActive="active" class="nav-item"
                 (click)="closeSidebarOnMobile()">
                 <i class="bi bi-chat-dots"></i>
                 <span>Feedback</span>
-            </a>
+            </a> -->
         </nav>
 
         <!-- Footer -->
@@ -162,17 +161,22 @@
             </div>
 
             <!-- Event Progress -->
+            <!-- Event Progress -->
             <div class="progress-card" *ngIf="router.url === '/dashboard'">
                 <div class="progress-header">
                     <h3 class="progress-title">Event Progress</h3>
-                    <span class="progress-percentage">80%</span>
+                    <span class="progress-percentage">
+                        {{ total > 0 ? ((completed / total) * 100 | number:'1.0-0') + '%' : '0%' }}
+                    </span>
                 </div>
                 <div class="progress-bar-wrapper">
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: 80%;"></div>
+                        <div class="progress-fill" [style.width]="total > 0 ? ((completed / total) * 100) + '%' : '0%'">
+                        </div>
                     </div>
                 </div>
             </div>
+
         </main>
     </mat-sidenav-content>
 </mat-sidenav-container>
