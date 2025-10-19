@@ -5,16 +5,12 @@ import { MatSidenavModule, MatSidenav } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { EventService } from '../../../shared/services/event';
-import { EventModel } from '../../../shared/models/interfaces';
-import { EventGeneratorService } from '../../../shared/services/event-generator.service';
 import { GuestService } from '../../../shared/services/guest';
 import { TaskService } from '../../../shared/services/task';
 import { ExpenseService } from '../../../shared/services/expense';
 import { Chart, registerables } from 'chart.js';
-import { DatePipe } from '@angular/common';
 import { AuthService, User } from '../../../shared/services/auth.service';
 Chart.register(...registerables);
-
 
 @Component({
   selector: 'app-dashboard',
@@ -30,12 +26,13 @@ export class Dashboard implements OnInit {
   upcoming = 0;
   completed = 0;
   totalGuests = 0;
+  progress = 0; // ✅ نسبة التقدم (الأحداث المكتملة)
   currentUser: User | null = null;
   isDarkMode = false;
   sidebarOpen = true;
   isMobile = false;
-  expensePercentages: number[] = [40, 25, 20, 15]; // Default, will be updated
-  eventsByMonth: number[] = [2, 3, 4, 3, 2]; // Default, will be updated
+  expensePercentages: number[] = [40, 25, 20, 15];
+  eventsByMonth: number[] = new Array(12).fill(0);
 
   constructor(
     private eventService: EventService,
@@ -44,12 +41,11 @@ export class Dashboard implements OnInit {
     private expenseService: ExpenseService,
     public router: Router,
     private authService: AuthService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.currentUser = this.authService.currentUser;
     this.loadStats();
-    setTimeout(() => this.initCharts(), 300);
     this.isDarkMode = localStorage.getItem('darkMode') === 'true';
     this.applyTheme();
     this.checkScreenSize();
@@ -91,6 +87,7 @@ export class Dashboard implements OnInit {
     if (this.sidenav) this.sidenav.close();
   }
 
+  // ✅ دالة الإحصائيات المحدثة
   loadStats() {
     const allEvents = this.eventService.getAll();
     const allGuests = this.guestService.getAll();
@@ -104,6 +101,9 @@ export class Dashboard implements OnInit {
       this.upcoming = myEvents.filter(e => e.status === 'Upcoming').length;
       this.completed = myEvents.filter(e => e.status === 'Completed').length;
 
+      // ✅ نسبة التقدم (الأحداث المكتملة)
+      this.progress = this.total > 0 ? Math.round((this.completed / this.total) * 100) : 0;
+
       const myEventIds = new Set<number>(myEvents.map(e => e.id));
 
       // Guests for organizer's events - handle guests that may have eventIds array or single eventId
@@ -112,8 +112,10 @@ export class Dashboard implements OnInit {
         return typeof gid === 'number' && myEventIds.has(gid);
       }).length;
 
-      // Expenses for organizer's events
-  const expenses = allExpenses.filter((exp: any) => typeof exp.eventId === 'number' && myEventIds.has(exp.eventId));
+      // Expenses
+      const expenses = allExpenses.filter(
+        (exp: any) => typeof exp.eventId === 'number' && myEventIds.has(exp.eventId)
+      );
       const categories: string[] = ['Venue', 'Decoration', 'Food', 'Music'];
       const totalExpense = expenses.reduce((sum: number, exp: any) => sum + (exp.amount || 0), 0);
       this.expensePercentages = categories.map(cat => {
@@ -123,33 +125,39 @@ export class Dashboard implements OnInit {
         return totalExpense > 0 ? Math.round((catTotal / totalExpense) * 100) : 0;
       });
 
-      // Events by month (Jan-May) for organizer events
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May'];
-      this.eventsByMonth = months.map(month => {
-        return myEvents.filter(event => {
-          if (!event.startDate) return false;
-          const eventDate = new Date(event.startDate);
-          const eventMonth = eventDate.toLocaleString('default', { month: 'short' });
-          return eventMonth === month;
-        }).length;
+      // ✅ الأحداث حسب الشهور
+      const monthCounts = new Array(12).fill(0);
+      myEvents.forEach(event => {
+        if (event.startDate) {
+          const month = new Date(event.startDate).getMonth();
+          monthCounts[month]++;
+        }
       });
 
-      // Optionally use tasks for other UI pieces - filter tasks to organizer events
-  const tasks = allTasks.filter((t: any) => typeof t.eventId === 'number' && myEventIds.has(t.eventId));
-      // (No direct UI binding yet, but data is available if needed)
+      this.eventsByMonth = monthCounts;
+
+      // ✅ تحديث الرسوم البيانية بعد تحميل البيانات
+      setTimeout(() => this.initCharts(), 300);
     } else {
-      // Not an organizer or not authenticated — show empty stats
       this.total = 0;
       this.upcoming = 0;
       this.completed = 0;
+      this.progress = 0;
       this.totalGuests = 0;
       this.expensePercentages = [0, 0, 0, 0];
-      this.eventsByMonth = [0, 0, 0, 0, 0];
+      this.eventsByMonth = new Array(12).fill(0);
+      setTimeout(() => this.initCharts(), 300);
     }
   }
 
+  // ✅ تحديث الرسوم البيانية
   initCharts() {
-    // Donut Chart (Expenses) - using computed percentages
+    const monthLabels = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+
+    // Donut Chart (Expenses)
     new Chart('expenseChart', {
       type: 'doughnut',
       data: {
@@ -167,11 +175,11 @@ export class Dashboard implements OnInit {
       },
     });
 
-    // Bar Chart (Events by Month) - using computed counts
+    // Bar Chart (Events by Month)
     new Chart('eventChart', {
       type: 'bar',
       data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+        labels: monthLabels,
         datasets: [
           {
             label: 'Events',

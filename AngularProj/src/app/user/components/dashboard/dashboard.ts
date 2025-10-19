@@ -11,6 +11,7 @@ import { FeedbackComponent } from '../feedback/feedback';
 import { EventsComponent } from '../events/events';
 import { ProfileComponent } from '../profile/profile';
 import { OverviewComponent } from '../overview/overview';
+import { InvitationsComponent } from '../invitations/invitations';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,25 +23,31 @@ import { OverviewComponent } from '../overview/overview';
     MatIconModule,
     MatButtonModule,
     MatCardModule
+    MatCardModule,
+    FeedbackComponent,
+    EventsComponent,
+    ProfileComponent,
+    OverviewComponent,
+    InvitationsComponent
   ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
 export class DashboardComponent implements OnInit {
-
   @ViewChild('sidenav') sidenav!: MatSidenav;
 
   sidebarOpen = true;
   darkMode = false;
   isMobile = false;
 
-  currentTab: 'overview' | 'feedback' | 'events' | 'profile' = 'overview';
+  currentTab: 'overview' | 'feedback' | 'events' | 'invitations' | 'profile' = 'overview';
 
   tabComponents: Record<string, Type<any>> = {
     overview: OverviewComponent,
     feedback: FeedbackComponent,
     events: EventsComponent,
-    profile: ProfileComponent
+    profile: ProfileComponent,
+    invitations: InvitationsComponent
   };
 
   get currentComponent(): Type<any> {
@@ -54,6 +61,7 @@ export class DashboardComponent implements OnInit {
     this.loadThemeMode();
     this.applySystemThemePreference();
     this.checkScreenSize();
+    this.restoreLastTab(); // ✅ Restore last tab when reloading
   }
 
   @HostListener('window:resize')
@@ -80,11 +88,25 @@ export class DashboardComponent implements OnInit {
     localStorage.setItem('sidebarOpen', JSON.stringify(this.sidebarOpen));
   }
 
-  selectTab(tab: 'overview' | 'feedback' | 'events' | 'profile') {
+  selectTab(tab: 'overview' | 'feedback' | 'events' | 'invitations' | 'profile') {
     this.currentTab = tab;
+    localStorage.setItem('lastOpenedTab', tab); // ✅ Save tab when changed
     if (this.isMobile && this.sidenav) {
       this.sidenav.close();
       this.sidebarOpen = false;
+    }
+  }
+
+  private restoreLastTab(): void {
+    const lastTab = localStorage.getItem('lastOpenedTab') as
+      | 'overview'
+      | 'feedback'
+      | 'events'
+      | 'invitations'
+      | 'profile'
+      | null;
+    if (lastTab && this.tabComponents[lastTab]) {
+      this.currentTab = lastTab;
     }
   }
 

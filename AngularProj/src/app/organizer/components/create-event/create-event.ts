@@ -120,12 +120,10 @@ export class CreateEvent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.authService.currentUser;
-    // If not authenticated, redirect to login
     if (!this.currentUser) {
       this.router.navigate(['/login']);
       return;
     }
-    // If authenticated but not an Organizer, redirect to dashboard
     if (this.currentUser.role !== 'Organizer') {
       this.router.navigate(['/dashboard']);
       return;
@@ -192,9 +190,8 @@ export class CreateEvent implements OnInit {
     }
   }
 
-  // ✅ حفظ الحدث في localStorage
+  // ✅ حفظ الحدث في localStorage + تحديد الحالة تلقائيًا
   onSubmit(): void {
-    // Enforce Organizer-only event creation
     if (!this.currentUser || this.currentUser.role !== 'Organizer') {
       Swal.fire({ icon: 'error', title: 'Not authorized', text: 'Only organizers can create events.' });
       return;
@@ -205,7 +202,6 @@ export class CreateEvent implements OnInit {
       const guestEmails = formValue.guestEmails.split(',').map((email: string) => email.trim());
       const guestIds: number[] = [];
 
-      // 🧩 جلب المستخدمين والضيوف الحاليين
       const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
       const existingGuests = this.guestService.getAll();
 
@@ -242,7 +238,6 @@ export class CreateEvent implements OnInit {
         guestIds.push(user.id);
       });
 
-      // ✅ تحديث بيانات المستخدمين والضيوف
       localStorage.setItem('users', JSON.stringify(existingUsers));
       localStorage.setItem('guests', JSON.stringify(existingGuests));
 
@@ -280,6 +275,17 @@ export class CreateEvent implements OnInit {
 
       // ✅ create new event
       const newEventId = existingEvents.length ? Math.max(...existingEvents.map((e: any) => e.id)) + 1 : 1;
+      const startDate = new Date(formValue.startDate);
+      const today = new Date();
+
+      let status: 'Upcoming' | 'InProgress' | 'Completed' | 'Cancelled' = 'Upcoming';
+
+      if (startDate.toDateString() === today.toDateString()) {
+        status = 'InProgress';
+      } else if (startDate < today) {
+        status = 'Completed';
+      }
+
       const event: EventModel = {
         id: newEventId,
         name: formValue.name,
@@ -295,7 +301,7 @@ export class CreateEvent implements OnInit {
         tasks: [],
         expenses: [],
         feedbacks: [],
-        status: 'Upcoming',
+        status,
         budget: formValue.budget,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
@@ -306,6 +312,22 @@ export class CreateEvent implements OnInit {
 
       // send invitations
       this.sendInvitations(guestEmails, event);
+      // ✅ إنشاء الدعوات وربطها بالحدث
+      const existingInvitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+      guestIds.forEach((guestId, index) => {
+        const newInvitation = {
+          id: existingInvitations.length
+            ? Math.max(...existingInvitations.map((i: any) => i.id)) + 1
+            : 1,
+          eventId: event.id,
+          guestId,
+          email: guestEmails[index],
+          status: 'Pending',
+          createdAt: new Date().toISOString()
+        };
+        existingInvitations.push(newInvitation);
+      });
+      localStorage.setItem('invitations', JSON.stringify(existingInvitations));
 
       // update guest eventId mapping
       const updatedGuests = existingGuests.map((g: any) =>
@@ -316,7 +338,7 @@ export class CreateEvent implements OnInit {
       Swal.fire({
         icon: 'success',
         title: 'Event Created!',
-        text: 'The event has been created and invitations sent.',
+        text: 'The event and invitations have been created successfully.',
         confirmButtonText: 'OK'
       }).then(() => {
         this.router.navigate(['/dashboard/events'], { queryParams: { refresh: Date.now() } });

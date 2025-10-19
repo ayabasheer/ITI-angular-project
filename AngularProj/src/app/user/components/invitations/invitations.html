@@ -1,0 +1,37 @@
+<div class="filter-tabs">
+  <button mat-button (click)="changeFilter('All')" [class.active]="selectedFilter === 'All'">All</button>
+  <button mat-button (click)="changeFilter('Pending')" [class.active]="selectedFilter === 'Pending'">Pending</button>
+  <button mat-button (click)="changeFilter('Accepted')" [class.active]="selectedFilter === 'Accepted'">Accepted</button>
+  <button mat-button (click)="changeFilter('Refused')" [class.active]="selectedFilter === 'Refused'">Refused</button>
+</div>
+
+<div class="invitations-grid" *ngIf="filteredInvitations.length; else noData">
+  <mat-card *ngFor="let inv of filteredInvitations" class="invitation-card">
+    <img [src]="inv.eventDetails?.image || 'assets/default-event.jpg'" alt="{{ inv.eventDetails?.name }}">
+    <mat-card-header>
+      <mat-card-title>{{ inv.eventDetails?.name }}</mat-card-title>
+      <mat-card-subtitle>{{ inv.eventDetails?.category }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p><strong>Location:</strong> {{ inv.eventDetails?.location }}</p>
+      <p><strong>Start:</strong> {{ inv.eventDetails?.startDate | date: 'medium' }}</p>
+      <p><strong>End:</strong> {{ inv.eventDetails?.endDate | date: 'medium' }}</p>
+    </mat-card-content>
+
+    <mat-card-actions *ngIf="inv.status === 'Pending'; else statusChip">
+      <button mat-flat-button color="accent" (click)="acceptInvitation(inv)">Accept</button>
+      <button mat-flat-button color="warn" (click)="refuseInvitation(inv)">Refuse</button>
+    </mat-card-actions>
+
+    <ng-template #statusChip>
+      <span class="status-chip" [class.accepted]="inv.status === 'Accepted'" [class.refused]="inv.status === 'Refused'">
+        {{ inv.status }}
+      </span>
+    </ng-template>
+  </mat-card>
+</div>
+
+<ng-template #noData>
+  <p class="no-data">No invitations found.</p>
+</ng-template>
