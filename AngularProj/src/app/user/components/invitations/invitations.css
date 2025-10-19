@@ -1,0 +1,34 @@
+.filter-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filter-tabs button.active {
+  background-color: #1976d2;
+  color: white;
+  border-radius: 20px;
+}
+
+.invitations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.status-chip {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.status-chip.accepted {
+  background-color: #4caf50;
+  color: white;
+}
+
+.status-chip.refused {
+  background-color: #f44336;
+  color: white;
+}

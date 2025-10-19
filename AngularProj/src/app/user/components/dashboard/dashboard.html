@@ -36,6 +36,10 @@
         <mat-icon>person</mat-icon>
         <span>Profile</span>
       </button>
+      <button mat-list-item (click)="selectTab('invitations')" [class.active]="currentTab==='invitations'">
+        <mat-icon>mail</mat-icon>
+        <span>Invitations</span>
+      </button>
     </mat-nav-list>
 
     <!-- Footer -->
