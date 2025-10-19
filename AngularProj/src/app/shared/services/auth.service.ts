@@ -24,8 +24,13 @@ export class AuthService {
 
   login(user: User) {
     try {
+      // Preserve any existing invitations so they are not lost during login (guest flows may trigger data writes elsewhere)
+      const preservedInvitations = localStorage.getItem('invitations');
       localStorage.setItem(this.key, JSON.stringify(user));
       this.currentUser = user; // ✅ تحديث القيمة في الذاكرة
+      if (preservedInvitations) {
+        try { localStorage.setItem('invitations', preservedInvitations); } catch { /* ignore */ }
+      }
     } catch {}
   }
 

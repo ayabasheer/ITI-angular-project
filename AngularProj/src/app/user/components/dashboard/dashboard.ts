@@ -22,13 +22,8 @@ import { InvitationsComponent } from '../invitations/invitations';
     MatListModule,
     MatIconModule,
     MatButtonModule,
-    MatCardModule
     MatCardModule,
-    FeedbackComponent,
-    EventsComponent,
-    ProfileComponent,
-    OverviewComponent,
-    InvitationsComponent
+    MatCardModule
   ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']

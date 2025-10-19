@@ -6,6 +6,7 @@
 </div>
 
 <div class="invitations-grid" *ngIf="filteredInvitations.length; else noData">
+  <p *ngIf="!currentUser" class="notice">Please log in as a guest to view and respond to your invitations.</p>
   <mat-card *ngFor="let inv of filteredInvitations" class="invitation-card">
     <img [src]="inv.eventDetails?.image || 'assets/default-event.jpg'" alt="{{ inv.eventDetails?.name }}">
     <mat-card-header>
@@ -19,9 +20,9 @@
       <p><strong>End:</strong> {{ inv.eventDetails?.endDate | date: 'medium' }}</p>
     </mat-card-content>
 
-    <mat-card-actions *ngIf="inv.status === 'Pending'; else statusChip">
-      <button mat-flat-button color="accent" (click)="acceptInvitation(inv)">Accept</button>
-      <button mat-flat-button color="warn" (click)="refuseInvitation(inv)">Refuse</button>
+    <mat-card-actions *ngIf="canAct(inv); else statusChip">
+      <button mat-flat-button color="accent" (click)="acceptInvitation(inv)" [disabled]="inv.status !== 'Pending'">Accept</button>
+      <button mat-flat-button color="warn" (click)="refuseInvitation(inv)" [disabled]="inv.status !== 'Pending'">Refuse</button>
     </mat-card-actions>
 
     <ng-template #statusChip>
