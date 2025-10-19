@@ -72,6 +72,10 @@ export async function loadAndStoreLocalImages(options?: { count?: number, folder
 export async function generateAndSaveAllWithImages() {
   const base = new Date('2025-10-11T09:00:00Z');
 
+  // Preserve any existing invitations so demo data generation doesn't wipe them.
+  const preservedInvitationsRaw = localStorage.getItem('invitations');
+  const preservedInvitations = preservedInvitationsRaw ? JSON.parse(preservedInvitationsRaw) : [];
+
   const NUM_ORGANIZERS = 40;
   const NUM_ADMINS = 100;
   const EVENTS_PER_ORGANIZER = 2;
@@ -347,6 +351,18 @@ export async function generateAndSaveAllWithImages() {
   localStorage.setItem('expenses', JSON.stringify(expenses));
   localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
 
+  // Restore preserved invitations (if any) so user-created invitations survive demo generation
+  try {
+    if (preservedInvitationsRaw) {
+      localStorage.setItem('invitations', preservedInvitationsRaw);
+    } else {
+      // Ensure key exists even if empty
+      localStorage.setItem('invitations', JSON.stringify([]));
+    }
+  } catch (e) {
+    console.warn('Unable to restore invitations after demo generation:', e);
+  }
+
   const snapshot = {
     organizers,
     admins,
@@ -355,6 +371,7 @@ export async function generateAndSaveAllWithImages() {
     tasks,
     expenses,
     feedbacks,
+    invitations: preservedInvitations,
     generatedAt: new Date().toISOString()
   };
   return snapshot;
