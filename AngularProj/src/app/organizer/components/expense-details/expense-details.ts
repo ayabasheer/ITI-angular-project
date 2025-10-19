@@ -7,7 +7,7 @@ import { Expense } from '../../../shared/models/interfaces';
 @Component({
   selector: 'app-expense-details',
   standalone: true,
-  imports: [CommonModule, FooterComponent],
+  imports: [CommonModule],
   templateUrl: './expense-details.html',
   styleUrls: ['./expense-details.css']
 })

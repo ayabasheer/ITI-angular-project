@@ -21,11 +21,7 @@ import { OverviewComponent } from '../overview/overview';
     MatListModule,
     MatIconModule,
     MatButtonModule,
-    MatCardModule,
-    FeedbackComponent,
-    EventsComponent,
-    ProfileComponent,
-    OverviewComponent
+    MatCardModule
   ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']

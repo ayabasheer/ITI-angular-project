@@ -33,11 +33,16 @@ export class Guests implements OnInit {
           .map(e => e.id)
       );
       this.events = this.eventService.getAll().filter(e => myEventIds.has(e.id));
-      const allGuests = this.guestService.getAll();
-      // Some guests may have eventId undefined or null; ensure it's a number before checking the Set
-      this.guests = allGuests.filter((g: Guest) =>
-        typeof g.eventIds[0] === 'number' && myEventIds.has(g.eventIds[0])
-      );
+      // gather guests for all organizer events
+      const guestsForAll: Guest[] = [];
+      for (const id of myEventIds) {
+        const gs = this.guestService.getForEvent(id);
+        gs.forEach((g: Guest) => {
+          // avoid duplicates
+          if (!guestsForAll.find(x => x.id === g.id)) guestsForAll.push(g);
+        });
+      }
+      this.guests = guestsForAll;
     } else {
       this.guests = [];
     }
@@ -45,11 +50,15 @@ export class Guests implements OnInit {
 
   // Accept nullable eventId because templates may pass undefined/null while
   // type narrowing in component logic doesn't affect template type checking.
-  getEventName(eventId?: number | null): string {
-    if (typeof eventId !== 'number') {
-      return 'Unknown Event';
-    }
-    const event = this.events.find(e => e.id === eventId);
+  // Accept either a single eventId or an array of eventIds; used by templates.
+  getEventName(eventRef?: number | number[] | null): string {
+    let id: number | undefined;
+    if (typeof eventRef === 'number') id = eventRef;
+    else if (Array.isArray(eventRef) && eventRef.length) id = eventRef[0];
+    else id = undefined;
+
+    if (typeof id !== 'number') return 'Unknown Event';
+    const event = this.events.find((e: any) => e.id === id);
     return event ? event.name : 'Unknown Event';
   }
 }

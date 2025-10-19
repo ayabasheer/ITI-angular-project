@@ -72,7 +72,7 @@
 .add-expense-btn:hover {
   background: linear-gradient(135deg, #b9975b, #d4af37);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 6px 18px rgba(212, 175, 55, 0.28);
 }
 
 /* Summary Cards */
@@ -87,8 +87,13 @@
   background-color: #ffffff;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
 }
 
 .expenses.dark .summary-card {
@@ -131,8 +136,8 @@
   background-color: #ffffff;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .expenses.dark .expenses-table {
@@ -171,14 +176,14 @@
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr 0.5fr;
   gap: 1rem;
-  padding: 1rem;
   border-bottom: 1px solid #eee;
   transition: all 0.3s ease;
   cursor: pointer;
 }
 
 .expense-row:hover {
-  background-color: rgba(212, 175, 55, 0.05);
+  background: linear-gradient(90deg, rgba(212,175,55,0.05), rgba(212,175,55,0.02));
+  transform: translateX(2px);
 }
 
 .expenses.dark .expense-row {
@@ -237,21 +242,42 @@
 }
 
 .edit-btn {
-  background-color: rgba(212, 175, 55, 0.1);
-  color: #d4af37;
+  background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(185,140,85,0.06));
+  color: #8b6a3f;
+  border: 1px solid rgba(212,175,55,0.12);
 }
 
 .edit-btn:hover {
-  background-color: rgba(212, 175, 55, 0.2);
+  background: linear-gradient(135deg, rgba(212,175,55,0.18), rgba(185,140,85,0.12));
+  transform: translateY(-2px);
 }
 
 .delete-btn {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+  background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(239,68,68,0.03));
+  color: #b91c1c;
+  border: 1px solid rgba(239,68,68,0.08);
 }
 
 .delete-btn:hover {
-  background-color: rgba(239, 68, 68, 0.2);
+  background: linear-gradient(135deg, rgba(239,68,68,0.14), rgba(239,68,68,0.06));
+  transform: translateY(-2px);
+}
+
+/* Reuse primary button look for inline small buttons */
+.btn-primary-small {
+  padding: 0.45rem 0.9rem;
+  background: linear-gradient(135deg, #d4af37, #b9975b);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary-small:hover {
+  background: linear-gradient(135deg, #b9975b, #d4af37);
+  transform: translateY(-2px);
 }
 
 /* Pagination */
@@ -317,7 +343,6 @@
   .expense-row {
     grid-template-columns: 1fr;
     gap: 0.5rem;
-    padding: 0.75rem;
   }
 
   .expense-actions {
@@ -364,9 +389,7 @@
     max-height: 400px;
   }
 
-  .expense-row {
-    padding: 0.5rem;
-  }
+
 
   .expense-description {
     font-size: 0.85rem;
