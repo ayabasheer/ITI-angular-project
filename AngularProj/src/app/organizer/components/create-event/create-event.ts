@@ -256,7 +256,7 @@ export class CreateEvent implements OnInit {
           existingGuests.push(guest);
         }
 
-        guestIds.push(user.id);
+        guestIds.push(guest.id);
       });
 
       localStorage.setItem('users', JSON.stringify(existingUsers));
@@ -300,7 +300,14 @@ export class CreateEvent implements OnInit {
         updatedAt: new Date().toISOString()
       };
 
-      existingEvents.push(event);
+      // persist or replace event in events list
+      if (this.editing && this.editingEventId) {
+        const idx = existingEvents.findIndex((e: any) => Number(e.id) === Number(this.editingEventId));
+        if (idx !== -1) existingEvents[idx] = event;
+        else existingEvents.push(event);
+      } else {
+        existingEvents.push(event);
+      }
       localStorage.setItem('events', JSON.stringify(existingEvents));
 
       // ✅ إنشاء الدعوات وربطها بالحدث
@@ -328,6 +335,11 @@ export class CreateEvent implements OnInit {
             currentEventIds.push(event.id);
           }
           return { ...g, eventIds: currentEventIds, eventId: event.id }; // keep eventId for backward compatibility
+        } else {
+          // Remove event.id from eventIds if guest is no longer invited
+          const currentEventIds = Array.isArray(g.eventIds) ? g.eventIds : (g.eventId ? [g.eventId] : []);
+          const updatedEventIds = currentEventIds.filter((id: number) => id !== event.id);
+          return { ...g, eventIds: updatedEventIds, eventId: updatedEventIds.length > 0 ? updatedEventIds[0] : null };
         }
         return g;
       });
@@ -384,15 +396,13 @@ export class CreateEvent implements OnInit {
       event.tasks = taskIds;
       event.expenses = expenseIds;
 
-      // persist or replace event in events list
-      if (this.editing && this.editingEventId) {
-        const idx = existingEvents.findIndex((e: any) => Number(e.id) === Number(this.editingEventId));
-        if (idx !== -1) existingEvents[idx] = event;
-        else existingEvents.push(event);
-      } else {
-        existingEvents.push(event);
+      // update event with tasks and expenses
+      const updatedEvents = JSON.parse(localStorage.getItem('events') || '[]');
+      const eventIdx = updatedEvents.findIndex((e: any) => e.id === event.id);
+      if (eventIdx !== -1) {
+        updatedEvents[eventIdx] = event;
+        localStorage.setItem('events', JSON.stringify(updatedEvents));
       }
-      localStorage.setItem('events', JSON.stringify(existingEvents));
 
       // create invitations but avoid duplicates when editing
       const existingInvitations = JSON.parse(localStorage.getItem('invitations') || '[]');
@@ -414,11 +424,7 @@ export class CreateEvent implements OnInit {
       });
       localStorage.setItem('invitations', JSON.stringify(existingInvitations));
 
-      // update guests' eventId
-      const guestsUpdatedFinal = existingGuests.map((g: any) =>
-        guestIds.includes(g.id) ? { ...g, eventId: event.id } : g
-      );
-      localStorage.setItem('guests', JSON.stringify(guestsUpdatedFinal));
+
 
       // ✅ إشعار النجاح
       Swal.fire({
