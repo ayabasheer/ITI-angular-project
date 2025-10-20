@@ -5,6 +5,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import Swal from 'sweetalert2';
 
 import { GuestUser } from '../../interfaces/guest.interface';
 import { FeedbackComponent } from '../feedback/feedback';
@@ -60,7 +61,7 @@ export class DashboardComponent implements OnInit {
     this.loadThemeMode();
     this.applySystemThemePreference();
     this.checkScreenSize();
-    this.restoreLastTab(); // ✅ Restore last tab when reloading
+    this.restoreLastTab();
   }
 
   @HostListener('window:resize')
@@ -78,18 +79,11 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  toggleSidebar(): void {
-    this.sidebarOpen = !this.sidebarOpen;
-    if (this.sidenav) {
-      if (this.sidebarOpen) this.sidenav.open();
-      else this.sidenav.close();
-    }
-    localStorage.setItem('sidebarOpen', JSON.stringify(this.sidebarOpen));
-  }
+
 
   selectTab(tab: 'overview' | 'feedback' | 'events' | 'invitations' | 'profile') {
     this.currentTab = tab;
-    localStorage.setItem('lastOpenedTab', tab); // ✅ Save tab when changed
+    localStorage.setItem('lastOpenedTab', tab);
     if (this.isMobile && this.sidenav) {
       this.sidenav.close();
       this.sidebarOpen = false;
@@ -109,18 +103,14 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  onBackdropClick() {
-    this.sidebarOpen = false;
-    if (this.sidenav) this.sidenav.close();
-  }
-
   toggleTheme(): void {
     this.darkMode = !this.darkMode;
     localStorage.setItem('themeMode', this.darkMode ? 'dark' : 'light');
 
     const dashboardEl = document.querySelector('.dashboard');
-    if (this.darkMode) dashboardEl?.classList.add('dark');
-    else dashboardEl?.classList.remove('dark');
+    this.darkMode
+      ? dashboardEl?.classList.add('dark')
+      : dashboardEl?.classList.remove('dark');
 
     this.updateCSSVariables();
   }
@@ -135,8 +125,9 @@ export class DashboardComponent implements OnInit {
     }
 
     const dashboardEl = document.querySelector('.dashboard');
-    if (this.darkMode) dashboardEl?.classList.add('dark');
-    else dashboardEl?.classList.remove('dark');
+    this.darkMode
+      ? dashboardEl?.classList.add('dark')
+      : dashboardEl?.classList.remove('dark');
 
     this.updateCSSVariables();
   }
@@ -163,12 +154,46 @@ export class DashboardComponent implements OnInit {
 
   private applySystemThemePreference(): void {
     if (!localStorage.getItem('themeMode')) {
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
         this.darkMode = true;
-        const dashboardEl = document.querySelector('.dashboard');
-        dashboardEl?.classList.add('dark');
+        document.querySelector('.dashboard')?.classList.add('dark');
         localStorage.setItem('themeMode', 'dark');
       }
     }
   }
+
+  logout(): void {
+    Swal.fire({
+      title: 'Are you sure you want to log out?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, log out',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#b08d57'
+    }).then(result => {
+      if (result.isConfirmed) {
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('lastOpenedTab');
+        Swal.fire('Logged out!', 'You have been logged out successfully.', 'success')
+          .then(() => {
+            window.location.href = '/home'; 
+          });
+      }
+    });
+  }
+  toggleSidebar(): void {
+  this.sidebarOpen = !this.sidebarOpen;
+  if (this.sidenav) {
+    this.sidebarOpen ? this.sidenav.open() : this.sidenav.close();
+  }
+  localStorage.setItem('sidebarOpen', JSON.stringify(this.sidebarOpen));
+}
+
+onBackdropClick(): void {
+  this.sidebarOpen = false;
+  if (this.sidenav) {
+    this.sidenav.close();
+  }
+}
+
 }

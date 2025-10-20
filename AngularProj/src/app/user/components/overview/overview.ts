@@ -2,13 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { Router } from '@angular/router';
 import { Event, Feedback, GuestStats, GuestUser } from '../../interfaces/guest.interface';
 
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatIconModule, MatProgressBarModule],
+  imports: [CommonModule, MatCardModule, MatIconModule, MatButtonModule, MatProgressBarModule],
   templateUrl: './overview.html',
   styleUrls: ['./overview.css']
 })
@@ -16,12 +18,15 @@ export class OverviewComponent implements OnInit {
   currentUser: GuestUser | null = null;
   events: Event[] = [];
   feedbacks: Feedback[] = [];
+
   stats: GuestStats = {
     totalInvitations: 0,
     acceptedEvents: 0,
     averageRatingGiven: 0,
     feedbackProvided: 0
   };
+
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.loadUser();
@@ -61,6 +66,15 @@ export class OverviewComponent implements OnInit {
       : 0;
   }
 
+  getStatusIcon(status?: string): string {
+    switch (status) {
+      case 'Completed': return 'check_circle';
+      case 'InProgress': return 'schedule';
+      case 'Cancelled': return 'cancel';
+      default: return 'help_outline';
+    }
+  }
+
   getStatusColor(status?: string): string {
     switch (status) {
       case 'InProgress': return '#FFA000';
@@ -68,5 +82,9 @@ export class OverviewComponent implements OnInit {
       case 'Cancelled': return '#F44336';
       default: return '#9E9E9E';
     }
+  }
+
+  goToEvents(): void {
+    this.router.navigate(['/events'], { queryParams: { tab: 'events' } });
   }
 }

@@ -266,3 +266,28 @@
     font-size: 0.95rem;
   }
 }
+/* 🔴 Logout Button */
+.logout-btn {
+  background-color: #b08d57;
+  color: #fff;
+  border-radius: 20px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #a57c46;
+  transform: translateY(-1px);
+}
+
+.dashboard.dark .logout-btn {
+  background-color: #d4af37;
+  color: #1e1e1e;
+}
+
+.dashboard.dark .logout-btn:hover {
+  background-color: #c09b2d;
+}

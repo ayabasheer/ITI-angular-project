@@ -60,3 +60,29 @@ button:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
+button {
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+button:disabled {
+  transform: none;
+  box-shadow: none;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dark-card button[color="accent"] {
+  background-color: #90caf9 !important; /* أزرق فاتح */
+  color: #000 !important;
+}
+
+.dark-card button[color="warn"] {
+  background-color: #ef5350 !important; /* أحمر واضح */
+  color: #fff !important;
+}

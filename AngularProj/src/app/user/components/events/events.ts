@@ -18,11 +18,20 @@ export class EventsComponent implements OnInit {
   currentUser: GuestUser | null = null;
   selectedEvent: Event | null = null;
   activeTab: 'All' | 'Pending' | 'Accepted' | 'Refused' = 'All';
+  themeMode: 'dark' | 'light' = 'light'; // 👈 added
 
   ngOnInit(): void {
+    this.loadTheme();     // 👈 load dark mode from localStorage
     this.loadUser();
     this.loadEvents();
     this.filterEvents();
+  }
+
+  // ✅ Load theme mode from localStorage
+  private loadTheme(): void {
+    const storedTheme = localStorage.getItem('themeMode');
+    this.themeMode = storedTheme === 'dark' ? 'dark' : 'light';
+    document.body.classList.toggle('dark-body', this.themeMode === 'dark');
   }
 
   private loadUser(): void {
@@ -96,16 +105,5 @@ export class EventsComponent implements OnInit {
 
   private saveEvents(): void {
     localStorage.setItem('events', JSON.stringify(this.events));
-  }
-
-  // عدد الضيوف الذين قبلوا الدعوة
-  getAcceptedGuests(event: Event): number {
-    if (!event.guests) return 0;
-    const storedUsers = localStorage.getItem('users'); // users list in localStorage
-    if (!storedUsers) return 0;
-    const allUsers: GuestUser[] = JSON.parse(storedUsers);
-    return event.guests
-      .map(id => allUsers.find(u => u.id === id))
-      .filter(u => u && u.status === 'Accepted').length;
   }
 }

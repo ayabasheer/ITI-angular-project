@@ -58,7 +58,9 @@
 .rating .filled {
   color: #ffb400;
 }
-
+.rating:hover {
+  color: #ffb400;
+}
 .add-feedback {
   max-width: 500px;
   margin: 0 auto 40px;
@@ -134,3 +136,54 @@
   font-size: 16px;
   margin-top: 24px;
 }
+/* Dark Mode Styling */
+/* 🌙 DARK MODE STYLING */
+/* 🌙 DARK MODE via ngClass */
+.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+.dark-mode .feedback-card {
+  background: #1f1f1f;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode .feedback-card mat-card-title {
+  color: #ffd700;
+}
+
+.dark-mode .feedback-card mat-card-subtitle {
+  color: #bbb;
+}
+
+.dark-mode .add-feedback {
+  background: #1f1f1f;
+  color: #e0e0e0;
+}
+
+.dark-mode select,
+.dark-mode textarea {
+  background: #2a2a2a;
+  color: #fff;
+  border-color: #555;
+}
+
+.dark-mode .add-feedback button {
+  background: #1976d2;
+  color: white;
+}
+
+.dark-mode .stars-input span {
+  color: #666;
+}
+
+.dark-mode .stars-input span.selected {
+  color: #ffd700;
+}
+
+.dark-mode .empty {
+  color: #aaa;
+}
+

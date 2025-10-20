@@ -1,4 +1,7 @@
-<div class="feedback-container">
+<div 
+  class="feedback-container" 
+  [ngClass]="{ 'dark-mode': themeMode === 'dark' }"
+>
   <h2 class="title">My Feedbacks</h2>
 
   <!-- No feedback message -->
@@ -33,9 +36,11 @@
 
     <label>Rating:</label>
     <div class="stars-input">
-      <span *ngFor="let r of stars" 
-            (click)="selectRating(r)" 
-            [class.selected]="r <= newRating">★</span>
+      <span 
+        *ngFor="let r of stars" 
+        (click)="selectRating(r)" 
+        [class.selected]="r <= newRating"
+      >★</span>
     </div>
 
     <label>Comment:</label>
