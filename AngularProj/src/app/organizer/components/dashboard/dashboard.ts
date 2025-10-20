@@ -208,4 +208,9 @@ export class Dashboard implements OnInit {
       dashboardEl?.classList.remove('dark');
     }
   }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/']);
+  }
 }
