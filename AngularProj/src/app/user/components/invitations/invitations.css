@@ -12,20 +12,21 @@
 
 .invitations-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(0px, 1fr));
+/* gap: 20px; */
 }
 
 /* Dashboard-like invitation card */
 .invitation-card {
-  width: fit-content;
-  border-radius: 12px;
+  width: 400px;
+  border-radius: 20px;
   overflow: hidden;
   background: linear-gradient(180deg, #ffffff, #f9f6f2);
   box-shadow: 0 6px 18px rgba(46,46,46,0.08);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
 }
 .invitation-card:hover {
   transform: translateY(-6px);
@@ -72,6 +73,54 @@
   justify-content: flex-start;
 }
 
+/* Accepted / Refused visual states */
+.invitation-card.accepted {
+  border: 2px solid rgba(76,175,80,0.12);
+}
+.invitation-card.refused {
+  border: 2px solid rgba(244,67,54,0.12);
+}
+
+.invitation-card.accepted::after,
+.invitation-card.refused::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.04);
+  pointer-events: none;
+}
+
+.invitation-card.accepted .status-chip {
+  background: #4caf50;
+  color: #fff;
+}
+
+.invitation-card.refused .status-chip {
+  background: #f44336;
+  color: #fff;
+}
+
+/* Ribbon */
+.invitation-card.accepted::before,
+.invitation-card.refused::before {
+  content: attr(data-ribbon);
+  position: absolute;
+  top: 12px;
+  right: -28px;
+  transform: rotate(45deg);
+  background: #4caf50;
+  color: #fff;
+  padding: 4px 40px;
+  font-weight: 700;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+}
+.invitation-card.refused::before { background: #f44336; }
+
+.invitation-card.accepted button[mat-flat-button],
+.invitation-card.refused button[mat-flat-button] {
+  opacity: 0.65;
+}
+
 .invitation-card button[mat-flat-button] {
   border-radius: 10px;
   padding: 8px 14px;
@@ -104,6 +153,62 @@
 .status-chip.refused {
   background-color: #f44336;
   color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .invitations-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+
+  .invitation-card img {
+    height: 120px;
+  }
+
+  .invitation-card mat-card-title {
+    font-size: 1rem;
+  }
+
+  .invitation-card mat-card-content p { font-size: 0.95rem; }
+}
+
+@media (max-width: 520px) {
+  .invitations-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .invitation-card img {
+    height: 100px;
+  }
+
+  .invitation-card mat-card-header {
+    padding: 8px 12px 6px 12px;
+  }
+
+  .invitation-card mat-card-content {
+    padding: 6px 12px 10px 12px;
+  }
+
+  .invitation-card mat-card-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .invitation-card button[mat-flat-button] {
+    width: 100%;
+  }
+
+  /* Move ribbon to top-left smaller */
+  .invitation-card.accepted::before,
+  .invitation-card.refused::before {
+    top: 8px;
+    right: -18px;
+    padding: 3px 28px;
+    font-size: 0.75rem;
+  }
 }
 
 /* Dark mode */
