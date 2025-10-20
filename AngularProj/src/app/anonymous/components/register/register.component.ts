@@ -28,6 +28,22 @@ export class RegisterComponent {
     return !emailRegex.test(this.email);
   }
 
+  // Name must start with a letter and only contain letters and spaces
+  isNameInvalid(): boolean {
+    if (!this.name) return false;
+    const nameRegex = /^[A-Za-z][A-Za-z ]*$/;
+    return !nameRegex.test(this.name);
+  }
+
+  // Password must be at least 6 characters and contain letters and numbers
+  isPasswordInvalid(): boolean {
+    if (!this.password) return false;
+    if (this.password.length < 6) return true;
+    const hasLetter = /[A-Za-z]/.test(this.password);
+    const hasNumber = /[0-9]/.test(this.password);
+    return !(hasLetter && hasNumber);
+  }
+
   constructor(private auth: AuthService, private router: Router, private lastRoute: LastRouteService) {}
 
   ngOnInit() {
@@ -65,6 +81,20 @@ export class RegisterComponent {
     }
 
     try {
+      // Validate inputs per requirements
+      if (this.isNameInvalid()) {
+        alert('Name must start with a letter and contain only letters and spaces.');
+        return;
+      }
+      // Email must start with a letter
+      if (!this.email || !/^[A-Za-z]/.test(this.email) || this.isEmailInvalid()) {
+        alert('Email must start with a letter and be a valid email address.');
+        return;
+      }
+      if (this.isPasswordInvalid()) {
+        alert('Password must be at least 6 characters and contain both letters and numbers.');
+        return;
+      }
       const raw = localStorage.getItem(key);
       const arr = raw ? JSON.parse(raw) : [];
 

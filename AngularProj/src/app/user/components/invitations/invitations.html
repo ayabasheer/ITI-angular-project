@@ -1,13 +1,14 @@
-<div class="filter-tabs">
+
+<div class="filter-tabs m-0">
   <button mat-button (click)="changeFilter('All')" [class.active]="selectedFilter === 'All'">All</button>
   <button mat-button (click)="changeFilter('Pending')" [class.active]="selectedFilter === 'Pending'">Pending</button>
   <button mat-button (click)="changeFilter('Accepted')" [class.active]="selectedFilter === 'Accepted'">Accepted</button>
   <button mat-button (click)="changeFilter('Refused')" [class.active]="selectedFilter === 'Refused'">Refused</button>
-</div>
 
-<div class="invitations-grid" *ngIf="filteredInvitations.length; else noData">
+</div>
+<div class="invitations-grid m-0 p-0" *ngIf="filteredInvitations.length; else noData">
   <p *ngIf="!currentUser" class="notice">Please log in as a guest to view and respond to your invitations.</p>
-  <mat-card *ngFor="let inv of filteredInvitations" class="invitation-card m-5"
+  <mat-card *ngFor="let inv of filteredInvitations" class="invitation-card "
             [class.accepted]="inv.status === 'Accepted'"
             [class.refused]="inv.status === 'Refused'"
             [attr.data-ribbon]="inv.status === 'Accepted' ? 'ACCEPTED' : (inv.status === 'Refused' ? 'REFUSED' : '')">
@@ -39,3 +40,5 @@
 <ng-template #noData>
   <p class="no-data">No invitations found.</p>
 </ng-template>
+
+

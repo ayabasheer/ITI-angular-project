@@ -99,11 +99,11 @@
 .menu-list button mat-icon {
   color: #292929;
   margin-right: 10px;
- 
+
 }
 
 .menu-list button span {
-  color: #a67c52; 
+  color: #a67c52;
   font-size: 1.5rem;
   font-weight: 500;
 }
@@ -132,7 +132,7 @@
   color: #fff;
 }
 .menu-list button.active span {
-  color: #fff; 
+  color: #fff;
 }
 
 /* 🌑 Dark Mode for Sidebar Buttons */

@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { EventService } from '../../../shared/services/event';
 import { GuestService } from '../../../shared/services/guest';
 import { AuthService, User } from '../../../shared/services/auth.service';
@@ -39,6 +39,9 @@ export class CreateEvent implements OnInit {
   eventForm: FormGroup;
   currentUser: User | null = null;
   selectedImageName: string = '';
+  // editing state
+  editing: boolean = false;
+  editingEventId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -46,6 +49,7 @@ export class CreateEvent implements OnInit {
     private guestService: GuestService,
     private authService: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
     private taskService: TaskService,
     private expenseService: ExpenseService
   ) {
@@ -74,6 +78,71 @@ export class CreateEvent implements OnInit {
       this.router.navigate(['/dashboard']);
       return;
     }
+
+    // detect edit mode via query param id and pre-fill form
+    this.route.queryParamMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        const eid = Number(id);
+        const all = this.eventService.getAll();
+        const found = all.find((e: any) => Number(e.id) === eid);
+        if (found) {
+          this.editing = true;
+          this.editingEventId = eid;
+          // patch simple fields
+          this.eventForm.patchValue({
+            name: found.name || '',
+            description: found.description || '',
+            category: found.category || '',
+            location: found.location || '',
+            startDate: found.startDate ? new Date(found.startDate) : '',
+            endDate: found.endDate ? new Date(found.endDate) : '',
+            budget: found.budget || 0,
+            image: found.image || ''
+          });
+
+          // fill guestEmails from guest ids -> emails
+          try {
+            const allGuests = this.guestService.getAll();
+            const emails = (found.guests || []).map((gid: any) => {
+              const g = allGuests.find((x: any) => Number(x.id) === Number(gid));
+              return g ? g.email : undefined;
+            }).filter(Boolean) as string[];
+            this.eventForm.patchValue({ guestEmails: emails.join(', ') });
+          } catch (e) {
+            // ignore
+          }
+
+          // populate tasks form array
+          const existingTasks = this.taskService.getForEvent(eid) || [];
+          // clear current tasks
+          while (this.tasks.length) this.tasks.removeAt(0);
+          for (const t of existingTasks) {
+            const g = this.fb.group({
+              title: [t.title || '', Validators.required],
+              description: [t.description || ''],
+              priority: [t.priority || 'Medium', Validators.required],
+              deadline: [t.deadline ? new Date(t.deadline) : '', Validators.required]
+            });
+            this.tasks.push(g);
+          }
+
+          // populate expenses form array
+          const existingExpenses = this.expenseService.getForEvent(eid) || [];
+          while (this.expenses.length) this.expenses.removeAt(0);
+          for (const ex of existingExpenses) {
+            const eg = this.fb.group({
+              name: [ex.name || '', Validators.required],
+              amount: [ex.amount || 0, [Validators.required, Validators.min(0)]],
+              category: [ex.category || 'Miscellaneous', Validators.required],
+              date: [ex.date ? new Date(ex.date) : '', Validators.required],
+              notes: [ex.notes || '']
+            });
+            this.expenses.push(eg);
+          }
+        }
+      }
+    });
   }
 
   // ✅ Validator لتأكيد صحة الإيميلات
@@ -194,10 +263,9 @@ export class CreateEvent implements OnInit {
       localStorage.setItem('guests', JSON.stringify(existingGuests));
 
       // ✅ إنشاء الحدث الجديد مع تحديد الحالة حسب التاريخ
-      const existingEvents = JSON.parse(localStorage.getItem('events') || '[]');
-      const newEventId = existingEvents.length ? Math.max(...existingEvents.map((e: any) => e.id)) + 1 : 1;
+  const existingEvents = JSON.parse(localStorage.getItem('events') || '[]');
 
-      const startDate = new Date(formValue.startDate);
+  const startDate = new Date(formValue.startDate);
       const today = new Date();
 
       let status: 'Upcoming' | 'InProgress' | 'Completed' | 'Cancelled' = 'Upcoming';
@@ -208,15 +276,18 @@ export class CreateEvent implements OnInit {
         status = 'Completed';
       }
 
+      // decide id: reuse when editing, or allocate new
+      const eventId = this.editing && this.editingEventId ? this.editingEventId : (existingEvents.length ? Math.max(...existingEvents.map((e: any) => e.id)) + 1 : 1);
+
       const event: EventModel = {
-        id: newEventId,
+        id: eventId,
         name: formValue.name,
         description: formValue.description,
         category: formValue.category,
         location: formValue.location,
         image: formValue.image || undefined,
-        startDate: formValue.startDate.toISOString(),
-        endDate: formValue.endDate.toISOString(),
+        startDate: (formValue.startDate instanceof Date) ? formValue.startDate.toISOString() : new Date(formValue.startDate).toISOString(),
+        endDate: (formValue.endDate instanceof Date) ? formValue.endDate.toISOString() : new Date(formValue.endDate).toISOString(),
         createdBy: this.currentUser.id,
         guestCount: guestIds.length,
         guests: guestIds,
@@ -261,18 +332,29 @@ export class CreateEvent implements OnInit {
         return g;
       });
       localStorage.setItem('guests', JSON.stringify(updatedGuests));
+      // If editing, delete old tasks/expenses for this event to avoid duplicates
+      if (this.editing && this.editingEventId) {
+        const oldTasks = this.taskService.getForEvent(this.editingEventId) || [];
+        for (const ot of oldTasks) {
+          try { this.taskService.delete(ot.id); } catch (e) { /* ignore */ }
+        }
+        const oldExpenses = this.expenseService.getForEvent(this.editingEventId) || [];
+        for (const oe of oldExpenses) {
+          try { this.expenseService.delete(oe.id); } catch (e) { /* ignore */ }
+        }
+      }
 
-      // ✅ إنشاء المهام
+      // create tasks from form
       const taskIds: number[] = [];
-      formValue.tasks.forEach((taskData: any) => {
+      (formValue.tasks || []).forEach((taskData: any) => {
         const task: Task = {
-          id: 0, // will be set by service
+          id: 0,
           eventId: event.id,
           title: taskData.title,
           description: taskData.description,
           assignedTo: null,
           priority: taskData.priority,
-          deadline: taskData.deadline.toISOString(),
+          deadline: (taskData.deadline instanceof Date) ? taskData.deadline.toISOString() : new Date(taskData.deadline).toISOString(),
           status: 'Not Started',
           comments: [],
           createdAt: new Date().toISOString(),
@@ -282,30 +364,61 @@ export class CreateEvent implements OnInit {
         taskIds.push(createdTask.id);
       });
 
-      // ✅ إنشاء المصروفات
+      // create expenses from form
       const expenseIds: number[] = [];
-      formValue.expenses.forEach((expenseData: any) => {
+      (formValue.expenses || []).forEach((expenseData: any) => {
         const expense: Expense = {
-          id: 0, // will be set by service
+          id: 0,
           eventId: event.id,
           name: expenseData.name,
           amount: expenseData.amount,
           category: expenseData.category,
-          date: expenseData.date.toISOString(),
+          date: (expenseData.date instanceof Date) ? expenseData.date.toISOString() : new Date(expenseData.date).toISOString(),
           notes: expenseData.notes
         };
         const createdExpense = this.expenseService.create(expense);
         expenseIds.push(createdExpense.id);
       });
 
-      // ✅ تحديث الحدث بالمهام والمصروفات
+      // assign created task/expense ids
       event.tasks = taskIds;
       event.expenses = expenseIds;
-      const eventIndex = existingEvents.findIndex((e: any) => e.id === event.id);
-      if (eventIndex !== -1) {
-        existingEvents[eventIndex] = event;
-        localStorage.setItem('events', JSON.stringify(existingEvents));
+
+      // persist or replace event in events list
+      if (this.editing && this.editingEventId) {
+        const idx = existingEvents.findIndex((e: any) => Number(e.id) === Number(this.editingEventId));
+        if (idx !== -1) existingEvents[idx] = event;
+        else existingEvents.push(event);
+      } else {
+        existingEvents.push(event);
       }
+      localStorage.setItem('events', JSON.stringify(existingEvents));
+
+      // create invitations but avoid duplicates when editing
+      const existingInvitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+      guestIds.forEach((guestId, index) => {
+        const already = existingInvitations.some((i: any) => Number(i.eventId) === Number(event.id) && (Number(i.guestId) === Number(guestId) || i.email === guestEmails[index]));
+        if (!already) {
+          const newInvitation = {
+            id: existingInvitations.length
+              ? Math.max(...existingInvitations.map((i: any) => i.id)) + 1
+              : 1,
+            eventId: event.id,
+            guestId,
+            email: guestEmails[index],
+            status: 'Pending',
+            createdAt: new Date().toISOString()
+          };
+          existingInvitations.push(newInvitation);
+        }
+      });
+      localStorage.setItem('invitations', JSON.stringify(existingInvitations));
+
+      // update guests' eventId
+      const updatedGuests = existingGuests.map((g: any) =>
+        guestIds.includes(g.id) ? { ...g, eventId: event.id } : g
+      );
+      localStorage.setItem('guests', JSON.stringify(updatedGuests));
 
       // ✅ إشعار النجاح
       Swal.fire({

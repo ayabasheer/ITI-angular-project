@@ -14,7 +14,7 @@
 
 /* Container */
 .expenses-container {
-  max-width: 1200px;
+  max-width:100%;
   margin: 0 auto;
 }
 
@@ -173,12 +173,11 @@
 }
 
 .expense-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 0.5fr;
-  gap: 1rem;
+display: flex;
   border-bottom: 1px solid #eee;
   transition: all 0.3s ease;
   cursor: pointer;
+  height: fit-content;
 }
 
 .expense-row:hover {
@@ -197,7 +196,59 @@
 .expense-row:last-child {
   border-bottom: none;
 }
+.row{
+  height: fit-content;
 
+}
+.total{
+
+  border-radius: 12px;
+  padding: 1rem;
+  height: fit-content;
+
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+margin: auto;
+}
+.expenses-layout {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+.left-col {
+  flex: 1 1 55%;
+  min-width: 280px;
+}
+.right-col {
+  flex: 0 0 40%;
+  min-width: 260px;
+  margin: 0 0 0 auto;
+}
+.chart-wrap {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+#expensePieChart {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 360px;
+}
+
+/* make chart container maintain a usable aspect ratio while allowing CSS scaling */
+.chart-wrap {
+  aspect-ratio: 1 / 1;
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ensure the underlying canvas fills the wrapper (Chart.js will respect maintainAspectRatio=false) */
+#expensePieChart {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none;
+}
 .expense-description {
   font-weight: 500;
   color: #2e2e2e;
@@ -345,78 +396,64 @@
     gap: 0.5rem;
   }
 
+  /* Make list item content and actions stack on narrow screens */
+  .list-group-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .list-group-item .btn-group {
+    width: 100%;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+  }
+
   .expense-actions {
     justify-content: flex-end;
     margin-top: 0.5rem;
   }
+  /* Stack the main columns for tablet and below */
+  .expenses-layout {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .right-col {
+    order: 2;
+    width: 100%;
+    margin: 0;
+  }
+  .left-col {
+    order: 1;
+  }
+  .chart-wrap { max-width: 100%; }
 }
 
 @media (max-width: 480px) {
-  .expenses {
-    padding: 0.5rem;
-  }
+  .expenses { padding: 0.5rem; }
 
-  .filters-section {
-    margin-bottom: 1rem;
-  }
+  .filters-section { margin-bottom: 1rem; }
 
-  .summary-cards {
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-  }
+  .summary-cards { gap: 0.5rem; margin-bottom: 1rem; }
+  .summary-card { padding: 0.875rem; }
+  .summary-title { font-size: 0.75rem; }
+  .summary-amount { font-size: 1rem; }
 
-  .summary-card {
-    padding: 0.875rem;
-  }
+  .table-header { padding: 0.75rem; }
+  .table-title { font-size: 1rem; }
+  .table-content { max-height: 400px; }
 
-  .summary-title {
-    font-size: 0.75rem;
-  }
+  /* Smaller screens: ensure form controls span full width */
+  select.form-select.w-50, .w-50 { width: 100% !important; }
+  .btn-primary-small, .action-btn { width: auto; }
+  .chart-wrap { max-width: 100%; }
 
-  .summary-amount {
-    font-size: 1rem;
-  }
+  /* Smaller text and compact controls */
+  .expense-description { font-size: 0.85rem; }
+  .expense-category, .expense-date { font-size: 0.7rem; }
+  .expense-amount { font-size: 0.8rem; }
+  .action-btn { padding: 0.2rem 0.4rem; font-size: 0.6rem; }
 
-  .table-header {
-    padding: 0.75rem;
-  }
-
-  .table-title {
-    font-size: 1rem;
-  }
-
-  .table-content {
-    max-height: 400px;
-  }
-
-
-
-  .expense-description {
-    font-size: 0.85rem;
-  }
-
-  .expense-category,
-  .expense-date {
-    font-size: 0.7rem;
-  }
-
-  .expense-amount {
-    font-size: 0.8rem;
-  }
-
-  .action-btn {
-    padding: 0.2rem 0.4rem;
-    font-size: 0.6rem;
-  }
-
-  .pagination {
-    margin-top: 1rem;
-    padding: 0.375rem;
-    gap: 0.25rem;
-  }
-
-  .page-btn {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.75rem;
-  }
+  .pagination { margin-top: 1rem; padding: 0.375rem; gap: 0.25rem; }
+  .page-btn { padding: 0.25rem 0.5rem; font-size: 0.75rem; }
 }
