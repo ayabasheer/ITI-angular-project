@@ -1,5 +1,0 @@
-- Update create-event.ts to include FormArrays for tasks and expenses in the FormGroup ✅
-- Add methods in create-event.ts to add/remove task and expense form groups ✅
-- Update create-event.html to include dynamic form fields for tasks and expenses with add/remove buttons ✅
-- Update onSubmit in create-event.ts to create tasks and expenses after event creation and associate them with the event ✅
-- Test the form submission to ensure tasks and expenses are saved correctly

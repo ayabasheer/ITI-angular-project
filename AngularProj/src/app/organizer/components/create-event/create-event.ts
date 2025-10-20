@@ -179,7 +179,7 @@ export class CreateEvent implements OnInit {
             id: newGuestId,
             name: user.name,
             email,
-            status: 'Pending',
+            status: 'Accepted',
             role: 'Guest',
             eventId: null,
             createdAt: new Date().toISOString()
@@ -249,10 +249,17 @@ export class CreateEvent implements OnInit {
       });
       localStorage.setItem('invitations', JSON.stringify(existingInvitations));
 
-      // ✅ تحديث eventId للضيوف
-      const updatedGuests = existingGuests.map((g: any) =>
-        guestIds.includes(g.id) ? { ...g, eventId: event.id } : g
-      );
+      // ✅ تحديث eventIds للضيوف (استخدام array بدلاً من single eventId)
+      const updatedGuests = existingGuests.map((g: any) => {
+        if (guestIds.includes(g.id)) {
+          const currentEventIds = Array.isArray(g.eventIds) ? g.eventIds : (g.eventId ? [g.eventId] : []);
+          if (!currentEventIds.includes(event.id)) {
+            currentEventIds.push(event.id);
+          }
+          return { ...g, eventIds: currentEventIds, eventId: event.id }; // keep eventId for backward compatibility
+        }
+        return g;
+      });
       localStorage.setItem('guests', JSON.stringify(updatedGuests));
 
       // ✅ إنشاء المهام
