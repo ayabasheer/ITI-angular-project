@@ -1,5 +1,5 @@
-import { Component, OnInit, HostBinding } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, HostBinding, OnDestroy } from '@angular/core';
+import { CommonModule, NgIf, NgForOf } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import Swal from 'sweetalert2';
@@ -17,7 +17,7 @@ interface Invitation {
 @Component({
   selector: 'app-invitations',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule],
+  imports: [CommonModule, NgIf, NgForOf, MatCardModule, MatButtonModule],
   templateUrl: './invitations.html',
   styleUrls: ['./invitations.css']
 })
@@ -31,16 +31,41 @@ export class InvitationsComponent implements OnInit {
 
   @HostBinding('class.dark-mode') isDarkMode = false;
 
+  private themeListener: any;
+
   ngOnInit(): void {
     this.loadDarkMode();
+    // listen for global theme changes dispatched from dashboard
+    this.themeListener = (e: any) => {
+      try {
+        const dark = e?.detail?.dark;
+        if (typeof dark === 'boolean') this.isDarkMode = dark;
+      } catch (err) {
+        // ignore
+      }
+    };
+    window.addEventListener('theme:changed', this.themeListener);
+
     this.loadUser();
     this.loadInvitations();
     this.applyFilter();
   }
 
   private loadDarkMode(): void {
-    const mode = localStorage.getItem('theme');
-    this.isDarkMode = mode === 'dark';
+    // support both legacy 'theme' and dashboard 'darkMode' keys
+    const theme = localStorage.getItem('theme');
+    const dm = localStorage.getItem('darkMode');
+    if (dm !== null) {
+      this.isDarkMode = dm === 'true';
+    } else if (theme) {
+      this.isDarkMode = theme === 'dark';
+    } else {
+      this.isDarkMode = false;
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.themeListener) window.removeEventListener('theme:changed', this.themeListener);
   }
 
   private loadUser(): void {

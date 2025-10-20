@@ -1,13 +1,6 @@
 <div class="events-container" [ngClass]="{'dark-mode': themeMode === 'dark'}">
   <h2 class="title">My Events</h2>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab-btn" [class.active]="activeTab==='All'" (click)="setTab('All')">All</button>
-    <button class="tab-btn" [class.active]="activeTab==='Pending'" (click)="setTab('Pending')">Pending</button>
-    <button class="tab-btn" [class.active]="activeTab==='Accepted'" (click)="setTab('Accepted')">Accepted</button>
-    <button class="tab-btn" [class.active]="activeTab==='Refused'" (click)="setTab('Refused')">Refused</button>
-  </div>
 
   <div *ngIf="!filteredEvents.length" class="empty">
     <p>No events in this category.</p>

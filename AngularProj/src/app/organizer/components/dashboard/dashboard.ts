@@ -198,14 +198,22 @@ export class Dashboard implements OnInit {
     this.isDarkMode = !this.isDarkMode;
     localStorage.setItem('darkMode', this.isDarkMode.toString());
     this.applyTheme();
+    // notify other parts of the app that theme changed
+    try {
+      window.dispatchEvent(new CustomEvent('theme:changed', { detail: { dark: this.isDarkMode } }));
+    } catch (e) {
+      // ignore in environments without CustomEvent
+    }
   }
 
   applyTheme() {
     const dashboardEl = document.querySelector('.dashboard-wrapper');
     if (this.isDarkMode) {
       dashboardEl?.classList.add('dark');
+      document.body.classList.add('dark');
     } else {
       dashboardEl?.classList.remove('dark');
+      document.body.classList.remove('dark');
     }
   }
 }
