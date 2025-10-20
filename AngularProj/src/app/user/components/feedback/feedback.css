@@ -58,9 +58,7 @@
 .rating .filled {
   color: #ffb400;
 }
-.rating:hover {
-  color: #ffb400;
-}
+
 .add-feedback {
   max-width: 500px;
   margin: 0 auto 40px;

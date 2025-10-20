@@ -227,29 +227,46 @@
 }
 
 /* Force light mode appearance when dark is not active */
-body:not(.dark) .invitation-card,
-.dashboard-wrapper:not(.dark) .invitation-card,
-:host(:not(.dark-mode)) .invitation-card {
-  background: #ffffff !important;
-  box-shadow: 0 6px 18px rgba(46,46,46,0.08) !important;
+.dark-mode .status-chip {
+  background-color: #555;
+  color: white;
+}
+.dark-mode .invitation-card{
+  background: #1f1f1f;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
+}
+.dark-mode .invitation-card mat-card-title {
+  color: #ffd700;
 }
 
-body:not(.dark) .invitation-card mat-card-title,
-.dashboard-wrapper:not(.dark) .invitation-card mat-card-title,
-:host(:not(.dark-mode)) .invitation-card mat-card-title {
-  color: #4b3f2f !important;
+.dark-mode .invitation-card mat-card-content p {
+  color: #ddd;
 }
-
-body:not(.dark) .invitation-card mat-card-subtitle,
-.dashboard-wrapper:not(.dark) .invitation-card mat-card-subtitle,
-:host(:not(.dark-mode)) .invitation-card mat-card-subtitle {
-  color: #a67c52 !important;
+.dark-mode .invitation-card button[mat-flat-button] {
+  color: white;
 }
-
-body:not(.dark) .invitation-card mat-card-content p,
-.dashboard-wrapper:not(.dark) .invitation-card mat-card-content p,
-:host(:not(.dark-mode)) .invitation-card mat-card-content p {
-  color: #333 !important;
+.dark-mode .invitation-card.accepted {
+  border: 2px solid rgba(76,175,80,0.12);
+}
+.dark-mode .invitation-card.refused {
+  border: 2px solid rgba(244,67,54,0.12);
+}
+.dark-mode .invitation-card.accepted::after,
+.dark-mode .invitation-card.refused::after {
+  background: rgba(255,255,255,0.04);
+}
+.dark-mode .invitation-card.accepted .status-chip {
+  background: #4caf50;
+  color: #fff;
+}
+.dark-mode .invitation-card.refused .status-chip {
+  background: #f44336;
+  color: #fff;
+}
+.dark-mode .invitation-card.accepted::before,
+.dark-mode .invitation-card.refused::before {
+  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
 }
 
 .status-chip.accepted {
