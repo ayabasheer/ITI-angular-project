@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -12,7 +12,9 @@ import { RouterModule, Router } from '@angular/router';
 import { EventService } from '../../../shared/services/event';
 import { GuestService } from '../../../shared/services/guest';
 import { AuthService, User } from '../../../shared/services/auth.service';
-import { EventModel } from '../../../shared/models/interfaces';
+import { EventModel, Task, Expense, Priority, ExpenseCategory } from '../../../shared/models/interfaces';
+import { TaskService } from '../../../shared/services/task';
+import { ExpenseService } from '../../../shared/services/expense';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -43,7 +45,9 @@ export class CreateEvent implements OnInit {
     private eventService: EventService,
     private guestService: GuestService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private taskService: TaskService,
+    private expenseService: ExpenseService
   ) {
     this.eventForm = this.fb.group({
       name: ['', Validators.required],
@@ -54,7 +58,9 @@ export class CreateEvent implements OnInit {
       endDate: ['', Validators.required],
       budget: [0, [Validators.required, Validators.min(0)]],
       image: [''],
-      guestEmails: ['', [Validators.required, this.emailListValidator]]
+      guestEmails: ['', [Validators.required, this.emailListValidator]],
+      tasks: this.fb.array([]),
+      expenses: this.fb.array([])
     });
   }
 
@@ -92,6 +98,48 @@ export class CreateEvent implements OnInit {
       };
       reader.readAsDataURL(file);
     }
+  }
+
+  // Getters for FormArrays
+  get tasks(): FormArray {
+    return this.eventForm.get('tasks') as FormArray;
+  }
+
+  get expenses(): FormArray {
+    return this.eventForm.get('expenses') as FormArray;
+  }
+
+  // Add task form group
+  addTask(): void {
+    const taskGroup = this.fb.group({
+      title: ['', Validators.required],
+      description: [''],
+      priority: ['Medium' as Priority, Validators.required],
+      deadline: ['', Validators.required]
+    });
+    this.tasks.push(taskGroup);
+  }
+
+  // Remove task form group
+  removeTask(index: number): void {
+    this.tasks.removeAt(index);
+  }
+
+  // Add expense form group
+  addExpense(): void {
+    const expenseGroup = this.fb.group({
+      name: ['', Validators.required],
+      amount: [0, [Validators.required, Validators.min(0)]],
+      category: ['Miscellaneous' as ExpenseCategory, Validators.required],
+      date: ['', Validators.required],
+      notes: ['']
+    });
+    this.expenses.push(expenseGroup);
+  }
+
+  // Remove expense form group
+  removeExpense(index: number): void {
+    this.expenses.removeAt(index);
   }
 
   // ✅ حفظ الحدث في localStorage + تحديد الحالة تلقائيًا
@@ -207,11 +255,56 @@ export class CreateEvent implements OnInit {
       );
       localStorage.setItem('guests', JSON.stringify(updatedGuests));
 
+      // ✅ إنشاء المهام
+      const taskIds: number[] = [];
+      formValue.tasks.forEach((taskData: any) => {
+        const task: Task = {
+          id: 0, // will be set by service
+          eventId: event.id,
+          title: taskData.title,
+          description: taskData.description,
+          assignedTo: null,
+          priority: taskData.priority,
+          deadline: taskData.deadline.toISOString(),
+          status: 'Not Started',
+          comments: [],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        const createdTask = this.taskService.create(task);
+        taskIds.push(createdTask.id);
+      });
+
+      // ✅ إنشاء المصروفات
+      const expenseIds: number[] = [];
+      formValue.expenses.forEach((expenseData: any) => {
+        const expense: Expense = {
+          id: 0, // will be set by service
+          eventId: event.id,
+          name: expenseData.name,
+          amount: expenseData.amount,
+          category: expenseData.category,
+          date: expenseData.date.toISOString(),
+          notes: expenseData.notes
+        };
+        const createdExpense = this.expenseService.create(expense);
+        expenseIds.push(createdExpense.id);
+      });
+
+      // ✅ تحديث الحدث بالمهام والمصروفات
+      event.tasks = taskIds;
+      event.expenses = expenseIds;
+      const eventIndex = existingEvents.findIndex((e: any) => e.id === event.id);
+      if (eventIndex !== -1) {
+        existingEvents[eventIndex] = event;
+        localStorage.setItem('events', JSON.stringify(existingEvents));
+      }
+
       // ✅ إشعار النجاح
       Swal.fire({
         icon: 'success',
         title: 'Event Created!',
-        text: 'The event and invitations have been created successfully.',
+        text: 'The event, invitations, tasks, and expenses have been created successfully.',
         confirmButtonText: 'OK'
       }).then(() => {
         this.router.navigate(['/dashboard/events'], { queryParams: { refresh: Date.now() } });

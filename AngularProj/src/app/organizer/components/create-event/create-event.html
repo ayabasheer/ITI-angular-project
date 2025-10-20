@@ -84,6 +84,121 @@
       </mat-error>
     </mat-form-field>
 
+    <!-- Tasks Section -->
+    <div class="section">
+      <h3>Tasks</h3>
+      <div formArrayName="tasks">
+        <div *ngFor="let task of tasks.controls; let i = index" [formGroupName]="i" class="task-item">
+          <mat-form-field appearance="outline">
+            <mat-label>Task Title</mat-label>
+            <input matInput formControlName="title" placeholder="Enter task title">
+            <mat-error *ngIf="task.get('title')?.invalid && task.get('title')?.touched">
+              Task title is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description" placeholder="Enter task description" rows="2"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Priority</mat-label>
+            <mat-select formControlName="priority">
+              <mat-option value="Low">Low</mat-option>
+              <mat-option value="Medium">Medium</mat-option>
+              <mat-option value="High">High</mat-option>
+              <mat-option value="Critical">Critical</mat-option>
+            </mat-select>
+            <mat-error *ngIf="task.get('priority')?.invalid && task.get('priority')?.touched">
+              Priority is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Deadline</mat-label>
+            <input matInput [matDatepicker]="taskPicker" formControlName="deadline">
+            <mat-datepicker-toggle matSuffix [for]="taskPicker"></mat-datepicker-toggle>
+            <mat-datepicker #taskPicker></mat-datepicker>
+            <mat-error *ngIf="task.get('deadline')?.invalid && task.get('deadline')?.touched">
+              Deadline is required
+            </mat-error>
+          </mat-form-field>
+
+          <button mat-icon-button color="warn" type="button" (click)="removeTask(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+      <button mat-stroked-button type="button" (click)="addTask()">
+        <mat-icon>add</mat-icon>
+        Add Task
+      </button>
+    </div>
+
+    <!-- Expenses Section -->
+    <div class="section">
+      <h3>Expenses</h3>
+      <div formArrayName="expenses">
+        <div *ngFor="let expense of expenses.controls; let i = index" [formGroupName]="i" class="expense-item">
+          <mat-form-field appearance="outline">
+            <mat-label>Expense Name</mat-label>
+            <input matInput formControlName="name" placeholder="Enter expense name">
+            <mat-error *ngIf="expense.get('name')?.invalid && expense.get('name')?.touched">
+              Expense name is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Amount</mat-label>
+            <input matInput type="number" formControlName="amount" placeholder="Enter amount">
+            <span matSuffix>$</span>
+            <mat-error *ngIf="expense.get('amount')?.invalid && expense.get('amount')?.touched">
+              Amount must be a positive number
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Category</mat-label>
+            <mat-select formControlName="category">
+              <mat-option value="Venue">Venue</mat-option>
+              <mat-option value="Decoration">Decoration</mat-option>
+              <mat-option value="Food">Food</mat-option>
+              <mat-option value="Music">Music</mat-option>
+              <mat-option value="Transport">Transport</mat-option>
+              <mat-option value="Miscellaneous">Miscellaneous</mat-option>
+            </mat-select>
+            <mat-error *ngIf="expense.get('category')?.invalid && expense.get('category')?.touched">
+              Category is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Date</mat-label>
+            <input matInput [matDatepicker]="expensePicker" formControlName="date">
+            <mat-datepicker-toggle matSuffix [for]="expensePicker"></mat-datepicker-toggle>
+            <mat-datepicker #expensePicker></mat-datepicker>
+            <mat-error *ngIf="expense.get('date')?.invalid && expense.get('date')?.touched">
+              Date is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Notes</mat-label>
+            <textarea matInput formControlName="notes" placeholder="Enter notes" rows="2"></textarea>
+          </mat-form-field>
+
+          <button mat-icon-button color="warn" type="button" (click)="removeExpense(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+      <button mat-stroked-button type="button" (click)="addExpense()">
+        <mat-icon>add</mat-icon>
+        Add Expense
+      </button>
+    </div>
+
     <div class="form-actions">
       <button mat-raised-button color="primary" type="submit" [disabled]="eventForm.invalid">
         Create Event

@@ -1,6 +1,5 @@
-# TODO: Add Logout Button to Organizer Dashboard
-
-## Tasks
-- [x] Add logout button in dashboard.html header-actions section beside user-dropdown
-- [x] Implement logout method in dashboard.ts component to call authService.logout() and navigate to main page
-- [x] Verify logout functionality removes current user and redirects correctly
+- Update create-event.ts to include FormArrays for tasks and expenses in the FormGroup ✅
+- Add methods in create-event.ts to add/remove task and expense form groups ✅
+- Update create-event.html to include dynamic form fields for tasks and expenses with add/remove buttons ✅
+- Update onSubmit in create-event.ts to create tasks and expenses after event creation and associate them with the event ✅
+- Test the form submission to ensure tasks and expenses are saved correctly
