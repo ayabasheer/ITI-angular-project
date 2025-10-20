@@ -25,16 +25,8 @@ export class GuestDetails {
     const feedbacks = rawF ? JSON.parse(rawF) : [];
     this.guest = guests.find((g: Guest) => g.id === id) || null;
     if (this.guest) {
-      // Get all events the guest is invited to, but filter to only show organizer's events
-      const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-      if (currentUser.role === 'Organizer') {
-        const myEvents = events.filter((e: any) => e.createdBy === currentUser.id);
-        const guestEventIds = Array.isArray(this.guest.eventIds) ? this.guest.eventIds : (this.guest.eventId ? [this.guest.eventId] : []);
-        const myGuestEvents = myEvents.filter((e: any) => guestEventIds.includes(e.id));
-        this.event = myGuestEvents.length ? myGuestEvents : null; // Set to array or null
-      } else {
-        this.event = null;
-      }
+      const gid = Array.isArray(this.guest.eventIds) && this.guest.eventIds.length ? this.guest.eventIds[0] : this.guest.eventId;
+      this.event = events.find((e: any) => e.id === gid) || null;
       this.feedback = this.guest!.feedbackId ? feedbacks.find((f: any) => f.id === this.guest!.feedbackId) : null;
     }
   }

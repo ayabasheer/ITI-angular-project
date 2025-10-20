@@ -52,30 +52,13 @@ export class Guests implements OnInit {
   // type narrowing in component logic doesn't affect template type checking.
   // Accept either a single eventId or an array of eventIds; used by templates.
   getEventName(eventRef?: number | number[] | null): string {
-    const user = this.auth.currentUser;
-    if (!user) return 'No Events';
-    const myEventIds = new Set<number>(
-      this.eventService
-        .getAll()
-        .filter(e => e.createdBy === user.id)
-        .map(e => e.id)
-    );
+    let id: number | undefined;
+    if (typeof eventRef === 'number') id = eventRef;
+    else if (Array.isArray(eventRef) && eventRef.length) id = eventRef[0];
+    else id = undefined;
 
-    if (Array.isArray(eventRef) && eventRef.length > 0) {
-      // Multiple events: show names of events created by this organizer
-      const filteredIds = eventRef.filter(id => myEventIds.has(id));
-      const eventNames = filteredIds.map(id => {
-        const event = this.events.find((e: any) => e.id === id);
-        return event ? `${event.name} — ${event.category}` : 'Unknown Event';
-      });
-      return eventNames.length ? eventNames.join(', ') : 'No Events';
-    } else if (typeof eventRef === 'number') {
-      // Single event
-      if (!myEventIds.has(eventRef)) return 'No Events';
-      const event = this.events.find((e: any) => e.id === eventRef);
-      return event ? `${event.name} — ${event.category}` : 'Unknown Event';
-    } else {
-      return 'No Events';
-    }
+    if (typeof id !== 'number') return 'Unknown Event';
+    const event = this.events.find((e: any) => e.id === id);
+    return event ? event.name : 'Unknown Event';
   }
 }
