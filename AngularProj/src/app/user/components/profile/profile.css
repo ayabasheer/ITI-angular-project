@@ -78,11 +78,11 @@ button:disabled {
 }
 
 .dark-card button[color="accent"] {
-  background-color: #90caf9 !important; /* أزرق فاتح */
+  background-color: #90caf9 !important;  
   color: #000 !important;
 }
 
 .dark-card button[color="warn"] {
-  background-color: #ef5350 !important; /* أحمر واضح */
+  background-color: #ef5350 !important;
   color: #fff !important;
 }
