@@ -36,16 +36,31 @@
   </div>
 
   <h3 class="recent-title">Recent Events</h3>
-  <div class="event-list">
-    <mat-card *ngFor="let event of events.slice(-3)" class="event-card">
+
+  <div class="event-list" *ngIf="events.length > 0; else noEvents">
+    <mat-card *ngFor="let event of events.slice(-4)" class="event-card">
       <img *ngIf="event.image" [src]="event.image" alt="{{ event.name }}" class="event-image" />
       <div class="event-details">
         <h4>{{ event.name }}</h4>
         <p class="desc">{{ event.description || 'No description available' }}</p>
         <div class="status" [style.color]="getStatusColor(event.status)">
-          <mat-icon>circle</mat-icon> {{ event.status }}
+          <mat-icon>{{ getStatusIcon(event.status) }}</mat-icon>
+          {{ event.status }}
         </div>
       </div>
     </mat-card>
+  </div>
+
+  <ng-template #noEvents>
+    <div class="empty-state">
+      <mat-icon>event_busy</mat-icon>
+      <p>No events yet</p>
+    </div>
+  </ng-template>
+
+  <div class="see-more">
+    <button mat-raised-button color="primary" (click)="goToEvents()">
+      See More Events
+    </button>
   </div>
 </div>

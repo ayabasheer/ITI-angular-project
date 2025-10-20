@@ -23,112 +23,131 @@ import { GuestUser } from '../../interfaces/guest.interface';
   styleUrls: ['./profile.css']
 })
 export class ProfileComponent implements OnInit {
+
   currentUser: GuestUser | null = null;
   editableUser: GuestUser | null = null;
   isDarkMode = false;
 
-  // Regex patterns
-  emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  phonePattern = /^\+\d{10,15}$/;
-  namePattern = /^[A-Za-z ]{3,}$/;
-  passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
+  // 🔹 Validation patterns
+  private readonly patterns = {
+    name: /^[A-Za-z ]{3,}$/,
+    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    phone: /^\+\d{10,15}$/,
+    password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/
+  };
 
   ngOnInit(): void {
-    this.isDarkMode = localStorage.getItem('themeMode') === 'dark';
+    this.applyTheme();
     this.loadUserData();
   }
 
-  loadUserData(): void {
-    const current = localStorage.getItem('currentUser');
-    const guestsData = localStorage.getItem('guests');
+  // ✅ Apply dark mode from localStorage
+  private applyTheme(): void {
+    const mode = localStorage.getItem('themeMode');
+    this.isDarkMode = mode === 'dark';
+    document.body.classList.toggle('dark-mode', this.isDarkMode);
+  }
 
-    if (!current || !guestsData) {
-      Swal.fire({
-        icon: 'error',
-        title: 'No user data found',
-        text: 'Please log in again.',
-      });
-      return;
+  // ✅ Load user data safely
+  private loadUserData(): void {
+    try {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+      const guests: GuestUser[] = JSON.parse(localStorage.getItem('guests') || '[]');
+
+      if (!currentUser || !guests.length) {
+        this.showError('No user data found', 'Please log in again.');
+        return;
+      }
+
+      const foundUser = guests.find(g => g.id === currentUser.id);
+      if (!foundUser) {
+        this.showError('User not found', 'Your account may have been removed.');
+        return;
+      }
+
+      this.currentUser = foundUser;
+      this.editableUser = { ...foundUser };
+    } catch (error) {
+      this.showError('Error loading profile', 'Data might be corrupted.');
+      console.error('Profile Load Error:', error);
     }
-
-    const currentUser = JSON.parse(current);
-    const guests: GuestUser[] = JSON.parse(guestsData);
-
-    const guestData = guests.find(g => Number(g.id) === Number(currentUser.id));
-    if (!guestData) {
-      Swal.fire({
-        icon: 'error',
-        title: 'User not found',
-        text: 'Your account may have been removed.',
-      });
-      return;
-    }
-
-    this.currentUser = guestData;
-    this.editableUser = { ...guestData };
   }
 
-  // ✅ Regex validation
-  isNameValid(name: string | undefined): boolean {
-    return !!name && this.namePattern.test(name);
+  // ✅ Validation helpers
+  isValid(field: keyof GuestUser, value: string | undefined): boolean {
+    const pattern = this.patterns[field as keyof typeof this.patterns];
+    return !!value && !!pattern?.test(value);
   }
 
-  isEmailValid(email: string | undefined): boolean {
-    return !!email && this.emailPattern.test(email);
-  }
-
-  isPhoneValid(phone: string | undefined): boolean {
-    return !!phone && this.phonePattern.test(phone);
-  }
-
-  isPasswordValid(password: string | undefined): boolean {
-    return !!password && this.passwordPattern.test(password);
-  }
+  // Backward compatibility for template checks
+  isNameValid(value: string | undefined) { return this.isValid('name', value); }
+  isEmailValid(value: string | undefined) { return this.isValid('email', value); }
+  isPhoneValid(value: string | undefined) { return this.isValid('phone', value); }
+  isPasswordValid(value: string | undefined) { return this.isValid('password', value); }
 
   // ✅ Full form validation
   isFormValid(): boolean {
-    return !!this.editableUser &&
-      this.isNameValid(this.editableUser.name) &&
-      this.isEmailValid(this.editableUser.email) &&
-      this.isPhoneValid(this.editableUser.phone) &&
-      this.isPasswordValid(this.editableUser.password);
+    const u = this.editableUser;
+    return !!u &&
+      this.isValid('name', u.name) &&
+      this.isValid('email', u.email) &&
+      this.isValid('phone', u.phone) &&
+      this.isValid('password', u.password);
   }
 
-  // ✅ Save both currentUser and guests
+  // ✅ Save profile
   saveProfile(form: NgForm): void {
     if (!this.isFormValid() || !this.editableUser) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Invalid Data',
-        text: 'Please correct the errors before saving.',
-      });
+      this.showError('Invalid Data', 'Please correct the errors before saving.');
       return;
     }
 
-    const guests: GuestUser[] = JSON.parse(localStorage.getItem('guests') || '[]');
-    const editableId = Number(this.editableUser.id);
-    const index = guests.findIndex(g => Number(g.id) === editableId);
+    try {
+      const guests: GuestUser[] = JSON.parse(localStorage.getItem('guests') || '[]');
+      const idx = guests.findIndex(g => g.id === this.editableUser!.id);
 
-    if (index !== -1) {
-      guests[index] = { ...this.editableUser };
-    } else {
-      guests.push({ ...this.editableUser });
+      if (idx !== -1) guests[idx] = { ...this.editableUser };
+      else guests.push({ ...this.editableUser });
+
+      localStorage.setItem('guests', JSON.stringify(guests));
+      localStorage.setItem('currentUser', JSON.stringify(this.editableUser));
+
+      this.currentUser = { ...this.editableUser };
+      this.showSuccess('Profile Updated', 'Your information has been successfully updated!');
+    } catch (error) {
+      this.showError('Error saving profile', 'Please try again.');
+      console.error('Save Error:', error);
     }
+  }
 
-    localStorage.setItem('guests', JSON.stringify(guests));
-    localStorage.setItem('currentUser', JSON.stringify(this.editableUser));
-    this.currentUser = { ...this.editableUser };
+  // ✅ Reset form to last saved version
+  resetForm(form: NgForm): void {
+    if (this.currentUser) {
+      this.editableUser = { ...this.currentUser };
+      form.resetForm(this.editableUser);
+    }
+  }
 
+  // ✅ SweetAlert helpers
+  private showError(title: string, text: string): void {
     Swal.fire({
-      icon: 'success',
-      title: 'Profile Updated',
-      text: 'Your information has been successfully updated!',
+      icon: 'error',
+      title,
+      text,
+      background: this.isDarkMode ? '#2c2c2c' : '#fff',
+      color: this.isDarkMode ? '#fff' : '#000'
     });
   }
 
-  // ✅ Reset form
-  resetForm(form: NgForm): void {
-    form.resetForm(this.currentUser);
-    this.editableUser = { ...this.currentUser! };
+  private showSuccess(title: string, text: string): void {
+    Swal.fire({
+      icon: 'success',
+      title,
+      text,
+      background: this.isDarkMode ? '#2c2c2c' : '#fff',
+      color: this.isDarkMode ? '#fff' : '#000',
+      timer: 2000,
+      showConfirmButton: false
+    });
   }
 }

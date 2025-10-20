@@ -10,8 +10,7 @@
     <!-- Logo Section -->
     <div class="sidebar-header">
       <h2 class="logo">
-        <span class="logo-main">Event</span>
-        <span class="logo-accent">ura</span>
+        <span class="logo-main">Event</span><span class="logo-accent">ura</span>
       </h2>
     </div>
 
@@ -29,20 +28,22 @@
 
       <button mat-list-item (click)="selectTab('events')" [class.active]="currentTab==='events'">
         <mat-icon>event</mat-icon>
-        <span>Event</span>
+        <span>Events</span>
+      </button>
+
+      <button mat-list-item (click)="selectTab('invitations')" [class.active]="currentTab==='invitations'">
+        <mat-icon>mail</mat-icon>
+        <span>Invitations</span>
       </button>
 
       <button mat-list-item (click)="selectTab('profile')" [class.active]="currentTab==='profile'">
         <mat-icon>person</mat-icon>
         <span>Profile</span>
       </button>
-      <button mat-list-item (click)="selectTab('invitations')" [class.active]="currentTab==='invitations'">
-        <mat-icon>mail</mat-icon>
-        <span>Invitations</span>
-      </button>
     </mat-nav-list>
 
     <!-- Footer -->
+     <br>
     <div class="sidebar-footer">
       <small>© 2025 Eventura</small>
     </div>
@@ -58,9 +59,15 @@
       </div>
 
       <div class="right">
-        <button mat-stroked-button class="theme-btn" (click)="toggleTheme()" aria-label="Toggle theme mode">
+        <button mat-stroked-button class="theme-btn" (click)="toggleTheme()">
           <mat-icon>{{ darkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
           <span>{{ darkMode ? 'Light' : 'Dark' }}</span>
+        </button>
+
+        <!-- 🚪 Logout Button -->
+        <button mat-flat-button color="warn" class="logout-btn" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
         </button>
       </div>
     </header>

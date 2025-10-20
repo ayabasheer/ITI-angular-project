@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -24,12 +24,27 @@ export class FeedbackComponent implements OnInit {
 
   stars: number[] = [1, 2, 3, 4, 5];
   userEvents: Event[] = [];
+  themeMode: 'light' | 'dark' = 'light';
+
+  constructor(private renderer: Renderer2) {}
 
   ngOnInit(): void {
     this.loadUser();
     this.loadEvents();
     this.loadFeedbacks();
     this.prepareUserEvents();
+    this.loadTheme();
+  }
+
+  private loadTheme(): void {
+    const storedTheme = localStorage.getItem('themeMode');
+    this.themeMode = storedTheme === 'dark' ? 'dark' : 'light';
+
+    if (this.themeMode === 'dark') {
+      this.renderer.addClass(document.body, 'dark-body');
+    } else {
+      this.renderer.removeClass(document.body, 'dark-body');
+    }
   }
 
   private loadUser(): void {
@@ -54,15 +69,15 @@ export class FeedbackComponent implements OnInit {
 
   private prepareUserEvents(): void {
     if (!this.currentUser) return;
-    const now = new Date();
 
     this.userEvents = this.events.filter(ev => {
       const guestIds = (ev.guests as (GuestUser | number)[] | undefined)
         ?.map(g => typeof g === 'number' ? g : g.id) || [];
 
-      return guestIds.includes(this.currentUser!.id) &&
-             new Date(ev.endDate) <= now &&
-             !this.feedbacks.some(fb => fb.eventId === ev.id);
+    return guestIds.includes(this.currentUser!.id) &&
+       ev.status === 'Completed' &&
+       !this.feedbacks.some(fb => fb.eventId === ev.id);
+
     });
 
     if (this.userEvents.length > 0) {
@@ -101,8 +116,6 @@ export class FeedbackComponent implements OnInit {
       rating: this.newRating,
       createdAt: new Date().toISOString()
     };
-
-    console.log('Saving feedback:', newFb); // Debugging
 
     this.feedbacks.push(newFb);
     allFeedbacksStored.push(newFb);

@@ -1,4 +1,4 @@
-<div class="events-container">
+<div class="events-container" [ngClass]="{'dark-mode': themeMode === 'dark'}">
   <h2 class="title">My Events</h2>
 
   <!-- Tabs -->
@@ -32,8 +32,6 @@
         <p><strong>Location:</strong> {{ ev.location }}</p>
         <p><strong>Start:</strong> {{ ev.startDate | date:'medium' }}</p>
         <p><strong>End:</strong> {{ ev.endDate | date:'medium' }}</p>
-        <p><strong>Guests:</strong> {{ ev.guests?.length || 0 }} (Accepted: {{ getAcceptedGuests(ev) }})</p>
-        <p><strong>Tasks:</strong> {{ ev.tasks?.length || 0 }}</p>
       </mat-card-content>
       <mat-card-actions>
         <button mat-stroked-button color="primary" (click)="viewDetails(ev)">View Details</button>
@@ -47,7 +45,7 @@
 
   <!-- Event Details Overlay -->
   <div class="event-details-overlay" *ngIf="selectedEvent">
-    <div class="event-details-card">
+    <div class="event-details-card" [ngClass]="{'dark-details': themeMode === 'dark'}">
       <button class="close-btn" (click)="closeDetails()">✖</button>
       <h3>{{ selectedEvent.name }}</h3>
       <img [src]="selectedEvent.image" alt="{{ selectedEvent.name }}">
@@ -64,8 +62,6 @@
       <p><strong>End:</strong> {{ selectedEvent.endDate | date:'medium' }}</p>
       <p><strong>Description:</strong> {{ selectedEvent.description }}</p>
       <p><strong>Budget:</strong> {{ selectedEvent.budget || 0 }}</p>
-      <p><strong>Guests:</strong> {{ selectedEvent.guests?.length || 0 }} (Accepted: {{ getAcceptedGuests(selectedEvent) }})</p>
-      <p><strong>Tasks:</strong> {{ selectedEvent.tasks?.length || 0 }}</p>
 
       <div *ngIf="selectedEvent.status==='Pending'" class="details-actions">
         <button mat-flat-button color="accent" (click)="acceptEvent(selectedEvent)">Accept</button>

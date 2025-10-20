@@ -72,10 +72,15 @@ body.dark {
 }
 
 .stat-card mat-icon {
-  font-size: 40px;
+  font-size: 25px;
   color: var(--accent);
 }
-
+.stat-content{
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  justify-content: center;  
+}
 .stat-content h3 {
   margin: 0;
   font-size: 1.8rem;
@@ -85,7 +90,8 @@ body.dark {
 
 .stat-content p {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  font-weight: 500;
   color: var(--text);
   opacity: 0.7;
 }
@@ -167,4 +173,20 @@ body.dark {
   .overview-container {
     padding: 1rem;
   }
+}
+.see-more {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.see-more button {
+  border-radius: 8px;
+  font-weight: 600;
+  background-color: var(--accent);
+  color: #fff;
+  transition: background 0.3s ease;
+}
+
+.see-more button:hover {
+  background-color: #a27d49;
 }
