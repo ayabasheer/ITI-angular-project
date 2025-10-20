@@ -248,7 +248,7 @@ export class CreateEvent implements OnInit {
             id: newGuestId,
             name: user.name,
             email,
-            status: 'Pending',
+            status: 'Accepted',
             role: 'Guest',
             eventId: null,
             createdAt: new Date().toISOString()
@@ -300,6 +300,38 @@ export class CreateEvent implements OnInit {
         updatedAt: new Date().toISOString()
       };
 
+      existingEvents.push(event);
+      localStorage.setItem('events', JSON.stringify(existingEvents));
+
+      // ✅ إنشاء الدعوات وربطها بالحدث
+      const existingInvitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+      guestIds.forEach((guestId, index) => {
+        const newInvitation = {
+          id: existingInvitations.length
+            ? Math.max(...existingInvitations.map((i: any) => i.id)) + 1
+            : 1,
+          eventId: event.id,
+          guestId,
+          email: guestEmails[index],
+          status: 'Pending',
+          createdAt: new Date().toISOString()
+        };
+        existingInvitations.push(newInvitation);
+      });
+      localStorage.setItem('invitations', JSON.stringify(existingInvitations));
+
+      // ✅ تحديث eventIds للضيوف (استخدام array بدلاً من single eventId)
+      const updatedGuests = existingGuests.map((g: any) => {
+        if (guestIds.includes(g.id)) {
+          const currentEventIds = Array.isArray(g.eventIds) ? g.eventIds : (g.eventId ? [g.eventId] : []);
+          if (!currentEventIds.includes(event.id)) {
+            currentEventIds.push(event.id);
+          }
+          return { ...g, eventIds: currentEventIds, eventId: event.id }; // keep eventId for backward compatibility
+        }
+        return g;
+      });
+      localStorage.setItem('guests', JSON.stringify(updatedGuests));
       // If editing, delete old tasks/expenses for this event to avoid duplicates
       if (this.editing && this.editingEventId) {
         const oldTasks = this.taskService.getForEvent(this.editingEventId) || [];
