@@ -351,17 +351,6 @@ export async function generateAndSaveAllWithImages() {
   localStorage.setItem('expenses', JSON.stringify(expenses));
   localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
 
-  // Restore preserved invitations (if any) so user-created invitations survive demo generation
-  try {
-    if (preservedInvitationsRaw) {
-      localStorage.setItem('invitations', preservedInvitationsRaw);
-    } else {
-      // Ensure key exists even if empty
-      localStorage.setItem('invitations', JSON.stringify([]));
-    }
-  } catch (e) {
-    console.warn('Unable to restore invitations after demo generation:', e);
-  }
 
   const snapshot = {
     organizers,

@@ -7,7 +7,10 @@
 
 <div class="invitations-grid" *ngIf="filteredInvitations.length; else noData">
   <p *ngIf="!currentUser" class="notice">Please log in as a guest to view and respond to your invitations.</p>
-  <mat-card *ngFor="let inv of filteredInvitations" class="invitation-card">
+  <mat-card *ngFor="let inv of filteredInvitations" class="invitation-card m-5"
+            [class.accepted]="inv.status === 'Accepted'"
+            [class.refused]="inv.status === 'Refused'"
+            [attr.data-ribbon]="inv.status === 'Accepted' ? 'ACCEPTED' : (inv.status === 'Refused' ? 'REFUSED' : '')">
     <img [src]="inv.eventDetails?.image || 'assets/default-event.jpg'" alt="{{ inv.eventDetails?.name }}">
     <mat-card-header>
       <mat-card-title>{{ inv.eventDetails?.name }}</mat-card-title>
