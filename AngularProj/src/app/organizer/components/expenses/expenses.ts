@@ -1,5 +1,5 @@
-import { Component , OnInit} from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule, NgIf, NgForOf } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
@@ -13,11 +13,12 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-expenses',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, NgIf, NgForOf, RouterModule, FormsModule],
   templateUrl: './expenses.html',
   styleUrls: ['./expenses.css']
 })
 export class Expenses implements OnInit {
+  isDark = false;
   expenses: Expense[] = [];
   events: any[] = [];
   // UI & state
@@ -31,6 +32,7 @@ export class Expenses implements OnInit {
   constructor(private expenseService: ExpenseService, private eventService: EventService, private auth: AuthService) {}
 
   ngOnInit() {
+    this.isDark = localStorage.getItem('darkMode') === 'true';
     const allExpenses = this.expenseService.getAll() || [];
     const allEvents = this.eventService.getAll() || [];
     const user = this.auth.currentUser;
@@ -142,14 +144,16 @@ export class Expenses implements OnInit {
       }
       const labels = Object.keys(this.byCategory);
       const data = labels.map(l => this.byCategory[l]);
+      const palette = ['#d4af37', '#b9975b', '#a67c52', '#8b6a3f'];
+      const bg = labels.map((_, idx) => palette[idx % palette.length]);
       // @ts-ignore
       const ch = new Chart(ctx, {
         type: 'pie',
         data: {
           labels,
-          datasets: [{ data, backgroundColor: ['#f6c23e', '#e74a3b', '#36b9cc', '#4e73df', '#1cc88a', '#858796'] }]
+          datasets: [{ data, backgroundColor: bg }]
         },
-        options: { responsive: true }
+        options: { responsive: true, maintainAspectRatio: false }
       });
       // @ts-ignore
       (canvas as any).__chart = ch;
