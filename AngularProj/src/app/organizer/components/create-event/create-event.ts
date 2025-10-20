@@ -304,11 +304,11 @@ export class CreateEvent implements OnInit {
       localStorage.setItem('events', JSON.stringify(existingEvents));
 
       // ✅ إنشاء الدعوات وربطها بالحدث
-      const existingInvitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+      const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
       guestIds.forEach((guestId, index) => {
         const newInvitation = {
-          id: existingInvitations.length
-            ? Math.max(...existingInvitations.map((i: any) => i.id)) + 1
+          id: invitations.length
+            ? Math.max(...invitations.map((i: any) => i.id)) + 1
             : 1,
           eventId: event.id,
           guestId,
@@ -316,12 +316,12 @@ export class CreateEvent implements OnInit {
           status: 'Pending',
           createdAt: new Date().toISOString()
         };
-        existingInvitations.push(newInvitation);
+        invitations.push(newInvitation);
       });
-      localStorage.setItem('invitations', JSON.stringify(existingInvitations));
+      localStorage.setItem('invitations', JSON.stringify(invitations));
 
       // ✅ تحديث eventIds للضيوف (استخدام array بدلاً من single eventId)
-      const updatedGuests = existingGuests.map((g: any) => {
+      const guestsUpdated = existingGuests.map((g: any) => {
         if (guestIds.includes(g.id)) {
           const currentEventIds = Array.isArray(g.eventIds) ? g.eventIds : (g.eventId ? [g.eventId] : []);
           if (!currentEventIds.includes(event.id)) {
@@ -331,7 +331,7 @@ export class CreateEvent implements OnInit {
         }
         return g;
       });
-      localStorage.setItem('guests', JSON.stringify(updatedGuests));
+      localStorage.setItem('guests', JSON.stringify(guestsUpdated));
       // If editing, delete old tasks/expenses for this event to avoid duplicates
       if (this.editing && this.editingEventId) {
         const oldTasks = this.taskService.getForEvent(this.editingEventId) || [];
@@ -415,10 +415,10 @@ export class CreateEvent implements OnInit {
       localStorage.setItem('invitations', JSON.stringify(existingInvitations));
 
       // update guests' eventId
-      const updatedGuests = existingGuests.map((g: any) =>
+      const guestsUpdatedFinal = existingGuests.map((g: any) =>
         guestIds.includes(g.id) ? { ...g, eventId: event.id } : g
       );
-      localStorage.setItem('guests', JSON.stringify(updatedGuests));
+      localStorage.setItem('guests', JSON.stringify(guestsUpdatedFinal));
 
       // ✅ إشعار النجاح
       Swal.fire({
