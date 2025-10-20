@@ -26,6 +26,7 @@ export class ProfileComponent implements OnInit {
 
   currentUser: GuestUser | null = null;
   editableUser: GuestUser | null = null;
+  originalUser: GuestUser | null = null; // To track changes
   isDarkMode = false;
 
   // 🔹 Validation patterns
@@ -39,6 +40,7 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.applyTheme();
     this.loadUserData();
+    if (this.editableUser) this.originalUser = { ...this.editableUser };
   }
 
   // ✅ Apply dark mode from localStorage
@@ -79,7 +81,6 @@ export class ProfileComponent implements OnInit {
     return !!value && !!pattern?.test(value);
   }
 
-  // Backward compatibility for template checks
   isNameValid(value: string | undefined) { return this.isValid('name', value); }
   isEmailValid(value: string | undefined) { return this.isValid('email', value); }
   isPhoneValid(value: string | undefined) { return this.isValid('phone', value); }
@@ -95,10 +96,21 @@ export class ProfileComponent implements OnInit {
       this.isValid('password', u.password);
   }
 
+  // ✅ Check if user made any changes
+  hasChanges(): boolean {
+    if (!this.editableUser || !this.originalUser) return false;
+    return (
+      this.editableUser.name !== this.originalUser.name ||
+      this.editableUser.email !== this.originalUser.email ||
+      this.editableUser.phone !== this.originalUser.phone ||
+      this.editableUser.password !== this.originalUser.password
+    );
+  }
+
   // ✅ Save profile
   saveProfile(form: NgForm): void {
-    if (!this.isFormValid() || !this.editableUser) {
-      this.showError('Invalid Data', 'Please correct the errors before saving.');
+    if (!this.isFormValid() || !this.hasChanges() || !this.editableUser) {
+      this.showError('Invalid Data', 'Please correct the errors or make changes before saving.');
       return;
     }
 
@@ -113,6 +125,7 @@ export class ProfileComponent implements OnInit {
       localStorage.setItem('currentUser', JSON.stringify(this.editableUser));
 
       this.currentUser = { ...this.editableUser };
+      this.originalUser = { ...this.editableUser }; // update original after save
       this.showSuccess('Profile Updated', 'Your information has been successfully updated!');
     } catch (error) {
       this.showError('Error saving profile', 'Please try again.');

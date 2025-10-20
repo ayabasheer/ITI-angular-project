@@ -5,87 +5,86 @@
       </mat-card-header>
 
       <mat-card-content>
-        <form #profileForm="ngForm" (ngSubmit)="saveProfile(profileForm)">
-          
-          <!-- Name -->
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Name</mat-label>
-            <input
-              matInput
-              [(ngModel)]="editableUser.name"
-              (ngModelChange)="editableUser.name = $event"
-              name="name"
-              required
-              #nameModel="ngModel"
-            />
-            <div class="error" *ngIf="nameModel.invalid && nameModel.touched">
-              Name must be at least 3 letters.
-            </div>
-          </mat-form-field>
+       <form #profileForm="ngForm" (ngSubmit)="saveProfile(profileForm)">
+  
+  <!-- Name -->
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Name</mat-label>
+    <input
+      matInput
+      [(ngModel)]="editableUser.name"
+      name="name"
+      required
+      #nameModel="ngModel"
+    />
+    <div class="error" *ngIf="(nameModel.invalid && nameModel.touched) || !isNameValid(editableUser.name)">
+      Name must be at least 3 letters.
+    </div>
+  </mat-form-field>
 
-          <!-- Email -->
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Email</mat-label>
-            <input
-              matInput
-              [(ngModel)]="editableUser.email"
-              (ngModelChange)="editableUser.email = $event"
-              name="email"
-              required
-              #emailModel="ngModel"
-            />
-            <div class="error" *ngIf="emailModel.invalid && emailModel.touched || !isEmailValid(editableUser.email)">
-              Enter a valid email.
-            </div>
-          </mat-form-field>
+  <!-- Email -->
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Email</mat-label>
+    <input
+      matInput
+      [(ngModel)]="editableUser.email"
+      name="email"
+      required
+      #emailModel="ngModel"
+    />
+    <div class="error" *ngIf="(emailModel.invalid && emailModel.touched) || !isEmailValid(editableUser.email)">
+      Enter a valid email.
+    </div>
+  </mat-form-field>
 
-          <!-- Phone -->
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Phone</mat-label>
-            <input
-              matInput
-              [(ngModel)]="editableUser.phone"
-              (ngModelChange)="editableUser.phone = $event"
-              name="phone"
-              required
-              #phoneModel="ngModel"
-            />
-            <div class="error" *ngIf="phoneModel.invalid && phoneModel.touched || !isPhoneValid(editableUser.phone)">
-              Enter a valid phone starting with + and 10-15 digits.
-            </div>
-          </mat-form-field>
+  <!-- Phone -->
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Phone</mat-label>
+    <input
+      matInput
+      [(ngModel)]="editableUser.phone"
+      name="phone"
+      required
+      #phoneModel="ngModel"
+    />
+    <div class="error" *ngIf="(phoneModel.invalid && phoneModel.touched) || !isPhoneValid(editableUser.phone)">
+      Enter a valid phone starting with + and 10-15 digits.
+    </div>
+  </mat-form-field>
 
-          <!-- Password -->
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Password</mat-label>
-            <input
-              matInput
-              [(ngModel)]="editableUser.password"
-              (ngModelChange)="editableUser.password = $event"
-              name="password"
-              type="password"
-              required
-              #passwordModel="ngModel"
-            />
-            <div class="error" *ngIf="passwordModel.invalid && passwordModel.touched || !isPasswordValid(editableUser.password)">
-              Password must be 6+ chars, with uppercase, lowercase, number, and special char.
-            </div>
-          </mat-form-field>
+  <!-- Password -->
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Password</mat-label>
+    <input
+      matInput
+      [(ngModel)]="editableUser.password"
+      name="password"
+      type="password"
+      required
+      #passwordModel="ngModel"
+    />
+    <div class="error" *ngIf="(passwordModel.invalid && passwordModel.touched) || !isPasswordValid(editableUser.password)">
+      Password must be 6+ chars, with uppercase, lowercase, number, and special char.
+    </div>
+  </mat-form-field>
 
-          <div class="actions">
-            <button
-              mat-raised-button
-              color="accent"
-              type="submit"
-              [disabled]="!isFormValid()"
-            >
-              Save
-            </button>
-            <button mat-raised-button color="warn" type="button" (click)="resetForm(profileForm)">
-              Reset
-            </button>
-          </div>
-        </form>
+  <div class="actions">
+    <!-- Save button disabled until all fields are valid -->
+   <button
+  mat-raised-button
+  color="accent"
+  type="submit"
+  [disabled]="!isFormValid() || !hasChanges()"
+>
+  Save
+</button>
+
+    <button mat-raised-button color="warn" type="button" (click)="resetForm(profileForm)">
+      Reset
+    </button>
+  </div>
+</form>
+
       </mat-card-content>
     </mat-card>
   </div>
