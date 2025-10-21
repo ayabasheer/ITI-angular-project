@@ -1,5 +1,9 @@
 {
   "dependencies": {
     "bootstrap": "^5.3.8"
+  },
+  "scripts": {
+    "start": "ng serve",
+    "build": "ng build --configuration=production"
   }
 }
