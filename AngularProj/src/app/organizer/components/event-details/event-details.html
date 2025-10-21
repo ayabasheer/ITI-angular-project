@@ -1,43 +1,45 @@
-<div class="site-container">
-    <!-- Back/Forward Navigation Buttons -->
-    <div class="navigation-buttons" style="margin-bottom: 1rem;">
-        <button class="btn btn-secondary me-2" (click)="goBack()">
-            <i class="fas fa-arrow-left"></i> Back
-        </button>
-        <button class="btn btn-secondary" (click)="goForward()">
-            <i class="fas fa-arrow-right"></i> Forward
-        </button>
-    </div>
+<div class="event-details" [ngClass]="{'dark': isDarkMode}">
+    <div class="site-container">
+        <!-- Back/Forward Navigation Buttons -->
+        <div class="navigation-buttons" style="margin-bottom: 1rem;">
+            <button class="btn btn-secondary me-2" (click)="goBack()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <button class="btn btn-secondary" (click)="goForward()">
+                <i class="fas fa-arrow-right"></i> Forward
+            </button>
+        </div>
 
-    <div *ngIf="!event" class="alert alert-danger">Event not found.</div>
-    <div *ngIf="event">
-        <h2>{{event.title || event.name}}</h2>
-        <img [src]="event.image || defaultImage" alt="event image" class="img-fluid mb-3"
-            style="max-width:400px; max-height:250px;" />
-        <p><strong>Category:</strong> {{event.category}}</p>
-        <p><strong>Description:</strong> {{event.description}}</p>
-        <p><strong>Location:</strong> {{event.location}}</p>
-        <p><strong>Status:</strong> {{event.status}}</p>
-        <p><strong>Start Date:</strong> {{event.startDate | date:'medium'}}</p>
-        <p><strong>End Date:</strong> {{event.endDate | date:'medium'}}</p>
-        <p><strong>Organizer:</strong> {{organizer?.name || organizer?.email || 'Organizer'}}</p>
-        <p><strong>Budget:</strong> {{event.budget}}</p>
-        <div class="mb-3">
-            <button *ngIf="canModify()" class="btn btn-warning me-2" (click)="editEvent()">Edit</button>
-            <button *ngIf="canModify()" class="btn btn-danger" (click)="deleteEvent()">Delete</button>
+        <div *ngIf="!event" class="alert alert-danger">Event not found.</div>
+        <div *ngIf="event">
+            <h2>{{event.title || event.name}}</h2>
+            <img [src]="event.image || defaultImage" alt="event image" class="img-fluid mb-3"
+                style="max-width:400px; max-height:250px;" />
+            <p><strong>Category:</strong> {{event.category}}</p>
+            <p><strong>Description:</strong> {{event.description}}</p>
+            <p><strong>Location:</strong> {{event.location}}</p>
+            <p><strong>Status:</strong> {{event.status}}</p>
+            <p><strong>Start Date:</strong> {{event.startDate | date:'medium'}}</p>
+            <p><strong>End Date:</strong> {{event.endDate | date:'medium'}}</p>
+            <p><strong>Organizer:</strong> {{organizer?.name || organizer?.email || 'Organizer'}}</p>
+            <p><strong>Budget:</strong> {{event.budget}}</p>
+            <div class="mb-3">
+                <button *ngIf="canModify()" class="btn btn-warning me-2" (click)="editEvent()">Edit</button>
+                <button *ngIf="canModify()" class="btn btn-danger" (click)="deleteEvent()">Delete</button>
+            </div>
+            <div *ngIf="feedbacks.length">
+                <h4>Feedbacks</h4>
+                <ul class="list-unstyled">
+                    <li *ngFor="let fb of feedbacks">
+                        <div class="border rounded p-2 mb-2">
+                            <strong>{{getGuestName(fb.guestId)}}</strong>
+                            <div class="small text-muted">Rating: {{fb.rating}}</div>
+                            <div>{{fb.comment}}</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div *ngIf="!feedbacks.length" class="text-muted">No feedback yet.</div>
         </div>
-        <div *ngIf="feedbacks.length">
-            <h4>Feedbacks</h4>
-            <ul class="list-unstyled">
-                <li *ngFor="let fb of feedbacks">
-                    <div class="border rounded p-2 mb-2">
-                        <strong>{{getGuestName(fb.guestId)}}</strong>
-                        <div class="small text-muted">Rating: {{fb.rating}}</div>
-                        <div>{{fb.comment}}</div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <div *ngIf="!feedbacks.length" class="text-muted">No feedback yet.</div>
     </div>
 </div>

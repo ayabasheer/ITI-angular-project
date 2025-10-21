@@ -1,4 +1,5 @@
-<div class="guest">
+<div class="guest" [ngClass]="{'dark': isDarkMode}">
+    <!--  -->
     <div class="guest-container">
         <!-- Back/Forward Navigation Buttons -->
         <div class="navigation-buttons" style="margin-bottom: 1rem;">
@@ -16,7 +17,7 @@
         </div>
 
         <div *ngIf="guests.length; else no" class="row">
-            <div class="col-md-4 mb-3" *ngFor="let g of guests">
+            <div class="col-lg-4 col-md-6 mb-3" *ngFor="let g of guests">
                 <div class="guest-card" [routerLink]="['/dashboard/guests', g.id]">
                     <div class="guest-info">
                         <div class="info-item">
@@ -46,5 +47,6 @@
             </div>
         </ng-template>
     </div>
+    
     <ng-template #no>No guests found.</ng-template>
 </div>

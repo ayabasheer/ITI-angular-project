@@ -24,6 +24,7 @@ export class Events implements OnInit {
   categories: string[] = [];
   statuses: string[] = [];
   defaultImage = 'https://via.placeholder.com/400x250?text=Event';
+  themeMode: string = 'light';
 
   constructor(private eventService: EventService, private auth: AuthService, private router: Router, private route: ActivatedRoute) {}
 
@@ -71,6 +72,11 @@ export class Events implements OnInit {
   }
 
   ngOnInit() {
+    this.themeMode = localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
+    window.addEventListener('theme:changed', (e: any) => {
+      this.themeMode = e.detail.dark ? 'dark' : 'light';
+    });
+
     this.loadEvents();
     // Listen for 'refresh' query param so returned navigations can trigger reload
     this.route.queryParamMap.subscribe(params => {

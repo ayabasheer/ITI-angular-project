@@ -16,6 +16,7 @@ import { AuthService } from '../../../shared/services/auth.service';
 export class Guests implements OnInit {
   guests: Guest[] = [];
   events: any[] = [];
+  isDarkMode: boolean = false;
 
   constructor(
     private guestService: GuestService,
@@ -32,6 +33,11 @@ export class Guests implements OnInit {
   }
 
   ngOnInit() {
+    this.isDarkMode = localStorage.getItem('darkMode') === 'true';
+    window.addEventListener('theme:changed', (e: any) => {
+      this.isDarkMode = e.detail.dark;
+    });
+
     const user = this.auth.currentUser;
     if (user && user.role === 'Organizer') {
       const myEventIds = new Set<number>(
