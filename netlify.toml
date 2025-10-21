@@ -1,11 +1,8 @@
 [build]
+  base = "AngularProj"
   command = "npm run build"
-  publish = "dist/Event-Planning-System/browser"  # match the exact casing!
+  publish = "dist/AngularProj/browser"
 
-[build.environment]
-  NODE_VERSION = "20"
-
-# CSR/SPA fallback for client-side routes
 [[redirects]]
   from = "/*"
   to = "/index.html"
