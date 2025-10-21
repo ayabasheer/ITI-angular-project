@@ -1,13 +1,42 @@
-<div style="padding:20px">
-    <h2>Guests</h2>
-    <div *ngIf="guests.length; else no" class="row">
-        <div class="col-md-4 mb-3" *ngFor="let g of guests">
-            <div class="card" style="cursor: pointer;" [routerLink]="['/dashboard/guests', g.id]">
-                <div class="card-body">
-                    <h5 class="card-title">{{ g.name }}</h5>
-                    <p class="card-text">{{ g.email }}</p>
-                    <p class="card-text"><small class="text-muted">Status: {{ g.status }}</small></p>
-                    <p class="card-text"><small class="text-muted">Event: {{ getEventName(g.eventIds || g.eventId) }}</small></p>
+<div class="guest">
+    <div class="guest-container">
+        <!-- Back/Forward Navigation Buttons -->
+        <div class="navigation-buttons" style="margin-bottom: 1rem;">
+            <button class="btn btn-secondary me-2" (click)="goBack()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <button class="btn btn-secondary" (click)="goForward()">
+                <i class="fas fa-arrow-right"></i> Forward
+            </button>
+        </div>
+
+        <div class="guest-header">
+            <h2 class="guest-title">Guests</h2>
+            <p class="guest-subtitle">Manage your event guests</p>
+        </div>
+
+        <div *ngIf="guests.length; else no" class="row">
+            <div class="col-md-4 mb-3" *ngFor="let g of guests">
+                <div class="guest-card" [routerLink]="['/dashboard/guests', g.id]">
+                    <div class="guest-info">
+                        <div class="info-item">
+                            <div class="info-label">Name</div>
+                            <div class="info-value">{{ g.name }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Email</div>
+                            <div class="info-value">{{ g.email }}</div>
+                        </div>
+                    </div>
+                    <div class="rsvp-section">
+                        <div class="rsvp-title">RSVP Status</div>
+                        <span class="rsvp-status rsvp-{{ (g.status || 'Pending').toLowerCase().replace(' ', '-') }}">{{
+                            g.status || 'Pending' }}</span>
+                    </div>
+                    <div class="notes-section">
+                        <div class="notes-title">Associated Event</div>
+                        <div class="notes-content">{{ getEventName(g.eventIds || g.eventId) }}</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -17,4 +46,5 @@
             </div>
         </ng-template>
     </div>
+    <ng-template #no>No guests found.</ng-template>
 </div>
