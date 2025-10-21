@@ -21,6 +21,7 @@ export class Tasks implements OnInit {
   query: string = '';
   priorityFilter: string = 'all';
   statusFilter: string = 'all';
+  isDarkMode: boolean = false;
 
   constructor(
     private taskService: TaskService,
@@ -61,6 +62,11 @@ export class Tasks implements OnInit {
   }
 
   ngOnInit() {
+    this.isDarkMode = localStorage.getItem('darkMode') === 'true';
+    window.addEventListener('theme:changed', (e: any) => {
+      this.isDarkMode = e.detail.dark;
+    });
+
     const user = this.auth.currentUser;
     if (user && user.role === 'Organizer') {
       const myEventIds = new Set<number>(

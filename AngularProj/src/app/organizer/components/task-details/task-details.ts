@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
@@ -11,12 +11,20 @@ import { Task } from '../../../shared/models/interfaces';
   templateUrl: './task-details.html',
   styleUrls: ['./task-details.css']
 })
-export class TaskDetails {
+export class TaskDetails implements OnInit {
   task: Task | null = null;
   event: any = null;
   assignedTo: any = null;
+  isDarkMode: boolean = false;
 
-  constructor(private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute) {}
+
+  ngOnInit() {
+    this.isDarkMode = localStorage.getItem('darkMode') === 'true';
+    window.addEventListener('theme:changed', (e: any) => {
+      this.isDarkMode = e.detail.dark;
+    });
+
     const id = Number(this.route.snapshot.paramMap.get('id'));
     const rawT = localStorage.getItem('tasks');
     const rawE = localStorage.getItem('events');

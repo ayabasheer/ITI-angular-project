@@ -16,6 +16,7 @@ import { AuthService } from '../../../shared/services/auth.service';
 export class Guests implements OnInit {
   guests: Guest[] = [];
   events: any[] = [];
+  isDarkMode: boolean = false;
 
   constructor(
     private guestService: GuestService,
@@ -32,6 +33,11 @@ export class Guests implements OnInit {
   }
 
   ngOnInit() {
+    this.isDarkMode = localStorage.getItem('darkMode') === 'true';
+    window.addEventListener('theme:changed', (e: any) => {
+      this.isDarkMode = e.detail.dark;
+    });
+
     const user = this.auth.currentUser;
     if (user && user.role === 'Organizer') {
       const myEventIds = new Set<number>(
@@ -60,13 +66,16 @@ export class Guests implements OnInit {
   // type narrowing in component logic doesn't affect template type checking.
   // Accept either a single eventId or an array of eventIds; used by templates.
   getEventName(eventRef?: number | number[] | null): string {
-    let id: number | undefined;
-    if (typeof eventRef === 'number') id = eventRef;
-    else if (Array.isArray(eventRef) && eventRef.length) id = eventRef[0];
-    else id = undefined;
+    let ids: number[] = [];
+    if (typeof eventRef === 'number') ids = [eventRef];
+    else if (Array.isArray(eventRef)) ids = eventRef;
+    else return 'Unknown Event';
 
-    if (typeof id !== 'number') return 'Unknown Event';
-    const event = this.events.find((e: any) => e.id === id);
-    return event ? event.name : 'Unknown Event';
+    // Find the first event ID that belongs to the current organizer's events
+    for (const id of ids) {
+      const event = this.events.find((e: any) => e.id === id);
+      if (event) return event.name;
+    }
+    return 'Unknown Event';
   }
 }

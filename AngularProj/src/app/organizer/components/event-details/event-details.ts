@@ -17,6 +17,7 @@ export class EventDetails {
   feedbacks: any[] = [];
   guests: any[] = [];
   defaultImage = 'https://via.placeholder.com/400x250?text=Event';
+  isDarkMode: boolean = false;
 
   constructor(private route: ActivatedRoute, private router: Router, private auth: AuthService) {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -32,6 +33,12 @@ export class EventDetails {
     this.organizer = this.event ? organizers.find((o: any) => o.id === this.event.organizerId) : null;
     this.feedbacks = this.event && this.event.feedbacks ? this.event.feedbacks.map((fid: number) => feedbacks.find((f: any) => f.id === fid)).filter((f: any) => f) : [];
     this.guests = guests;
+
+    // Initialize dark mode
+    this.isDarkMode = localStorage.getItem('darkMode') === 'true';
+    window.addEventListener('theme:changed', (e: any) => {
+      this.isDarkMode = e.detail.dark;
+    });
   }
 
   goBack() {
