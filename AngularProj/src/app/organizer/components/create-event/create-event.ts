@@ -228,30 +228,49 @@ export class CreateEvent implements OnInit {
       return;
     }
 
-    if (!this.eventForm.valid) return;
+    if (this.eventForm.valid && this.currentUser) {
+      const formValue = this.eventForm.value;
+      const guestEmails = formValue.guestEmails.split(',').map((email: string) => email.trim());
+      const guestIds: number[] = [];
 
-    const formValue = this.eventForm.value;
-    const guestEmails = formValue.guestEmails.split(',').map((email: string) => email.trim());
-    const guestIds: number[] = [];
+      const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      const existingGuests = this.guestService.getAll();
 
-    // Handle guests and users
-    const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-    const existingGuests = this.guestService.getAll();
+      guestEmails.forEach((email: string) => {
+        let user = existingUsers.find((u: any) => u.email === email);
+        if (!user) {
+          const newUserId = existingUsers.length ? Math.max(...existingUsers.map((u: any) => u.id)) + 1 : 1;
+          user = {
+            id: newUserId,
+            name: email.split('@')[0],
+            email,
+            role: 'Guest',
+            status: 'Pending',
+            createdAt: new Date().toISOString()
+          };
+          existingUsers.push(user);
+        }
 
-    guestEmails.forEach((email: string) => {
-      let user = existingUsers.find((u: any) => u.email === email);
-      if (!user) {
-        const newUserId = existingUsers.length ? Math.max(...existingUsers.map((u: any) => u.id)) + 1 : 1;
-        user = {
-          id: newUserId,
-          name: email.split('@')[0],
-          email,
-          role: 'Guest',
-          status: 'Pending',
-          createdAt: new Date().toISOString()
-        };
-        existingUsers.push(user);
-      }
+        let guest = existingGuests.find((g: any) => g.email === email);
+        if (!guest) {
+          const newGuestId = existingGuests.length ? Math.max(...existingGuests.map((g: any) => g.id)) + 1 : 1;
+          guest = {
+            id: newGuestId,
+            name: user.name,
+            email,
+            status: 'Pending',
+            role: 'Guest',
+            eventId: null,
+            createdAt: new Date().toISOString()
+          };
+          existingGuests.push(guest);
+        }
+
+        guestIds.push(user.id);
+      });
+
+      localStorage.setItem('users', JSON.stringify(existingUsers));
+      localStorage.setItem('guests', JSON.stringify(existingGuests));
 
       let guest = existingGuests.find((g: any) => g.email === email);
       if (!guest) {
@@ -359,33 +378,16 @@ export class CreateEvent implements OnInit {
     event.tasks = taskIds;
     event.expenses = expenseIds;
 
-    // Persist event
-    if (this.editing && this.editingEventId) {
-      const idx = existingEvents.findIndex((e: any) => Number(e.id) === Number(this.editingEventId));
-      if (idx !== -1) {
-        existingEvents[idx] = event;
-      } else {
-        existingEvents.push(event);
-      }
-    } else {
-      existingEvents.push(event);
-    }
-    localStorage.setItem('events', JSON.stringify(existingEvents));
-
-    // Handle invitations
-    const existingInvitations = JSON.parse(localStorage.getItem('invitations') || '[]');
-    guestIds.forEach((guestId, index) => {
-      const already = existingInvitations.some((i: any) => Number(i.eventId) === Number(event.id) && (Number(i.guestId) === Number(guestId) || i.email === guestEmails[index]));
-      if (!already) {
-        const newInvitation = {
-          id: existingInvitations.length ? Math.max(...existingInvitations.map((i: any) => i.id)) + 1 : 1,
-          eventId: event.id,
-          guestId,
-          email: guestEmails[index],
-          status: 'Pending',
-          createdAt: new Date().toISOString()
-        };
-        existingInvitations.push(newInvitation);
+      // If editing, delete old tasks/expenses for this event to avoid duplicates
+      if (this.editing && this.editingEventId) {
+        const oldTasks = this.taskService.getForEvent(this.editingEventId) || [];
+        for (const ot of oldTasks) {
+          try { this.taskService.delete(ot.id); } catch (e) { /* ignore */ }
+        }
+        const oldExpenses = this.expenseService.getForEvent(this.editingEventId) || [];
+        for (const oe of oldExpenses) {
+          try { this.expenseService.delete(oe.id); } catch (e) { /* ignore */ }
+        }
       }
     });
     localStorage.setItem('invitations', JSON.stringify(existingInvitations));
