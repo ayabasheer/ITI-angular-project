@@ -1,15 +1,17 @@
-import { Component, OnInit, HostListener, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { MatSidenavModule, MatSidenav } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+
 import { EventService } from '../../../shared/services/event';
 import { GuestService } from '../../../shared/services/guest';
 import { TaskService } from '../../../shared/services/task';
 import { ExpenseService } from '../../../shared/services/expense';
-import { Chart, registerables } from 'chart.js';
 import { AuthService, User } from '../../../shared/services/auth.service';
+
+import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
 
 @Component({
@@ -19,14 +21,25 @@ Chart.register(...registerables);
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
-export class Dashboard implements OnInit {
+export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('sidenav') sidenav!: MatSidenav;
+
+  // Canvas refs for Chart.js
+  @ViewChild('expenseCanvas') expenseCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('eventCanvas') eventCanvas!: ElementRef<HTMLCanvasElement>;
+
+  // Keep chart instances to safely destroy/rebuild
+  private expenseChart?: Chart;
+  private eventChart?: Chart;
+
+  // interval for live status updates
+  private statusInterval: any;
 
   total = 0;
   upcoming = 0;
   completed = 0;
   totalGuests = 0;
-  progress = 0; // ✅ نسبة التقدم (الأحداث المكتملة)
+  progress = 0;
   currentUser: User | null = null;
   isDarkMode = false;
   sidebarOpen = true;
@@ -46,9 +59,30 @@ export class Dashboard implements OnInit {
   ngOnInit(): void {
     this.currentUser = this.authService.currentUser;
     this.loadStats();
+
     this.isDarkMode = localStorage.getItem('darkMode') === 'true';
     this.applyTheme();
+
     this.checkScreenSize();
+
+    // 🔁 Start global 1s ticker that updates ALL events' statuses
+    this.statusInterval = setInterval(() => {
+      this.updateAllEventStatuses();
+      // Recompute dashboard numbers after status changes
+      this.loadStats();
+    }, 1000);
+  }
+
+  ngAfterViewInit(): void {
+    // View is now in the DOM; if canvases are present, init charts
+    this.initChartsIfReady();
+  }
+
+  ngOnDestroy(): void {
+    if (this.statusInterval) {
+      clearInterval(this.statusInterval);
+      this.statusInterval = null;
+    }
   }
 
   @HostListener('window:resize')
@@ -87,24 +121,56 @@ export class Dashboard implements OnInit {
     if (this.sidenav) this.sidenav.close();
   }
 
-  // ✅ دالة الإحصائيات المحدثة
+  // --- Status compute + storage update (ALL events) ---
+  private computeStatus(start?: Date, end?: Date, now = new Date()):
+    'Upcoming' | 'InProgress' | 'Completed' | 'Cancelled' {
+    const s = start ? new Date(start) : undefined;
+    const e = end ? new Date(end) : undefined;
+    if (e && now > e) return 'Completed';
+    if (s && now < s) return 'Upcoming';
+    if (s && e && now >= s && now <= e) return 'InProgress';
+    // If only start provided and now >= start, consider in-progress until end is known
+    if (s && !e && now >= s) return 'InProgress';
+    return 'Upcoming';
+  }
+
+  private updateAllEventStatuses(): void {
+    const events = JSON.parse(localStorage.getItem('events') || '[]');
+    if (!Array.isArray(events) || events.length === 0) return;
+
+    const now = new Date();
+    const updated = events.map((ev: any) => {
+      const nextStatus = this.computeStatus(ev.startDate ? new Date(ev.startDate) : undefined,
+                                            ev.endDate ? new Date(ev.endDate) : undefined,
+                                            now);
+      return (ev.status === nextStatus) ? ev : { ...ev, status: nextStatus, updatedAt: new Date().toISOString() };
+    });
+
+    // Only write if something actually changed (optional micro-optimization)
+    const changed = JSON.stringify(events) !== JSON.stringify(updated);
+    if (changed) {
+      localStorage.setItem('events', JSON.stringify(updated));
+    }
+  }
+
+  // Load statistics and compute dataset for charts
   loadStats() {
     const allEvents = this.eventService.getAll();
     const allGuests = this.guestService.getAll();
     const allExpenses = this.expenseService.getAll();
-    const allTasks = this.taskService.getAll();
+    const allTasks = this.taskService.getAll(); // currently unused, but you may use it later
 
     const user = this.currentUser;
     if (user && user.role === 'Organizer') {
-      const myEvents = allEvents.filter(e => e.createdBy === user.id);
+      const myEvents = allEvents.filter((e: any) => e.createdBy === user.id);
       this.total = myEvents.length;
-      this.upcoming = myEvents.filter(e => e.status === 'Upcoming').length;
-      this.completed = myEvents.filter(e => e.status === 'Completed').length;
+      this.upcoming = myEvents.filter((e: any) => e.status === 'Upcoming').length;
+      this.completed = myEvents.filter((e: any) => e.status === 'Completed').length;
 
-      // ✅ نسبة التقدم (الأحداث المكتملة)
+      // Progress percentage (completed events)
       this.progress = this.total > 0 ? Math.round((this.completed / this.total) * 100) : 0;
 
-      const myEventIds = new Set<number>(myEvents.map(e => e.id));
+      const myEventIds = new Set<number>(myEvents.map((e: any) => e.id));
 
       // Guests for organizer's events - handle guests that may have eventIds array or single eventId
       this.totalGuests = allGuests.filter((g: any) => {
@@ -118,26 +184,22 @@ export class Dashboard implements OnInit {
       );
       const categories: string[] = ['Venue', 'Decoration', 'Food', 'Music'];
       const totalExpense = expenses.reduce((sum: number, exp: any) => sum + (exp.amount || 0), 0);
-      this.expensePercentages = categories.map(cat => {
+      this.expensePercentages = categories.map((cat) => {
         const catTotal = expenses
           .filter((exp: any) => exp.category === cat)
           .reduce((sum: number, exp: any) => sum + (exp.amount || 0), 0);
         return totalExpense > 0 ? Math.round((catTotal / totalExpense) * 100) : 0;
       });
 
-      // ✅ الأحداث حسب الشهور
+      // Events by month
       const monthCounts = new Array(12).fill(0);
-      myEvents.forEach(event => {
+      myEvents.forEach((event: any) => {
         if (event.startDate) {
           const month = new Date(event.startDate).getMonth();
-          monthCounts[month]++;
+          if (!Number.isNaN(month)) monthCounts[month]++;
         }
       });
-
       this.eventsByMonth = monthCounts;
-
-      // ✅ تحديث الرسوم البيانية بعد تحميل البيانات
-      setTimeout(() => this.initCharts(), 300);
     } else {
       this.total = 0;
       this.upcoming = 0;
@@ -146,19 +208,32 @@ export class Dashboard implements OnInit {
       this.totalGuests = 0;
       this.expensePercentages = [0, 0, 0, 0];
       this.eventsByMonth = new Array(12).fill(0);
-      setTimeout(() => this.initCharts(), 300);
     }
+
+    // Charts can be (re)initialized now that data is ready
+    this.initChartsIfReady();
   }
 
-  // ✅ تحديث الرسوم البيانية
-  initCharts() {
-    const monthLabels = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
+  // Initialize charts only if canvases/contexts are present; destroy previous instances first
+  private initChartsIfReady() {
+    const expenseCanvasEl = this.expenseCanvas?.nativeElement;
+    const eventCanvasEl = this.eventCanvas?.nativeElement;
+
+    if (!expenseCanvasEl || !eventCanvasEl) {
+      // canvases may be hidden or not yet rendered if not on /dashboard
+      return;
+    }
+
+    const expenseCtx = expenseCanvasEl.getContext('2d');
+    const eventCtx = eventCanvasEl.getContext('2d');
+    if (!expenseCtx || !eventCtx) return;
+
+    // Destroy previous instances to prevent duplicates
+    this.expenseChart?.destroy();
+    this.eventChart?.destroy();
 
     // Donut Chart (Expenses)
-    new Chart('expenseChart', {
+    this.expenseChart = new Chart(expenseCtx, {
       type: 'doughnut',
       data: {
         labels: ['Venue', 'Decoration', 'Food', 'Music'],
@@ -166,17 +241,19 @@ export class Dashboard implements OnInit {
           {
             data: this.expensePercentages,
             backgroundColor: ['#d4af37', '#b9975b', '#a67c52', '#8b6a3f'],
-            borderWidth: 0,
-          },
-        ],
+            borderWidth: 0
+          }
+        ]
       },
       options: {
         plugins: { legend: { position: 'right' } },
-      },
+        maintainAspectRatio: false
+      }
     });
 
     // Bar Chart (Events by Month)
-    new Chart('eventChart', {
+    const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    this.eventChart = new Chart(eventCtx, {
       type: 'bar',
       data: {
         labels: monthLabels,
@@ -184,13 +261,14 @@ export class Dashboard implements OnInit {
           {
             label: 'Events',
             data: this.eventsByMonth,
-            backgroundColor: '#d4af37',
-          },
-        ],
+            backgroundColor: '#d4af37'
+          }
+        ]
       },
       options: {
         scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
-      },
+        maintainAspectRatio: false
+      }
     });
   }
 
@@ -198,10 +276,11 @@ export class Dashboard implements OnInit {
     this.isDarkMode = !this.isDarkMode;
     localStorage.setItem('darkMode', this.isDarkMode.toString());
     this.applyTheme();
+
     // notify other parts of the app that theme changed
     try {
       window.dispatchEvent(new CustomEvent('theme:changed', { detail: { dark: this.isDarkMode } }));
-    } catch (e) {
+    } catch {
       // ignore in environments without CustomEvent
     }
   }

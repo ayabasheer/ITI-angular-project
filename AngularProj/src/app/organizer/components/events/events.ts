@@ -1,5 +1,5 @@
 import { EventService } from './../../../shared/services/event';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -15,7 +15,7 @@ import Swal from 'sweetalert2';
   templateUrl: './events.html',
   styleUrls: ['./events.css']
 })
-export class Events implements OnInit {
+export class Events implements OnInit, OnDestroy {
   events: EventModel[] = [];
   // filter state
   query: string = '';
@@ -25,7 +25,39 @@ export class Events implements OnInit {
   statuses: string[] = [];
   defaultImage = 'https://via.placeholder.com/400x250?text=Event';
 
+  private statusInterval: any;
+
   constructor(private eventService: EventService, private auth: AuthService, private router: Router, private route: ActivatedRoute) {}
+
+  private computeStatus(start?: Date, end?: Date, now = new Date()):
+    'Upcoming' | 'InProgress' | 'Completed' | 'Cancelled' {
+    const s = start ? new Date(start) : undefined;
+    const e = end ? new Date(end) : undefined;
+    if (e && now > e) return 'Completed';
+    if (s && now < s) return 'Upcoming';
+    if (s && e && now >= s && now <= e) return 'InProgress';
+    if (s && !e && now >= s) return 'InProgress';
+    return 'Upcoming';
+  }
+
+  // Updates ALL events in storage every tick (global behavior)
+  private updateAllEventStatuses(): void {
+    const events = JSON.parse(localStorage.getItem('events') || '[]');
+    if (!Array.isArray(events) || events.length === 0) return;
+
+    const now = new Date();
+    const updated = events.map((ev: any) => {
+      const nextStatus = this.computeStatus(
+        ev.startDate ? new Date(ev.startDate) : undefined,
+        ev.endDate ? new Date(ev.endDate) : undefined,
+        now
+      );
+      return (ev.status === nextStatus) ? ev : { ...ev, status: nextStatus, updatedAt: new Date().toISOString() };
+    });
+
+    const changed = JSON.stringify(events) !== JSON.stringify(updated);
+    if (changed) localStorage.setItem('events', JSON.stringify(updated));
+  }
 
   canModify(event: EventModel): boolean {
     const user = this.auth.currentUser;
@@ -64,6 +96,13 @@ export class Events implements OnInit {
 
   ngOnInit() {
     this.loadEvents();
+
+    // Live refresh loop (1s): update statuses for ALL events, then reload this list
+    this.statusInterval = setInterval(() => {
+      this.updateAllEventStatuses();
+      this.loadEvents();
+    }, 1000);
+
     // Listen for 'refresh' query param so returned navigations can trigger reload
     this.route.queryParamMap.subscribe(params => {
       const refresh = params.get('refresh');
@@ -73,26 +112,30 @@ export class Events implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    if (this.statusInterval) {
+      clearInterval(this.statusInterval);
+      this.statusInterval = null;
+    }
+  }
+
   loadEvents() {
     const all = this.eventService.getAll();
     const user = this.auth.currentUser;
 
-    console.log('All events:', all);
-    console.log('Current user:', user);
-
     if (user && user.role === 'Organizer') {
-      const userId = Number(user.id); // ✅ تأكدنا أنه رقم
+      const userId = Number(user.id); // ✅ ensure number
       this.events = all.filter(e => Number(e.createdBy) === userId);
-      console.log('Filtered events:', this.events);
     } else {
       this.events = [];
     }
+
     // derive available categories and statuses for filters
     const cats = new Set<string>();
     const stats = new Set<string>();
     for (const e of this.events) {
-      if (e.category) cats.add(e.category);
-      if (e.status) stats.add(e.status);
+      if (e?.category) cats.add(e.category);
+      if (e?.status) stats.add(e.status);
     }
     this.categories = Array.from(cats).sort();
     this.statuses = Array.from(stats).sort();

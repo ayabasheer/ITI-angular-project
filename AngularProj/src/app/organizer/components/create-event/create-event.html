@@ -1,5 +1,5 @@
 <div class="create-event-container">
-  <h2>Create New Event</h2>
+  <h2>{{ editing ? 'Edit Event' : 'Create New Event' }}</h2>
 
   <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="event-form">
     <mat-form-field appearance="outline">
@@ -201,7 +201,7 @@
 
     <div class="form-actions">
       <button mat-raised-button color="primary" type="submit" [disabled]="eventForm.invalid">
-        Create Event
+        {{ editing ? 'Save Changes' : 'Create Event' }}
       </button>
       <button mat-button type="button" routerLink="/dashboard/events">
         Cancel

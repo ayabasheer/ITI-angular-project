@@ -1,186 +1,194 @@
 <mat-sidenav-container class="dashboard-wrapper">
-    <mat-sidenav #sidenav class="sidebar" [mode]="isMobile ? 'over' : 'side'" [opened]="sidebarOpen"
-        (backdropClick)="onBackdropClick()" role="navigation" aria-label="Main navigation">
+  <mat-sidenav
+    #sidenav
+    class="sidebar"
+    [mode]="isMobile ? 'over' : 'side'"
+    [opened]="sidebarOpen"
+    (backdropClick)="onBackdropClick()"
+    role="navigation"
+    aria-label="Main navigation"
+  >
+    <!-- Logo Section -->
+    <div class="sidebar-header">
+      <a routerLink="/" class="logo-link">
+        <img src="assets/logo.png" alt="Eventura Logo" height="100" class="fade-in" />
+      </a>
+    </div>
 
-        <!-- Logo Section -->
-        <div class="sidebar-header">
-            <a routerLink="/" class="logo-link">
-                <img src="assets/logo.png" alt="Eventura Logo" height="100" class="fade-in">
-            </a>
+    <!-- Navigation Section -->
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item" (click)="closeSidebarOnMobile()">
+        <i class="bi bi-house-door"></i>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/dashboard/events" routerLinkActive="active" class="nav-item" (click)="closeSidebarOnMobile()">
+        <i class="bi bi-calendar-event"></i>
+        <span>Events</span>
+      </a>
+      <a routerLink="/dashboard/guests" routerLinkActive="active" class="nav-item" (click)="closeSidebarOnMobile()">
+        <i class="bi bi-people"></i>
+        <span>Guests</span>
+      </a>
+      <a routerLink="/dashboard/tasks" routerLinkActive="active" class="nav-item" (click)="closeSidebarOnMobile()">
+        <i class="bi bi-list-check"></i>
+        <span>Tasks</span>
+      </a>
+      <a routerLink="/dashboard/expenses" routerLinkActive="active" class="nav-item" (click)="closeSidebarOnMobile()">
+        <i class="bi bi-cash-stack"></i>
+        <span>Expenses</span>
+      </a>
+      <!--
+      <a routerLink="/dashboard/feedback" routerLinkActive="active" class="nav-item" (click)="closeSidebarOnMobile()">
+        <i class="bi bi-chat-dots"></i>
+        <span>Feedback</span>
+      </a>
+      -->
+    </nav>
+
+    <!-- Footer -->
+    <div class="sidebar-footer">
+      <small>© 2025 Eventura</small>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="main-content">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="left">
+        <button mat-icon-button class="nav-toggler" (click)="toggleSidebar()">
+          <mat-icon>{{ sidebarOpen ? 'menu_open' : 'menu' }}</mat-icon>
+        </button>
+        <h2 class="page-title">Dashboard</h2>
+      </div>
+      <div class="header-actions">
+        <button
+          class="dark-mode-toggle"
+          (click)="toggleDarkMode()
+          "
+          aria-label="Toggle dark mode"
+          [attr.aria-pressed]="isDarkMode"
+        >
+          <span class="icon" aria-hidden="true">{{ isDarkMode ? '☀️' : '🌙' }}</span>
+        </button>
+        <div class="user-dropdown">
+          <button class="user-btn">
+            <i class="bi bi-person-circle"></i>
+            <span>{{ currentUser?.name || 'User' }}</span>
+            <i class="bi bi-chevron-down"></i>
+          </button>
+        </div>
+        <button class="btn btn-secondary" (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i>
+          Logout
+        </button>
+        <button routerLink="/dashboard/create-event" class="btn btn-primary">
+          <i class="bi bi-plus-lg"></i>
+          Add Event
+        </button>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <router-outlet></router-outlet>
+
+      <!-- Statistics Cards -->
+      <div class="stats-grid" [hidden]="router.url !== '/dashboard'">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="bi bi-calendar-event"></i>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number">{{ total }}</h3>
+            <p class="stat-label">Total Events</p>
+          </div>
         </div>
 
-        <!-- Navigation Section -->
-        <nav class="sidebar-nav">
-            <a routerLink="/dashboard" routerLinkActive="active" class="nav-item" (click)="closeSidebarOnMobile()">
-                <i class="bi bi-house-door"></i>
-                <span>Dashboard</span>
-            </a>
-            <a routerLink="/dashboard/events" routerLinkActive="active" class="nav-item"
-                (click)="closeSidebarOnMobile()">
-                <i class="bi bi-calendar-event"></i>
-                <span>Events</span>
-            </a>
-            <a routerLink="/dashboard/guests" routerLinkActive="active" class="nav-item"
-                (click)="closeSidebarOnMobile()">
-                <i class="bi bi-people"></i>
-                <span>Guests</span>
-            </a>
-            <a routerLink="/dashboard/tasks" routerLinkActive="active" class="nav-item"
-                (click)="closeSidebarOnMobile()">
-                <i class="bi bi-list-check"></i>
-                <span>Tasks</span>
-            </a>
-            <a routerLink="/dashboard/expenses" routerLinkActive="active" class="nav-item"
-                (click)="closeSidebarOnMobile()">
-                <i class="bi bi-cash-stack"></i>
-                <span>Expenses</span>
-            </a>
-            <!-- <a routerLink="/dashboard/feedback" routerLinkActive="active" class="nav-item"
-                (click)="closeSidebarOnMobile()">
-                <i class="bi bi-chat-dots"></i>
-                <span>Feedback</span>
-            </a> -->
-        </nav>
-
-        <!-- Footer -->
-        <div class="sidebar-footer">
-            <small>© 2025 Eventura</small>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="bi bi-calendar-plus"></i>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number">{{ upcoming }}</h3>
+            <p class="stat-label">Upcoming</p>
+          </div>
         </div>
-    </mat-sidenav>
 
-    <mat-sidenav-content class="main-content">
-        <!-- Top Header -->
-        <header class="top-header">
-            <div class="left">
-                <button mat-icon-button class="nav-toggler" (click)="toggleSidebar()">
-                    <mat-icon>{{ sidebarOpen ? 'menu_open' : 'menu' }}</mat-icon>
-                </button>
-                <h2 class="page-title">Dashboard</h2>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="bi bi-check-lg"></i>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number">{{ completed }}</h3>
+            <p class="stat-label">Completed</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="bi bi-people"></i>
+          </div>
+          <div class="stat-content">
+            <h3 class="stat-number">{{ totalGuests }}</h3>
+            <p class="stat-label">Total Guests</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-grid" [hidden]="router.url !== '/dashboard'">
+        <!-- Expenses by Category -->
+        <div class="chart-card">
+          <h3 class="chart-title">Expenses by Category</h3>
+          <div class="chart-content">
+            <div class="pie-chart-container">
+              <!-- Use template ref instead of id -->
+              <canvas #expenseCanvas width="200" height="200" aria-label="Expenses by Category"></canvas>
             </div>
-            <div class="header-actions">
-                <button class="dark-mode-toggle" (click)="toggleDarkMode()" aria-label="Toggle dark mode" [attr.aria-pressed]="isDarkMode">
-                    <span class="icon" aria-hidden="true">{{ isDarkMode ? '☀️' : '🌙' }}</span>
-                </button>
-                <div class="user-dropdown">
-                    <button class="user-btn">
-                        <i class="bi bi-person-circle"></i>
-                        <span>{{ currentUser?.name || 'User' }}</span>
-                        <i class="bi bi-chevron-down"></i>
-                    </button>
-                </div>
-                <button class="btn btn-secondary" (click)="logout()">
-                    <i class="bi bi-box-arrow-right"></i>
-                    Logout
-                </button>
-                <button routerLink="/dashboard/create-event" class="btn btn-primary">
-                    <i class="bi bi-plus-lg"></i>
-                    Add Event
-                </button>
+            <div class="chart-legend">
+              <div class="legend-item">
+                <span class="legend-dot" style="background-color: #d4af37;"></span>
+                <span class="legend-label">Venue</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot" style="background-color: #b9975b;"></span>
+                <span class="legend-label">Decoration</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot" style="background-color: #a67c52;"></span>
+                <span class="legend-label">Food</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot" style="background-color: #8b6a3f;"></span>
+                <span class="legend-label">Music</span>
+              </div>
             </div>
-        </header>
+          </div>
+        </div>
 
-        <main class="page-content">
-            <router-outlet></router-outlet>
+        <!-- Events by Month -->
+        <div class="chart-card">
+          <h3 class="chart-title">Events by Month</h3>
+          <div class="bar-chart-container">
+            <!-- Use template ref instead of id -->
+            <canvas #eventCanvas width="400" height="200" aria-label="Events by Month"></canvas>
+          </div>
+        </div>
+      </div>
 
-            <!-- Statistics Cards -->
-            <div class="stats-grid" *ngIf="router.url === '/dashboard'">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="bi bi-calendar-event"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="stat-number">{{ total }}</h3>
-                        <p class="stat-label">Total Events</p>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="bi bi-calendar-plus"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="stat-number">{{ upcoming }}</h3>
-                        <p class="stat-label">Upcoming</p>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="bi bi-check-lg"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="stat-number">{{ completed }}</h3>
-                        <p class="stat-label">Completed</p>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="bi bi-people"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="stat-number">{{ totalGuests }}</h3>
-                        <p class="stat-label">Total Guests</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Charts Section -->
-            <div class="charts-grid" *ngIf="router.url === '/dashboard'">
-                <!-- Expenses by Category -->
-                <div class="chart-card">
-                    <h3 class="chart-title">Expenses by Category</h3>
-                    <div class="chart-content">
-                        <div class="pie-chart-container">
-                            <canvas id="expenseChart" width="200" height="200"></canvas>
-                        </div>
-                        <div class="chart-legend">
-                            <div class="legend-item">
-                                <span class="legend-dot" style="background-color: #d4af37;"></span>
-                                <span class="legend-label">Venue</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-dot" style="background-color: #b9975b;"></span>
-                                <span class="legend-label">Decoration</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-dot" style="background-color: #a67c52;"></span>
-                                <span class="legend-label">Food</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-dot" style="background-color: #8b6a3f;"></span>
-                                <span class="legend-label">Music</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Events by Month -->
-                <div class="chart-card">
-                    <h3 class="chart-title">Events by Month</h3>
-                    <div class="bar-chart-container">
-                        <canvas id="eventChart" width="400" height="200"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Event Progress -->
-            <!-- Event Progress -->
-            <div class="progress-card" *ngIf="router.url === '/dashboard'">
-                <div class="progress-header">
-                    <h3 class="progress-title">Event Progress</h3>
-                    <span class="progress-percentage">
-                        {{ total > 0 ? ((completed / total) * 100 | number:'1.0-0') + '%' : '0%' }}
-                    </span>
-                </div>
-                <div class="progress-bar-wrapper">
-                    <div class="progress-bar">
-                        <div class="progress-fill" [style.width]="total > 0 ? ((completed / total) * 100) + '%' : '0%'">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </main>
-    </mat-sidenav-content>
+      <!-- Event Progress -->
+      <div class="progress-card" [hidden]="router.url !== '/dashboard'">
+        <div class="progress-header">
+          <h3 class="progress-title">Event Progress</h3>
+          <span class="progress-percentage">
+            {{ total > 0 ? ((completed / total) * 100 | number:'1.0-0') + '%' : '0%' }}
+          </span>
+        </div>
+        <div class="progress-bar-wrapper">
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width]="total > 0 ? ((completed / total) * 100) + '%' : '0%'"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </mat-sidenav-content>
 </mat-sidenav-container>
