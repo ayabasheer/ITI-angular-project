@@ -1,36 +1,52 @@
-<div style="padding:20px">
-    <h2>Events</h2>
+<div class="events">
+    <div class="events-container">
+        <!-- Back/Forward Navigation Buttons -->
+        <div class="navigation-buttons" style="margin-bottom: 1rem;">
+            <button class="btn btn-secondary me-2" (click)="goBack()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <button class="btn btn-secondary" (click)="goForward()">
+                <i class="fas fa-arrow-right"></i> Forward
+            </button>
+        </div>
 
-    <div class="mb-3 d-flex gap-2 align-items-center">
-        <input class="form-control" placeholder="Search by name, description, or location" [(ngModel)]="query" />
+        <h2 class="events-title">Events</h2>
 
-        <select class="form-select" [(ngModel)]="category" style="width:180px">
-            <option value="all">All categories</option>
-            <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
-        </select>
+        <div class="search-filters">
+            <input class="search-input" placeholder="Search by name, description, or location" [(ngModel)]="query" />
 
-        <select class="form-select" [(ngModel)]="status" style="width:160px">
-            <option value="all">All statuses</option>
-            <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
-        </select>
-    </div>
+            <select class="filter-btn" [(ngModel)]="category" style="width:180px">
+                <option value="all">All categories</option>
+                <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+            </select>
 
-    <div *ngIf="filteredEvents.length; else no" class="row">
-        <div class="col-md-4 mb-3" *ngFor="let e of filteredEvents">
-            <div class="card" style="cursor: pointer;" [routerLink]="['/dashboard/events', e.id]">
-                <img [src]="e.image || defaultImage" class="card-img-top" alt="Event image" style="height: 200px; object-fit: cover;">
+            <select class="filter-btn" [(ngModel)]="status" style="width:160px">
+                <option value="all">All statuses</option>
+                <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+            </select>
+        </div>
+
+        <div *ngIf="filteredEvents.length; else no" class="events-grid">
+            <div class="event-card" *ngFor="let e of filteredEvents" [routerLink]="['/dashboard/events', e.id]">
+                <img [src]="e.image || defaultImage" class="event-image" alt="Event image">
                 <div class="card-body">
-                    <h5 class="card-title">{{ e.name }}</h5>
-                    <p class="card-text">{{ e.description }}</p>
-                    <p class="card-text"><small class="text-muted">{{ e.startDate | date:'short' }}</small></p>
-                    <div class="mt-2">
-                        <button *ngIf="canModify(e)" class="btn btn-sm btn-outline-warning me-2" (click)="editEvent(e); $event.stopPropagation()">Edit</button>
-                        <button *ngIf="canModify(e)" class="btn btn-sm btn-outline-danger" (click)="deleteEvent(e); $event.stopPropagation()">Delete</button>
+                    <h5 class="event-title">{{ e.name }}</h5>
+                    <p class="event-description">{{ e.description }}</p>
+                    <p class="event-date">{{ e.startDate | date:'short' }}</p>
+                    <div class="event-actions">
+                        <span class="event-status status-{{ (e.status || 'Upcoming').toLowerCase() }}">{{ e.status || 'Upcoming' }}</span>
+                        <div>
+                            <button *ngIf="canModify(e)" class="btn btn-sm btn-outline-warning me-2" (click)="editEvent(e); $event.stopPropagation()">Edit</button>
+                            <button *ngIf="canModify(e)" class="btn btn-sm btn-outline-danger" (click)="deleteEvent(e); $event.stopPropagation()">Delete</button>
+                        </div>
                     </div>
                 </div>
-
             </div>
         </div>
+        <ng-template #no>
+            <div class="text-center mt-4">
+                <p>No events found.</p>
+            </div>
+        </ng-template>
     </div>
-    <ng-template #no>No events found.</ng-template>
 </div>

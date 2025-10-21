@@ -23,6 +23,14 @@ export class Guests implements OnInit {
     private auth: AuthService
   ) {}
 
+  goBack() {
+    window.history.back();
+  }
+
+  goForward() {
+    window.history.forward();
+  }
+
   ngOnInit() {
     const user = this.auth.currentUser;
     if (user && user.role === 'Organizer') {
