@@ -65,7 +65,17 @@ export class CreateEvent implements OnInit {
       guestEmails: ['', [Validators.required, this.emailListValidator]],
       tasks: this.fb.array([]),
       expenses: this.fb.array([])
-    });
+    }, { validators: this.dateRangeValidator });
+  }
+
+  // Custom validator for date range
+  dateRangeValidator(group: any): any {
+    const start = group.get('startDate')?.value;
+    const end = group.get('endDate')?.value;
+    if (start && end && new Date(start) >= new Date(end)) {
+      return { dateRangeInvalid: true };
+    }
+    return null;
   }
 
   ngOnInit(): void {
@@ -211,224 +221,198 @@ export class CreateEvent implements OnInit {
     this.expenses.removeAt(index);
   }
 
-  // ✅ حفظ الحدث في localStorage + تحديد الحالة تلقائيًا
+  // Refactored onSubmit: separate create and update logic
   onSubmit(): void {
     if (!this.currentUser || this.currentUser.role !== 'Organizer') {
       Swal.fire({ icon: 'error', title: 'Not authorized', text: 'Only organizers can create events.' });
       return;
     }
 
-    if (this.eventForm.valid && this.currentUser) {
-      const formValue = this.eventForm.value;
-      const guestEmails = formValue.guestEmails.split(',').map((email: string) => email.trim());
-      const guestIds: number[] = [];
+    if (!this.eventForm.valid) return;
 
-      const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-      const existingGuests = this.guestService.getAll();
+    const formValue = this.eventForm.value;
+    const guestEmails = formValue.guestEmails.split(',').map((email: string) => email.trim());
+    const guestIds: number[] = [];
 
-      guestEmails.forEach((email: string) => {
-        let user = existingUsers.find((u: any) => u.email === email);
-        if (!user) {
-          const newUserId = existingUsers.length ? Math.max(...existingUsers.map((u: any) => u.id)) + 1 : 1;
-          user = {
-            id: newUserId,
-            name: email.split('@')[0],
-            email,
-            role: 'Guest',
-            status: 'Pending',
-            createdAt: new Date().toISOString()
-          };
-          existingUsers.push(user);
-        }
+    // Handle guests and users
+    const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+    const existingGuests = this.guestService.getAll();
 
-        let guest = existingGuests.find((g: any) => g.email === email);
-        if (!guest) {
-          const newGuestId = existingGuests.length ? Math.max(...existingGuests.map((g: any) => g.id)) + 1 : 1;
-          guest = {
-            id: newGuestId,
-            name: user.name,
-            email,
-            status: 'Accepted',
-            role: 'Guest',
-            eventId: null,
-            createdAt: new Date().toISOString()
-          };
-          existingGuests.push(guest);
-        }
-
-        guestIds.push(user.id);
-      });
-
-      localStorage.setItem('users', JSON.stringify(existingUsers));
-      localStorage.setItem('guests', JSON.stringify(existingGuests));
-
-      // ✅ إنشاء الحدث الجديد مع تحديد الحالة حسب التاريخ
-  const existingEvents = JSON.parse(localStorage.getItem('events') || '[]');
-
-  const startDate = new Date(formValue.startDate);
-      const today = new Date();
-
-      let status: 'Upcoming' | 'InProgress' | 'Completed' | 'Cancelled' = 'Upcoming';
-
-      if (startDate.toDateString() === today.toDateString()) {
-        status = 'InProgress';
-      } else if (startDate < today) {
-        status = 'Completed';
+    guestEmails.forEach((email: string) => {
+      let user = existingUsers.find((u: any) => u.email === email);
+      if (!user) {
+        const newUserId = existingUsers.length ? Math.max(...existingUsers.map((u: any) => u.id)) + 1 : 1;
+        user = {
+          id: newUserId,
+          name: email.split('@')[0],
+          email,
+          role: 'Guest',
+          status: 'Pending',
+          createdAt: new Date().toISOString()
+        };
+        existingUsers.push(user);
       }
 
-      // decide id: reuse when editing, or allocate new
-      const eventId = this.editing && this.editingEventId ? this.editingEventId : (existingEvents.length ? Math.max(...existingEvents.map((e: any) => e.id)) + 1 : 1);
+      let guest = existingGuests.find((g: any) => g.email === email);
+      if (!guest) {
+        const newGuestId = existingGuests.length ? Math.max(...existingGuests.map((g: any) => g.id)) + 1 : 1;
+        guest = {
+          id: newGuestId,
+          name: user.name,
+          email,
+          status: 'Accepted',
+          role: 'Guest',
+          eventId: null,
+          createdAt: new Date().toISOString()
+        };
+        existingGuests.push(guest);
+      }
 
-      const event: EventModel = {
-        id: eventId,
-        name: formValue.name,
-        description: formValue.description,
-        category: formValue.category,
-        location: formValue.location,
-        image: formValue.image || undefined,
-        startDate: (formValue.startDate instanceof Date) ? formValue.startDate.toISOString() : new Date(formValue.startDate).toISOString(),
-        endDate: (formValue.endDate instanceof Date) ? formValue.endDate.toISOString() : new Date(formValue.endDate).toISOString(),
-        createdBy: this.currentUser.id,
-        guestCount: guestIds.length,
-        guests: guestIds,
-        tasks: [],
-        expenses: [],
-        feedbacks: [],
-        status,
-        budget: formValue.budget,
+      guestIds.push(user.id);
+    });
+
+    localStorage.setItem('users', JSON.stringify(existingUsers));
+    localStorage.setItem('guests', JSON.stringify(existingGuests));
+
+    // Calculate status
+    const startDate = new Date(formValue.startDate);
+    const endDate = new Date(formValue.endDate);
+    const today = new Date();
+    let status: 'Upcoming' | 'InProgress' | 'Completed' | 'Cancelled' = 'Upcoming';
+    if (endDate < today) {
+      status = 'Completed';
+    } else if (startDate <= today) {
+      status = 'InProgress';
+    }
+
+    // Get or create event ID
+    const existingEvents = JSON.parse(localStorage.getItem('events') || '[]');
+    const eventId = this.editing && this.editingEventId ? this.editingEventId : (existingEvents.length ? Math.max(...existingEvents.map((e: any) => e.id)) + 1 : 1);
+
+    // Create event object
+    const event: EventModel = {
+      id: eventId,
+      name: formValue.name,
+      description: formValue.description,
+      category: formValue.category,
+      location: formValue.location,
+      image: formValue.image || undefined,
+      startDate: (formValue.startDate instanceof Date) ? formValue.startDate.toISOString() : new Date(formValue.startDate).toISOString(),
+      endDate: (formValue.endDate instanceof Date) ? formValue.endDate.toISOString() : new Date(formValue.endDate).toISOString(),
+      createdBy: this.currentUser.id,
+      guestCount: guestIds.length,
+      guests: guestIds,
+      tasks: [],
+      expenses: [],
+      feedbacks: [],
+      status,
+      budget: formValue.budget,
+      createdAt: this.editing ? (existingEvents.find((e: any) => e.id === eventId)?.createdAt || new Date().toISOString()) : new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    // Handle tasks and expenses
+    if (this.editing && this.editingEventId) {
+      // Delete old tasks/expenses
+      const oldTasks = this.taskService.getForEvent(this.editingEventId) || [];
+      oldTasks.forEach((ot: any) => this.taskService.delete(ot.id));
+      const oldExpenses = this.expenseService.getForEvent(this.editingEventId) || [];
+      oldExpenses.forEach((oe: any) => this.expenseService.delete(oe.id));
+    }
+
+    // Create new tasks
+    const taskIds: number[] = [];
+    (formValue.tasks || []).forEach((taskData: any) => {
+      const task: Task = {
+        id: 0,
+        eventId: event.id,
+        title: taskData.title,
+        description: taskData.description,
+        assignedTo: null,
+        priority: taskData.priority,
+        deadline: (taskData.deadline instanceof Date) ? taskData.deadline.toISOString() : new Date(taskData.deadline).toISOString(),
+        status: 'Not Started',
+        comments: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
+      const createdTask = this.taskService.create(task);
+      taskIds.push(createdTask.id);
+    });
 
+    // Create new expenses
+    const expenseIds: number[] = [];
+    (formValue.expenses || []).forEach((expenseData: any) => {
+      const expense: Expense = {
+        id: 0,
+        eventId: event.id,
+        name: expenseData.name,
+        amount: expenseData.amount,
+        category: expenseData.category,
+        date: (expenseData.date instanceof Date) ? expenseData.date.toISOString() : new Date(expenseData.date).toISOString(),
+        notes: expenseData.notes
+      };
+      const createdExpense = this.expenseService.create(expense);
+      expenseIds.push(createdExpense.id);
+    });
+
+    event.tasks = taskIds;
+    event.expenses = expenseIds;
+
+    // Persist event
+    if (this.editing && this.editingEventId) {
+      const idx = existingEvents.findIndex((e: any) => Number(e.id) === Number(this.editingEventId));
+      if (idx !== -1) {
+        existingEvents[idx] = event;
+      } else {
+        existingEvents.push(event);
+      }
+    } else {
       existingEvents.push(event);
-      localStorage.setItem('events', JSON.stringify(existingEvents));
+    }
+    localStorage.setItem('events', JSON.stringify(existingEvents));
 
-      // ✅ إنشاء الدعوات وربطها بالحدث
-      const invitations = JSON.parse(localStorage.getItem('invitations') || '[]');
-      guestIds.forEach((guestId, index) => {
+    // Handle invitations
+    const existingInvitations = JSON.parse(localStorage.getItem('invitations') || '[]');
+    guestIds.forEach((guestId, index) => {
+      const already = existingInvitations.some((i: any) => Number(i.eventId) === Number(event.id) && (Number(i.guestId) === Number(guestId) || i.email === guestEmails[index]));
+      if (!already) {
         const newInvitation = {
-          id: invitations.length
-            ? Math.max(...invitations.map((i: any) => i.id)) + 1
-            : 1,
+          id: existingInvitations.length ? Math.max(...existingInvitations.map((i: any) => i.id)) + 1 : 1,
           eventId: event.id,
           guestId,
           email: guestEmails[index],
           status: 'Pending',
           createdAt: new Date().toISOString()
         };
-        invitations.push(newInvitation);
-      });
-      localStorage.setItem('invitations', JSON.stringify(invitations));
-
-      // ✅ تحديث eventIds للضيوف (استخدام array بدلاً من single eventId)
-      const guestsUpdated = existingGuests.map((g: any) => {
-        if (guestIds.includes(g.id)) {
-          const currentEventIds = Array.isArray(g.eventIds) ? g.eventIds : (g.eventId ? [g.eventId] : []);
-          if (!currentEventIds.includes(event.id)) {
-            currentEventIds.push(event.id);
-          }
-          return { ...g, eventIds: currentEventIds, eventId: event.id }; // keep eventId for backward compatibility
-        }
-        return g;
-      });
-      localStorage.setItem('guests', JSON.stringify(guestsUpdated));
-      // If editing, delete old tasks/expenses for this event to avoid duplicates
-      if (this.editing && this.editingEventId) {
-        const oldTasks = this.taskService.getForEvent(this.editingEventId) || [];
-        for (const ot of oldTasks) {
-          try { this.taskService.delete(ot.id); } catch (e) { /* ignore */ }
-        }
-        const oldExpenses = this.expenseService.getForEvent(this.editingEventId) || [];
-        for (const oe of oldExpenses) {
-          try { this.expenseService.delete(oe.id); } catch (e) { /* ignore */ }
-        }
+        existingInvitations.push(newInvitation);
       }
+    });
+    localStorage.setItem('invitations', JSON.stringify(existingInvitations));
 
-      // create tasks from form
-      const taskIds: number[] = [];
-      (formValue.tasks || []).forEach((taskData: any) => {
-        const task: Task = {
-          id: 0,
-          eventId: event.id,
-          title: taskData.title,
-          description: taskData.description,
-          assignedTo: null,
-          priority: taskData.priority,
-          deadline: (taskData.deadline instanceof Date) ? taskData.deadline.toISOString() : new Date(taskData.deadline).toISOString(),
-          status: 'Not Started',
-          comments: [],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-        const createdTask = this.taskService.create(task);
-        taskIds.push(createdTask.id);
-      });
-
-      // create expenses from form
-      const expenseIds: number[] = [];
-      (formValue.expenses || []).forEach((expenseData: any) => {
-        const expense: Expense = {
-          id: 0,
-          eventId: event.id,
-          name: expenseData.name,
-          amount: expenseData.amount,
-          category: expenseData.category,
-          date: (expenseData.date instanceof Date) ? expenseData.date.toISOString() : new Date(expenseData.date).toISOString(),
-          notes: expenseData.notes
-        };
-        const createdExpense = this.expenseService.create(expense);
-        expenseIds.push(createdExpense.id);
-      });
-
-      // assign created task/expense ids
-      event.tasks = taskIds;
-      event.expenses = expenseIds;
-
-      // persist or replace event in events list
-      if (this.editing && this.editingEventId) {
-        const idx = existingEvents.findIndex((e: any) => Number(e.id) === Number(this.editingEventId));
-        if (idx !== -1) existingEvents[idx] = event;
-        else existingEvents.push(event);
-      } else {
-        existingEvents.push(event);
-      }
-      localStorage.setItem('events', JSON.stringify(existingEvents));
-
-      // create invitations but avoid duplicates when editing
-      const existingInvitations = JSON.parse(localStorage.getItem('invitations') || '[]');
-      guestIds.forEach((guestId, index) => {
-        const already = existingInvitations.some((i: any) => Number(i.eventId) === Number(event.id) && (Number(i.guestId) === Number(guestId) || i.email === guestEmails[index]));
-        if (!already) {
-          const newInvitation = {
-            id: existingInvitations.length
-              ? Math.max(...existingInvitations.map((i: any) => i.id)) + 1
-              : 1,
-            eventId: event.id,
-            guestId,
-            email: guestEmails[index],
-            status: 'Pending',
-            createdAt: new Date().toISOString()
-          };
-          existingInvitations.push(newInvitation);
+    // Update guests' eventIds
+    const guestsUpdated = existingGuests.map((g: any) => {
+      if (guestIds.includes(g.id)) {
+        const currentEventIds = Array.isArray(g.eventIds) ? g.eventIds : (g.eventId ? [g.eventId] : []);
+        if (!currentEventIds.includes(event.id)) {
+          currentEventIds.push(event.id);
         }
-      });
-      localStorage.setItem('invitations', JSON.stringify(existingInvitations));
+        return { ...g, eventIds: currentEventIds, eventId: event.id };
+      }
+      return g;
+    });
+    localStorage.setItem('guests', JSON.stringify(guestsUpdated));
 
-      // update guests' eventId
-      const guestsUpdatedFinal = existingGuests.map((g: any) =>
-        guestIds.includes(g.id) ? { ...g, eventId: event.id } : g
-      );
-      localStorage.setItem('guests', JSON.stringify(guestsUpdatedFinal));
-
-      // ✅ إشعار النجاح
-      Swal.fire({
-        icon: 'success',
-        title: 'Event Created!',
-        text: 'The event, invitations, tasks, and expenses have been created successfully.',
-        confirmButtonText: 'OK'
-      }).then(() => {
-        this.router.navigate(['/dashboard/events'], { queryParams: { refresh: Date.now() } });
-      });
-    }
+    // Success notification
+    const title = this.editing ? 'Event Updated!' : 'Event Created!';
+    const text = this.editing ? 'The event has been updated successfully.' : 'The event, invitations, tasks, and expenses have been created successfully.';
+    Swal.fire({
+      icon: 'success',
+      title,
+      text,
+      confirmButtonText: 'OK'
+    }).then(() => {
+      this.router.navigate(['/dashboard/events'], { queryParams: { refresh: Date.now() } });
+    });
   }
 }
