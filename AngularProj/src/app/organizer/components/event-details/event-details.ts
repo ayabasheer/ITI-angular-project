@@ -34,6 +34,14 @@ export class EventDetails {
     this.guests = guests;
   }
 
+  goBack() {
+    window.history.back();
+  }
+
+  goForward() {
+    window.history.forward();
+  }
+
   canModify(): boolean {
     const user = this.auth.currentUser;
     if (!user || !this.event) return false;
