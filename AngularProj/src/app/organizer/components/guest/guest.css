@@ -19,6 +19,8 @@
 }
 
 /* 🔙 Navigation Buttons */
+
+/* 🔙 Navigation Buttons */
 .navigation-buttons {
   display: flex;
   gap: 0.5rem;
@@ -54,11 +56,12 @@
 
 /* 👥 Guest Card */
 .guest-card {
-  background-color: #ffffff;
-  border-radius: 12px;
+background-color: #ffffff;
+border-radius: 12px;
+  padding: 2rem;
   padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+transition: all 0.3s ease;
   cursor: pointer;
   border-left: 4px solid #d4af37;
   margin-bottom: 1rem;
@@ -69,14 +72,21 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
+.guest-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.guest.dark .guest-container ,
 .guest.dark .guest-card {
-  background-color: #292929;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+background-color: #292929;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .guest.dark .guest-card:hover {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
+
 
 /* 🏷️ Header */
 .guest-header {
