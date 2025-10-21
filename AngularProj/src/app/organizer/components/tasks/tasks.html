@@ -42,10 +42,10 @@
                 </div>
                 <div class="task-footer">
                     <span class="task-status status-{{ (t.status?.toLowerCase() || 'todo').replace(' ', '-') }}">{{ t.status || 'To Do' }}</span>
-                    <div>
+                    <!-- <div>
                         <button class="action-btn edit-btn" (click)="editTask(t); $event.stopPropagation()">Edit</button>
                         <button class="action-btn delete-btn" (click)="deleteTask(t); $event.stopPropagation()">Delete</button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
