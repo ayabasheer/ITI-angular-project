@@ -34,9 +34,9 @@
                         <span class="rsvp-status rsvp-{{ (g.status || 'Pending').toLowerCase().replace(' ', '-') }}">{{
                             g.status || 'Pending' }}</span>
                     </div>
-                    <div class="notes-section">
+                        <div class="notes-section">
                         <div class="notes-title">Associated Event</div>
-                        <div class="notes-content">{{ getEventName(g.eventIds || g.eventId) }}</div>
+                        <div class="notes-content">{{ getEventName(g.eventIds && g.eventIds.length ? g.eventIds : g.eventId) }}</div>
                     </div>
                 </div>
             </div>

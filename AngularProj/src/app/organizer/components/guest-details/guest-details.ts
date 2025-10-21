@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Guest } from '../../../shared/models/interfaces';
@@ -10,12 +10,20 @@ import { Guest } from '../../../shared/models/interfaces';
   templateUrl: './guest-details.html',
   styleUrls: ['./guest-details.css']
 })
-export class GuestDetails {
+export class GuestDetails implements OnInit {
   guest: Guest | null = null;
   event: any = null;
   feedback: any = null;
+  isDarkMode: boolean = false;
 
-  constructor(private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute) {}
+
+  ngOnInit() {
+    this.isDarkMode = localStorage.getItem('darkMode') === 'true';
+    window.addEventListener('theme:changed', (e: any) => {
+      this.isDarkMode = e.detail.dark;
+    });
+
     const id = Number(this.route.snapshot.paramMap.get('id'));
     const rawG = localStorage.getItem('guests');
     const rawE = localStorage.getItem('events');

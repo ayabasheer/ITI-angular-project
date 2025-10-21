@@ -1,4 +1,5 @@
-<div class="site-container">
+<div class="guest-details" [ngClass]="{'dark': isDarkMode}">
+    <div class="site-container">
     <!-- Back/Forward Navigation Buttons -->
     <div class="navigation-buttons" style="margin-bottom: 1rem;">
         <button class="btn btn-secondary me-2" (click)="goBack()">

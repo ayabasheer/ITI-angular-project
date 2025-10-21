@@ -66,13 +66,16 @@ export class Guests implements OnInit {
   // type narrowing in component logic doesn't affect template type checking.
   // Accept either a single eventId or an array of eventIds; used by templates.
   getEventName(eventRef?: number | number[] | null): string {
-    let id: number | undefined;
-    if (typeof eventRef === 'number') id = eventRef;
-    else if (Array.isArray(eventRef) && eventRef.length) id = eventRef[0];
-    else id = undefined;
+    let ids: number[] = [];
+    if (typeof eventRef === 'number') ids = [eventRef];
+    else if (Array.isArray(eventRef)) ids = eventRef;
+    else return 'Unknown Event';
 
-    if (typeof id !== 'number') return 'Unknown Event';
-    const event = this.events.find((e: any) => e.id === id);
-    return event ? event.name : 'Unknown Event';
+    // Find the first event ID that belongs to the current organizer's events
+    for (const id of ids) {
+      const event = this.events.find((e: any) => e.id === id);
+      if (event) return event.name;
+    }
+    return 'Unknown Event';
   }
 }

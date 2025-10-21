@@ -1,0 +1,12 @@
+[build]
+  command = "npm run build"
+  publish = "dist/Event-Planning-System/browser"  # match the exact casing!
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# CSR/SPA fallback for client-side routes
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
