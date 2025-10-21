@@ -27,6 +27,14 @@ export class Events implements OnInit {
 
   constructor(private eventService: EventService, private auth: AuthService, private router: Router, private route: ActivatedRoute) {}
 
+  goBack() {
+    window.history.back();
+  }
+
+  goForward() {
+    window.history.forward();
+  }
+
   canModify(event: EventModel): boolean {
     const user = this.auth.currentUser;
     if (!user || !event) return false;

@@ -1,4 +1,14 @@
 <div class="site-container">
+    <!-- Back/Forward Navigation Buttons -->
+    <div class="navigation-buttons" style="margin-bottom: 1rem;">
+        <button class="btn btn-secondary me-2" (click)="goBack()">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <button class="btn btn-secondary" (click)="goForward()">
+            <i class="fas fa-arrow-right"></i> Forward
+        </button>
+    </div>
+
     <div *ngIf="!event" class="alert alert-danger">Event not found.</div>
     <div *ngIf="event">
         <h2>{{event.title || event.name}}</h2>

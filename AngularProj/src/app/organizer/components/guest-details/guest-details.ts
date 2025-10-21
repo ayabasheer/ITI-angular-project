@@ -30,4 +30,12 @@ export class GuestDetails {
       this.feedback = this.guest!.feedbackId ? feedbacks.find((f: any) => f.id === this.guest!.feedbackId) : null;
     }
   }
+
+  goBack() {
+    window.history.back();
+  }
+
+  goForward() {
+    window.history.forward();
+  }
 }

@@ -1,18 +1,58 @@
-<div style="padding:20px">
-    <h2>Tasks</h2>
-    <div *ngIf="tasks.length; else no" class="row">
-        <div class="col-md-4 mb-3" *ngFor="let t of tasks">
-            <div class="card" style="cursor: pointer;" [routerLink]="['/dashboard/tasks', t.id]">
-                <div class="card-body">
-                    <h5 class="card-title">{{ t.title }}</h5>
-                    <p class="card-text">{{ t.description || 'No description' }}</p>
-                    <p class="card-text"><small class="text-muted">Priority: {{ t.priority }}</small></p>
-                    <p class="card-text"><small class="text-muted">Status: {{ t.status }}</small></p>
-                    <p class="card-text"><small class="text-muted">Deadline: {{ t.deadline | date:'short' }}</small></p>
-                    <p class="card-text"><small class="text-muted">Event: {{ getEventName(t.eventId) }}</small></p>
+<div class="tasks">
+    <div class="tasks-container">
+        <!-- Back/Forward Navigation Buttons -->
+        <div class="navigation-buttons" style="margin-bottom: 1rem;">
+            <button class="btn btn-secondary me-2" (click)="goBack()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <button class="btn btn-secondary" (click)="goForward()">
+                <i class="fas fa-arrow-right"></i> Forward
+            </button>
+        </div>
+
+        <div class="filters-section">
+            <input class="search-input" placeholder="Search tasks..." [(ngModel)]="query" />
+            <select class="filter-select" [(ngModel)]="priorityFilter">
+                <option value="all">All Priorities</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+            <select class="filter-select" [(ngModel)]="statusFilter">
+                <option value="all">All Statuses</option>
+                <option value="To Do">To Do</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+            </select>
+            <button class="add-task-btn" (click)="addTask()">Add Task</button>
+        </div>
+
+        <div *ngIf="filteredTasks.length; else no" class="tasks-list">
+            <div class="task-card" *ngFor="let t of filteredTasks" [routerLink]="['/dashboard/tasks', t.id]">
+                <div class="task-header">
+                    <h5 class="task-title">{{ t.title }}</h5>
+                    <span class="task-priority priority-{{ (t.priority || 'Low').toLowerCase() }}">{{ t.priority || 'Low' }}</span>
+                </div>
+                <div class="task-content">
+                    <p class="task-description">{{ t.description || 'No description' }}</p>
+                    <div class="task-meta">
+                        <span>Deadline: {{ t.deadline | date:'short' }}</span>
+                        <span>Event: {{ getEventName(t.eventId) }}</span>
+                    </div>
+                </div>
+                <div class="task-footer">
+                    <span class="task-status status-{{ (t.status?.toLowerCase() || 'todo').replace(' ', '-') }}">{{ t.status || 'To Do' }}</span>
+                    <div>
+                        <button class="action-btn edit-btn" (click)="editTask(t); $event.stopPropagation()">Edit</button>
+                        <button class="action-btn delete-btn" (click)="deleteTask(t); $event.stopPropagation()">Delete</button>
+                    </div>
                 </div>
             </div>
         </div>
+        <ng-template #no>
+            <div class="text-center mt-4">
+                <p>No tasks found.</p>
+            </div>
+        </ng-template>
     </div>
-    <ng-template #no>No tasks found.</ng-template>
 </div>

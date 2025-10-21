@@ -30,4 +30,12 @@ export class TaskDetails {
       this.assignedTo = this.task!.assignedTo ? users.find((u: any) => u.id === this.task!.assignedTo) || null : null;
     }
   }
+
+  goBack() {
+    window.history.back();
+  }
+
+  goForward() {
+    window.history.forward();
+  }
 }
