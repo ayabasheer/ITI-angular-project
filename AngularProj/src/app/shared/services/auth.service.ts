@@ -45,4 +45,12 @@ export class AuthService {
       this.currentUser = null; // ✅ مسح القيمة من الذاكرة كمان
     } catch {}
   }
+
+  isAuthenticated(): boolean {
+    return this.currentUser !== null;
+  }
+
+  hasRole(role: string): boolean {
+    return this.currentUser?.role === role;
+  }
 }

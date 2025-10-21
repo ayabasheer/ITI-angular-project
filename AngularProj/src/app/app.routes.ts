@@ -10,6 +10,7 @@ import { EventsComponent } from './anonymous/components/events/events.component'
 import { EventDetailComponent } from './anonymous/components/events/event-detail.component';
 import { CreateEvent } from './organizer/components/create-event/create-event';
 import { UserModule } from './user/user-module';
+import { OrganizerGuard, UserGuard } from './shared/guards/auth.guard';
 
 
 
@@ -23,7 +24,7 @@ export const routes: Routes = [
 	{ path: 'events/:id', component: EventDetailComponent },
 	{ path: 'events', component: EventsComponent },
 	{ path: 'create-event', component: CreateEvent },
-	{path:"dashboard", loadChildren: () => import('./organizer/organizer-module').then(m => m.OrganizerModule)},
-	{path:"user", loadChildren: () => import('./user/user-module').then(m => m.UserModule)},
+	{path:"dashboard", loadChildren: () => import('./organizer/organizer-module').then(m => m.OrganizerModule), canActivate: [OrganizerGuard]},
+	{path:"user", loadChildren: () => import('./user/user-module').then(m => m.UserModule), canActivate: [UserGuard]},
 	{ path: '**', redirectTo: '' }
 ];

@@ -172,7 +172,7 @@ export class DashboardComponent implements OnInit {
         localStorage.removeItem('lastOpenedTab');
         Swal.fire('Logged out!', 'You have been logged out successfully.', 'success')
           .then(() => {
-            window.location.href = '/home'; 
+            window.location.href = '/login';
           });
       }
     });
