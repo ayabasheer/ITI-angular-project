@@ -15,16 +15,7 @@
         <p><strong>Email:</strong> {{ guest.email }}</p>
         <p><strong>Phone:</strong> {{ guest.phone || 'N/A' }}</p>
         <p><strong>Status:</strong> {{ guest.status }}</p>
-        <div *ngIf="event && event.length > 0">
-            <h4>Events:</h4>
-            <ul>
-                <li *ngFor="let e of event">{{ e.name }} — {{ e.category }}</li>
-            </ul>
-            //new branch
-        </div>
-        <div *ngIf="!event || event.length === 0">
-            <p><strong>Events:</strong> No events found.</p>
-        </div>
+        <p><strong>Event:</strong> {{ event?.name || 'Unknown Event' }}</p>
         <p><strong>Role:</strong> {{ guest.role }}</p>
         <p><strong>Created At:</strong> {{ guest.createdAt | date:'medium' }}</p>
         <div *ngIf="feedback">
